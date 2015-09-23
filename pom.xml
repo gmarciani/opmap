@@ -1,26 +1,140 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.gmarciani</groupId>
-  <artifactId>opmap</artifactId>
-  <version>1.0</version>
-  <name>opmap</name>
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source/>
-          <target/>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <url>http://github.com/gmarciani/opmap</url>
-  <organization>
-  	<name>Gmarciani</name>
-  	<url>http://gmarciani.com</url>
-  </organization>
-  <description>Operator Placement Problem for Data Stream Processing Applications</description>
+	<modelVersion>4.0.0</modelVersion>
+	  
+	<groupId>com.gmarciani</groupId>
+	<artifactId>opmap</artifactId>
+	<version>1.0</version>
+	
+	<name>opmap</name>
+	<description>Operator Placement Problem for Data Stream Processing Applications</description>
+	<url>http://github.com/gmarciani/opmap</url>
+	
+	<organization>
+		<name>Gmarciani</name>
+		<url>http://gmarciani.com</url>
+	</organization>
+	
+	
+	<properties>
+		<junit.version>4.12</junit.version>
+		<jackson.version>2.6.1</jackson.version>
+		<webgraph.version>3.4.3</webgraph.version>
+		<apache.commons-lang.version>3.4</apache.commons-lang.version>
+		<fastutil.version>7.0.7</fastutil.version>
+		<jfreechart.version>1.0.19</jfreechart.version>
+		<jfreesvg.version>3.0</jfreesvg.version>
+		<jung.version>2.0.1</jung.version>
+		<jgrapht.version>0.9.1</jgrapht.version>
+	</properties>
+
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+				<source/>
+				<target/>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>  
+  
+	<dependencies>
+  
+  		<dependency>
+  			<groupId>junit</groupId>
+  			<artifactId>junit</artifactId>
+  			<version>${junit.version}</version>
+  			<scope>test</scope>
+  		</dependency>
+  	
+  	<dependency>
+  		<groupId>com.fasterxml.jackson.core</groupId>
+  		<artifactId>jackson-databind</artifactId>
+  		<version>${jackson.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>it.unimi.dsi</groupId>
+  		<artifactId>webgraph</artifactId>
+  		<version>${webgraph.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>it.unimi.dsi</groupId>
+  		<artifactId>fastutil</artifactId>
+  		<version>${fastutil.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.apache.commons</groupId>
+  		<artifactId>commons-lang3</artifactId>
+  		<version>${apache.commons-lang.version}</version>
+  	</dependency>  	
+  	
+  	<dependency>
+  		<groupId>org.jgrapht</groupId>
+  		<artifactId>jgrapht-core</artifactId>
+  		<version>${jgrapht.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.jfree</groupId>
+  		<artifactId>jfreechart</artifactId>
+  		<version>${jfreechart.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.jfree</groupId>
+  		<artifactId>jfreesvg</artifactId>
+  		<version>${jfreesvg.version}</version>
+  	</dependency>
+  	
+  	<dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung2</artifactId>
+        <version>${jung.version}</version>
+        <type>pom</type>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung-api</artifactId>
+        <version>${jung.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung-visualization</artifactId>
+        <version>${jung.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung-graph-impl</artifactId>
+        <version>${jung.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung-algorithms</artifactId>
+        <version>${jung.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jung</groupId>
+        <artifactId>jung-io</artifactId>
+        <version>${jung.version}</version>
+        <scope>compile</scope>
+    </dependency>
+  	
+  </dependencies>
+  
 </project>
