@@ -4,7 +4,7 @@ import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import model.application.Application;
 import model.architecture.Architecture;
-import model.optmodel.OPPCPlexModel;
+import model.optmodel.OPPModel;
 import model.optmodel.mp.OPPStandard;
 import model.report.Report;
 import model.solver.OPPSolver;
@@ -17,7 +17,7 @@ public class Opmap {
 		Application app = new Application("Sample DSP Application");
 		Architecture arc = new Architecture("Sample Distributed Architecture");
 		
-		OPPCPlexModel model = new OPPStandard(app, arc);
+		OPPModel model = new OPPStandard(app, arc);
 		
 		OPPSolver solver = new MPSolver();
 		
