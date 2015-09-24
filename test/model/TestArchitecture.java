@@ -4,8 +4,7 @@ import org.junit.Test;
 
 import model.architecture.Architecture;
 import model.architecture.link.LogicalLink;
-import model.architecture.node.ComputationalNode;
-import model.architecture.node.ComputationalOffer;
+import model.architecture.node.Computational;
 
 public class TestArchitecture {
 
@@ -13,10 +12,10 @@ public class TestArchitecture {
 	public void normal() {
 		Architecture arc = new Architecture("Sample Grid Architecture");
 		
-		ComputationalNode node1 = new ComputationalNode(1, "sensor1", new ComputationalOffer(1, 1, 1.0));
-		ComputationalNode node2 = new ComputationalNode(2, "station2", new ComputationalOffer(1, 1, 1.0));
-		ComputationalNode node3 = new ComputationalNode(3, "station3", new ComputationalOffer(1, 1, 1.0));
-		ComputationalNode node4 = new ComputationalNode(4, "datacenter", new ComputationalOffer(1, 1, 1.0));
+		Computational node1 = new Computational(1, "sensor1", 1, 1, 1.0);
+		Computational node2 = new Computational(2, "station2", 1, 1, 1.0);
+		Computational node3 = new Computational(3, "station3", 1, 1, 1.0);
+		Computational node4 = new Computational(4, "datacenter", 1, 1, 1.0);
 
 		arc.addVertex(node1);
 		arc.addVertex(node2);
