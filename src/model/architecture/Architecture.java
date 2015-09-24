@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import model.architecture.link.LogicalLink;
-import model.architecture.node.ComputationalNode;
+import model.architecture.node.Computational;
 
-public class Architecture extends DirectedSparseGraph<ComputationalNode, LogicalLink> {
+public class Architecture extends DirectedSparseGraph<Computational, LogicalLink> {
 
 	private static final long serialVersionUID = 7470862065393196611L;
 	
