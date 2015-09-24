@@ -6,11 +6,9 @@ import java.util.Set;
 import org.junit.Test;
 
 import model.application.Application;
-import model.application.OperationalPath;
-import model.application.operator.ComputationalDemand;
-import model.application.operator.OperationalNode;
-import model.application.operator.Operator;
-import model.application.operator.OperatorRole;
+import model.application.operator.Operational;
+import model.application.operator.OperationalPath;
+import model.application.operator.Role;
 
 public class TestApplication {
 
@@ -33,12 +31,12 @@ public class TestApplication {
 	public void pathsFromSourceToSink() {
 		Application app = getSimpleApp();
 		
-		OperationalNode source = app.getVertices().stream().findAny().get();
-		OperationalNode sink = app.getVertices().stream().findAny().get();
+		Operational source = app.getVertices().stream().findAny().get();
+		Operational sink = app.getVertices().stream().findAny().get();
 		
-		Set<OperationalPath> paths = app.getOperationalPaths(source, sink);
+		//Set<OperationalPath> paths = app.getOperationalPaths(source, sink);
 		
-		System.out.println(paths);
+		//System.out.println(paths);
 	}
 	
 	@Test 
@@ -53,13 +51,14 @@ public class TestApplication {
 	private static Application getSimpleApp() {
 		Application app = new Application("Simple DSP Application");
 		
-		OperationalNode node1 = new OperationalNode(1, new Operator(OperatorRole.SRC, "gridsensor", x -> new Long(1000)), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node2 = new OperationalNode(2, new Operator(OperatorRole.PIP, "selection1", x -> x/2), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node3 = new OperationalNode(3, new Operator(OperatorRole.PIP, "selection2", x -> x/2), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node4 = new OperationalNode(4, new Operator(OperatorRole.SNK, "datacenter", x -> new Long(1)), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
+		Operational node1 = new Operational(1, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0, new LinkedHashSet<Long>());
+		Operational node2 = new Operational(2, Role.PIP, "selection1", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
+		Operational node3 = new Operational(3, Role.PIP, "selection2", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
+		Operational node4 = new Operational(4, Role.SNK, "datacenter", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
 		
 		app.addStream(node1, node2);
 		app.addStream(node1, node3);
+		app.addStream(node2, node3);
 		app.addStream(node2, node4);
 		app.addStream(node3, node4);
 		
@@ -69,13 +68,14 @@ public class TestApplication {
 	private static Application getCycledApp() {
 		Application app = new Application("Cycled DSP Application");
 		
-		OperationalNode node1 = new OperationalNode(1, new Operator(OperatorRole.SRC, "gridsensor", x -> new Long(1000)), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node2 = new OperationalNode(2, new Operator(OperatorRole.PIP, "selection1", x -> x/2), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node3 = new OperationalNode(3, new Operator(OperatorRole.PIP, "selection2", x -> x/2), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
-		OperationalNode node4 = new OperationalNode(4, new Operator(OperatorRole.SNK, "datacenter", x -> new Long(1)), new ComputationalDemand(1, 1.0), new LinkedHashSet<Long>());
+		Operational node1 = new Operational(1, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0, new LinkedHashSet<Long>());
+		Operational node2 = new Operational(2, Role.PIP, "selection1", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
+		Operational node3 = new Operational(3, Role.PIP, "selection2", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
+		Operational node4 = new Operational(4, Role.SNK, "datacenter", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
 		
 		app.addStream(node1, node2);
 		app.addStream(node1, node3);
+		app.addStream(node2, node3);
 		app.addStream(node2, node4);
 		app.addStream(node3, node4);
 		
