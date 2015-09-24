@@ -1,13 +1,13 @@
 package model.application.operator;
 
-public enum OperatorRole {
+public enum Role {
 	SRC("Source"),
 	SNK("Sink"),
 	PIP("Pipe");
 	
 	private String name;
 	
-	private OperatorRole(final String name) {
+	private Role(final String name) {
 		this.name = name;
 	}
 	

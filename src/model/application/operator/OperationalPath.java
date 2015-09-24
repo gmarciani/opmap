@@ -1,11 +1,9 @@
-package model.application;
+package model.application.operator;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import model.application.operator.OperationalNode;
-
-public class OperationalPath extends ArrayList<OperationalNode> implements Comparable<OperationalPath> {
+public class OperationalPath extends ArrayList<Operational> implements Comparable<OperationalPath> {
 
 	private static final long serialVersionUID = 3178541927310072502L;
 	
