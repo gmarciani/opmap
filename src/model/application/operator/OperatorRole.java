@@ -1,13 +1,13 @@
 package model.application.operator;
 
-public enum OperatorType {
+public enum OperatorRole {
 	SRC("Source"),
 	SNK("Sink"),
 	PIP("Pipe");
 	
 	private String name;
 	
-	private OperatorType(final String name) {
+	private OperatorRole(final String name) {
 		this.name = name;
 	}
 	
@@ -15,7 +15,8 @@ public enum OperatorType {
 		return this.name;
 	}
 	
-	@Override public String toString() {
+	@Override 
+	public String toString() {
 		return this.getName();
 	}
 }

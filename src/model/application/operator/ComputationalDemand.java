@@ -56,17 +56,10 @@ public class ComputationalDemand implements Comparable<ComputationalDemand>, Ser
 
 	public void setFlowOut(long flowOut) {
 		this.flowOut = flowOut;
-	}
+	}		
 	
-	@Override public String toString() {
-		return "ComputationalDemand(" + 
-			   "resources:" + this.getResources() + ";" + 
-			   "speed:" + this.getSpeed() + ";" + 
-			   "flowIn:" + this.getFlowIn() + ";" + 
-			   "flowOut:" + this.getFlowOut() + ")";
-	}	
-	
-	@Override public boolean equals(Object obj) {
+	@Override 
+	public boolean equals(Object obj) {
 		if (this.getClass() != obj.getClass())
 			return false;
 		
@@ -78,15 +71,23 @@ public class ComputationalDemand implements Comparable<ComputationalDemand>, Ser
 				this.getFlowOut() == other.getFlowOut());
 	}
 	
-	@Override public int compareTo(ComputationalDemand other) {
-		if (this.getResources() > other.getResources())
-			return 1;
-		else if (this.getResources() < other.getResources()) 
-			return -1;
-		return 0;
+	@Override 
+	public int compareTo(ComputationalDemand other) {
+		return Double.valueOf(this.getResources() * this.getSpeed() * this.getFlowIn()).compareTo(
+				Double.valueOf(other.getResources() * other.getSpeed() * other.getFlowIn()));
 	}
 	
-	@Override public int hashCode() {
+	@Override 
+	public String toString() {
+		return "ComputationalDemand(" + 
+			   "resources:" + this.getResources() + ";" + 
+			   "speed:" + this.getSpeed() + ";" + 
+			   "flowIn:" + this.getFlowIn() + ";" + 
+			   "flowOut:" + this.getFlowOut() + ")";
+	}
+	
+	@Override 
+	public int hashCode() {
 		return Objects.hash(this.getResources(),
 				            this.getSpeed(),
 				            this.getFlowIn(),

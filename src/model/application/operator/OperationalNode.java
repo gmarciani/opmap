@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import model.application.operator.Operator;
-import model.application.operator.OperatorType;
+import model.application.operator.OperatorRole;
 
 public class OperationalNode implements Comparable<OperationalNode>, Serializable {
 
@@ -80,26 +80,19 @@ public class OperationalNode implements Comparable<OperationalNode>, Serializabl
 	}
 	
 	public boolean isSource() {
-		return this.getOperator().getType() == OperatorType.SRC;
+		return this.getOperator().getRole().equals(OperatorRole.SRC);
 	}
 
 	public boolean isSink() {
-		return this.getOperator().getType() == OperatorType.SNK;
+		return this.getOperator().getRole().equals(OperatorRole.SNK);
 	}	
 	
 	public boolean isPipe() {
-		return this.getOperator().getType() == OperatorType.PIP;
-	}
+		return this.getOperator().getRole().equals(OperatorRole.PIP);
+	}	
 	
-	@Override public String toString() {
-		return "OperationalNode(" +
-			   "id:" + this.getId() + ";" + 
-			   "operator:" + this.getOperator() + "; " +
-			   "compDemand:" + this.getComputationalDemand() + "; " +
-			   "pinnables:" + this.getPinnables() + ")";
-	}
-	
-	@Override public boolean equals(Object obj) {
+	@Override 
+	public boolean equals(Object obj) {
 		if (this.getClass() != obj.getClass())
 			return false;
 		
@@ -112,10 +105,17 @@ public class OperationalNode implements Comparable<OperationalNode>, Serializabl
 		return this.getComputationalDemand().compareTo(other.getComputationalDemand());
 	}	
 	
+	@Override 
+	public String toString() {
+		return "OperationalNode(" +
+			   "id:" + this.getId() + ";" + 
+			   "operator:" + this.getOperator() + "; " +
+			   "compDemand:" + this.getComputationalDemand() + "; " +
+			   "pinnables:" + this.getPinnables() + ")";
+	}
+	
 	@Override public int hashCode() {
 		return Objects.hash(this.getId());
-	}
-
-	
+	}	
 
 }
