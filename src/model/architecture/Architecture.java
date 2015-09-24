@@ -2,39 +2,32 @@ package model.architecture;
 
 import java.io.IOException;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import model.architecture.link.LogicalLink;
 import model.architecture.node.ComputationalNode;
 
-public class Architecture {
+public class Architecture extends DirectedSparseGraph<ComputationalNode, LogicalLink> {
 
+	private static final long serialVersionUID = 7470862065393196611L;
+	
 	private String name;
 	private String description;
-	private DirectedGraph<ComputationalNode, LogicalLink> graph;
-	
-	public Architecture(String name, String description, DirectedGraph<ComputationalNode, LogicalLink> graph) {
-		this.setName(name);
-		this.setDescription(description);
-		this.setGraph(graph);
-	}
 	
 	public Architecture(String name, String description) {
+		super();
 		this.setName(name);
-		this.setDescription(description);
-		this.setGraph(new DefaultDirectedGraph<ComputationalNode, LogicalLink>(LogicalLink.class));		
+		this.setDescription(description);	
 	}
 	
 	public Architecture(String name) {
+		super();
 		this.setName(name);
 		this.setDescription(null);
-		this.setGraph(new DefaultDirectedGraph<ComputationalNode, LogicalLink>(LogicalLink.class));	
 	}	
 	
 	public String getName() {
@@ -53,14 +46,6 @@ public class Architecture {
 		this.description = description;
 	}
 	
-	public DirectedGraph<ComputationalNode, LogicalLink> getGraph() {
-		return this.graph;
-	}
-	
-	public void setGraph(DirectedGraph<ComputationalNode, LogicalLink> graph) {
-		this.graph = graph;
-	}
-	
 	public static Architecture readJSON(String json) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		Architecture arc = mapper.readValue(json, Architecture.class);
@@ -73,25 +58,12 @@ public class Architecture {
 		return json;
 	}
 	
-	public static Architecture getSampleArchitecture() {
-		// TODO Auto-generated method stub
-		return null;
-	}	
-	
 	@Override public String toString() {
-		return "Architecture(name:" + this.getName() + ";" + 
-							 "description:" + this.getDescription() + ";" + 
-							 "graph:" + this.getGraph() + ")";
-	}
-
-	public void addComputationalNode(ComputationalNode node1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addLogicalLink(int i, int j, LogicalLink logicalLink) {
-		// TODO Auto-generated method stub
-		
+		return "Architecture(" + 
+			   "name:" + this.getName() + ";" + 
+			   "description:" + this.getDescription() + ";" + 
+			   "nodes:" +  this.getVertices() + ";" + 
+			   "links:" + this.getEdges() + ")";
 	}
 	
 }

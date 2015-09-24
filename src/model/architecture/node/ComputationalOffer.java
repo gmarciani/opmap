@@ -1,6 +1,7 @@
 package model.architecture.node;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ComputationalOffer implements Comparable<ComputationalOffer>, Serializable {
 
@@ -14,6 +15,12 @@ public class ComputationalOffer implements Comparable<ComputationalOffer>, Seria
 		this.setResources(resources);
 		this.setSpeedup(speedup);
 		this.setAvailability(availability);
+	}
+	
+	public ComputationalOffer() {
+		this.setResources(0);
+		this.setSpeedup(0.0);
+		this.setAvailability(0.0);
 	}
 
 	public int getResources() {
@@ -40,24 +47,37 @@ public class ComputationalOffer implements Comparable<ComputationalOffer>, Seria
 		this.availability = availability;
 	}
 
-	@Override public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return false;
+	@Override 
+	public boolean equals(Object obj) {
+		if (this.getClass() != obj.getClass())
+			return false;
+		
+		ComputationalOffer other = (ComputationalOffer) obj;
+		
+		return (this.getResources() == other.getResources() &&
+				this.getSpeedup() == other.getSpeedup() &&
+				this.getAvailability() == other.getAvailability());
 	}
 
-	@Override public int compareTo(ComputationalOffer other) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override 
+	public int compareTo(ComputationalOffer other) {
+		return Double.valueOf(this.getSpeedup() * this.getAvailability() * this.getResources()).compareTo(
+				Double.valueOf(other.getSpeedup() * other.getAvailability() * other.getResources()));
+	}	
+	
+	@Override 
+	public String toString() {
+		return "ComputationalOffer(" + 
+			   "resources:" + this.getResources() + ";" + 
+			   "speedup:" + this.getSpeedup() + ";" + 
+			   "availability:" + this.getAvailability() + ")";
 	}
 	
-	@Override public int hashCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	@Override public String toString() {
-		// TODO Auto-generated method stub
-		return "";
+	@Override 
+	public int hashCode() {
+		return Objects.hash(this.getResources(), 
+							this.getSpeedup(), 
+							this.getAvailability());
 	}
 
 }

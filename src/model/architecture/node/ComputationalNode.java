@@ -1,6 +1,7 @@
 package model.architecture.node;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ComputationalNode implements Comparable<ComputationalNode>, Serializable {
 	
@@ -46,24 +47,31 @@ public class ComputationalNode implements Comparable<ComputationalNode>, Seriali
 		this.computationalOffer = computationalOffer;
 	}	
 	
-	@Override public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return false;
+	@Override 
+	public boolean equals(Object obj) {
+		if (this.getClass() != obj.getClass())
+			return false;
+		
+		ComputationalNode other = (ComputationalNode) obj;
+		
+		return (this.getId() == other.getId());
 	}
 
-	@Override public int compareTo(ComputationalNode other) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	@Override public int hashCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	@Override 
+	public int compareTo(ComputationalNode other) {
+		return this.getComputationalOffer().compareTo(other.getComputationalOffer());
+	}	
 	
 	@Override public String toString() {
-		// TODO Auto-generated method stub
-		return "";
+		return "ComputationalNode(" +
+				"id:" + this.getId() + ";" + 
+				"name:" + this.getName() + ";" + 
+				"offer:" + this.getComputationalOffer() + ")";
+	}
+	
+	@Override 
+	public int hashCode() {
+		return Objects.hash(this.getId());
 	}
 
 }

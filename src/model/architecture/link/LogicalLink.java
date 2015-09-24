@@ -1,10 +1,10 @@
 package model.architecture.link;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import model.architecture.node.ComputationalOffer;
 
-public class LogicalLink implements Comparable<ComputationalOffer>, Serializable {
+public class LogicalLink implements Comparable<LogicalLink>, Serializable {
 
 	private static final long serialVersionUID = 7389110561491378819L;
 	
@@ -43,28 +43,39 @@ public class LogicalLink implements Comparable<ComputationalOffer>, Serializable
 			this.availability = 0.5;
 		else
 			this.availability = availability;
+	}	
+	
+	/*@Override
+	public boolean equals(Object obj) {
+		if (this.getClass() != obj.getClass())
+			return false;
+		
+		LogicalLink other = (LogicalLink) obj;
+		
+		return (this.getDelay() == other.getDelay() &&
+				this.getBandwidth() == other.getBandwidth() &&
+				this.getAvailability() == other.getAvailability());
+	}*/
+	
+	@Override 
+	public int compareTo(LogicalLink other) {
+		return Double.valueOf(this.getBandwidth() * this.getAvailability() / this.getDelay()).compareTo(
+				Double.valueOf(other.getBandwidth() * other.getAvailability() / other.getDelay()));
 	}
 	
-
-	@Override public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override public int compareTo(ComputationalOffer other) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override 
+	public String toString() {
+		return "LogicalLink(" + 
+			   "delay:" + this.getDelay() + ";" + 
+			   "bandwidth:" + this.getBandwidth() + ";" + 
+			   "availability:" + this.getAvailability() + ")";
 	}
 	
-	@Override public int hashCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	@Override public String toString() {
-		return "LogicalLink(delay:" + this.getDelay() + ";" + 
-						   "bandwidth:" + this.getBandwidth() + ";" + 
-						   "availability:" + this.getAvailability() + ")";
-	}
+	@Override 
+	public int hashCode() {
+		return Objects.hash(this.getDelay(), 
+				this.getBandwidth(), 
+				this.getAvailability());
+	}	
 
 }
