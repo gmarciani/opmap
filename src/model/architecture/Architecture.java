@@ -2,16 +2,17 @@ package model.architecture;
 
 import java.io.IOException;
 
+import org.jgrapht.graph.DefaultDirectedGraph;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import model.architecture.link.LogicalLink;
 import model.architecture.node.Computational;
 
-public class Architecture extends DirectedSparseGraph<Computational, LogicalLink> {
+public class Architecture extends DefaultDirectedGraph<Computational, LogicalLink> {
 
 	private static final long serialVersionUID = 7470862065393196611L;
 	
@@ -19,13 +20,13 @@ public class Architecture extends DirectedSparseGraph<Computational, LogicalLink
 	private String description;
 	
 	public Architecture(String name, String description) {
-		super();
+		super(LogicalLink.class);
 		this.setName(name);
 		this.setDescription(description);	
 	}
 	
 	public Architecture(String name) {
-		super();
+		super(LogicalLink.class);
 		this.setName(name);
 		this.setDescription(null);
 	}	
@@ -62,8 +63,8 @@ public class Architecture extends DirectedSparseGraph<Computational, LogicalLink
 		return "Architecture(" + 
 			   "name:" + this.getName() + ";" + 
 			   "description:" + this.getDescription() + ";" + 
-			   "nodes:" +  this.getVertices() + ";" + 
-			   "links:" + this.getEdges() + ")";
+			   "nodes:" +  this.vertexSet() + ";" + 
+			   "links:" + this.edgeSet() + ")";
 	}
 	
 }
