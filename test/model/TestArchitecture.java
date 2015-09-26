@@ -22,10 +22,10 @@ public class TestArchitecture {
 		arc.addVertex(node3);
 		arc.addVertex(node4);		
 		
-		arc.addEdge(new LogicalLink(1.0, 1.0, 1.0), node1, node2);
-		arc.addEdge(new LogicalLink(1.0, 1.0, 1.0), node1, node3);
-		arc.addEdge(new LogicalLink(1.0, 1.0, 1.0), node2, node4);
-		arc.addEdge(new LogicalLink(1.0, 1.0, 1.0), node3, node4);
+		arc.addEdge(node1, node2, new LogicalLink(1.0, 1.0, 1.0));
+		arc.addEdge(node1, node3, new LogicalLink(1.0, 1.0, 1.0));
+		arc.addEdge(node2, node4, new LogicalLink(1.0, 1.0, 1.0));
+		arc.addEdge(node3, node4, new LogicalLink(1.0, 1.0, 1.0));
 		
 		System.out.println(arc);
 	}
