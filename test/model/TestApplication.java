@@ -1,10 +1,13 @@
 package model;
 
+import static org.junit.Assert.fail;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
+import control.exceptions.ModelException;
 import model.application.Application;
 import model.application.operator.Operational;
 import model.application.operator.OperationalPath;
@@ -14,7 +17,12 @@ public class TestApplication {
 
 	@Test 
 	public void normal() {
-		Application app = getSimpleApp();
+		Application app = null;
+		try {
+			app = getSimpleApp();
+		} catch (ModelException exc) {
+			fail();
+		}
 		
 		System.out.println(app);
 		
@@ -22,56 +30,67 @@ public class TestApplication {
 	
 	@Test 
 	public void cycled() {
-		Application app = getCycledApp();
+		@SuppressWarnings("unused")
+		Application app;
+		try {
+			app = getCycledApp();
+		} catch (ModelException exc) {
+			return;
+		}
 		
-		System.out.println(app);
+		fail();
 	}
 	
 	@Test 
-	public void pathsFromSourceToSink() {
-		Application app = getSimpleApp();
+	public void pathsFromSourceToSink() throws ModelException {
+		Application app;
 		
-		Operational source = app.getVertices().stream().findAny().get();
-		Operational sink = app.getVertices().stream().findAny().get();
+		app = getSimpleApp();
 		
-		//Set<OperationalPath> paths = app.getOperationalPaths(source, sink);
+		Operational source = app.getSources().stream().findAny().get();
 		
-		//System.out.println(paths);
-	}
-	
-	@Test 
-	public void allPaths() {
-		Application app = getSimpleApp();
-		
-		Set<OperationalPath> paths = app.getAllOperationalPaths();
+		Set<OperationalPath> paths = app.getOperationalPaths(source);
 		
 		System.out.println(paths);
 	}
 	
-	private static Application getSimpleApp() {
+	private static Application getSimpleApp() throws ModelException {
 		Application app = new Application("Simple DSP Application");
 		
 		Operational node1 = new Operational(1, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0, new LinkedHashSet<Long>());
 		Operational node2 = new Operational(2, Role.PIP, "selection1", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
 		Operational node3 = new Operational(3, Role.PIP, "selection2", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
-		Operational node4 = new Operational(4, Role.SNK, "datacenter", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
+		Operational node4 = new Operational(4, Role.SNK, "datacenter1", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
+		Operational node5 = new Operational(5, Role.SNK, "datacenter2", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
+				
+		app.addOperational(node1);
+		app.addOperational(node2);
+		app.addOperational(node3);
+		app.addOperational(node4);
+		app.addOperational(node5);
 		
 		app.addStream(node1, node2);
 		app.addStream(node1, node3);
 		app.addStream(node2, node3);
 		app.addStream(node2, node4);
 		app.addStream(node3, node4);
+		app.addStream(node3, node5);
 		
 		return app;
 	}
 	
-	private static Application getCycledApp() {
+	private static Application getCycledApp() throws ModelException {
 		Application app = new Application("Cycled DSP Application");
 		
 		Operational node1 = new Operational(1, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0, new LinkedHashSet<Long>());
 		Operational node2 = new Operational(2, Role.PIP, "selection1", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
 		Operational node3 = new Operational(3, Role.PIP, "selection2", x -> x/2, 1, 1.0, new LinkedHashSet<Long>());
 		Operational node4 = new Operational(4, Role.SNK, "datacenter", x -> new Long(1), 1, 1.0, new LinkedHashSet<Long>());
+		
+		app.addOperational(node1);
+		app.addOperational(node2);
+		app.addOperational(node3);
+		app.addOperational(node4);
 		
 		app.addStream(node1, node2);
 		app.addStream(node1, node3);
