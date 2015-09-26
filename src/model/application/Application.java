@@ -1,21 +1,27 @@
 package model.application;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
+
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import control.exceptions.ModelException;
 import model.application.dstream.DataStream;
 import model.application.operator.Operational;
 import model.application.operator.OperationalPath;
 
-public class Application extends DirectedSparseGraph<Operational, DataStream> {
+public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 
 	private static final long serialVersionUID = -6105440850975900864L;
 	
@@ -23,13 +29,13 @@ public class Application extends DirectedSparseGraph<Operational, DataStream> {
 	private String description;
 	
 	public Application(String name, String description) {
-		super();
+		super(DataStream.class);
 		this.setName(name);
 		this.setDescription(description);
 	}
 	
 	public Application(String name) {
-		super();
+		super(DataStream.class);
 		this.setName(name);
 		this.setDescription(null);
 	}
@@ -51,37 +57,52 @@ public class Application extends DirectedSparseGraph<Operational, DataStream> {
 	}
 	
 	public Set<Operational> getSources() {
-		return super.getVertices().stream().filter(v -> v.isSource()).collect(Collectors.toSet());
+		return super.vertexSet().stream().filter(v -> v.isSource()).collect(Collectors.toSet());
 	}
 	
 	public Set<Operational> getSinks() {
-		return super.getVertices().stream().filter(v -> v.isSink()).collect(Collectors.toSet());
+		return super.vertexSet().stream().filter(v -> v.isSink()).collect(Collectors.toSet());
 	}
 	
 	public Set<Operational> getPipes() {
-		return super.getVertices().stream().filter(v -> v.isPipe()).collect(Collectors.toSet());
+		return super.vertexSet().stream().filter(v -> v.isPipe()).collect(Collectors.toSet());
+	}
+	
+	public boolean addOperational(Operational opnode) {
+		return super.addVertex(opnode);
 	}
 		
-	public boolean addStream(Operational src, Operational dst) {
+	public boolean addStream(Operational src, Operational dst) throws ModelException {
 		DataStream dstream = new DataStream();
 		dstream.setFlow(src.getFlowOut());
 		dst.addFlowIn(dstream.getFlow());
-		return super.addEdge(dstream, src, dst);
-	}
-	
-	public Set<OperationalPath> getAllOperationalPaths() {
-		Set<OperationalPath> paths = new ConcurrentSkipListSet<OperationalPath>();
-		
-		for (Operational source : this.getSources())
-			paths.addAll(this.getOperationalPaths(source));		
-		
-		return paths;
+		super.addVertex(src);
+		super.addVertex(dst);
+		try {
+			return super.addDagEdge(src, dst, dstream);
+		} catch (org.jgrapht.experimental.dag.DirectedAcyclicGraph.CycleFoundException exc) {
+			throw new ModelException("An application must be acyclic: found cycle while adding the following dstream " + dstream);
+		}
 	}
 	
 	public Set<OperationalPath> getOperationalPaths(Operational source) {
-		Set<OperationalPath> paths = new ConcurrentSkipListSet<OperationalPath>();
+		Set<OperationalPath> paths = new HashSet<OperationalPath>();
+		List<DataStream> pathEdge = new LinkedList<DataStream>();
 		
-		//TO-DO
+		for (Operational sink : this.getSinks()) {
+			pathEdge = DijkstraShortestPath.findPathBetween(this, source, sink);
+			if (pathEdge.isEmpty())
+				continue;
+			OperationalPath path = new OperationalPath();
+			Iterator<DataStream> iter = pathEdge.iterator();			
+			while(iter.hasNext()) {
+				DataStream dstream = iter.next();
+				path.add(this.getEdgeSource(dstream));
+				if (!iter.hasNext())
+					path.add(this.getEdgeTarget(dstream));
+			}	
+			paths.add(path);
+		}			
 		
 		return paths;
 	}
@@ -105,7 +126,7 @@ public class Application extends DirectedSparseGraph<Operational, DataStream> {
 			   "sources:" + this.getSources() + ";" + 
 			   "sinks:" + this.getSinks() + ";" +
 			   "pipes:" + this.getPipes() + ";" +
-			   "streams:" + this.getEdges() + ")";
+			   "streams:" + this.edgeSet() + ")";
 	}
 
 }
