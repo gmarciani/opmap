@@ -1,6 +1,5 @@
 package model.optmodel;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,26 +9,62 @@ import ilog.concert.IloNumVar;
 import ilog.concert.IloObjective;
 import ilog.concert.IloRange;
 import ilog.cplex.IloCplex;
+import model.application.Application;
+import model.architecture.Architecture;
 
-public class AbstractCPlexModel implements CPlexModel {
+public abstract class AbstractOPPModel implements OPPModel {
+	
+	private Application app;
+	private Architecture arc;	
+	
+	private IloNumVar[][] X;
+	private IloNumVar[][][][] Y;
 	
 	protected List<IloNumVar> variables;
 	protected List<IloRange> constraints;
 	protected IloObjective objective;
 	protected IloCplex cplex;
 
-	public AbstractCPlexModel() {
-		try {
-			this.cplex = new IloCplex();
-		} catch (IloException exc) {
-			exc.getMessage();
-		}
-		
-		this.variables = new ArrayList<IloNumVar>();
-		this.constraints = new ArrayList<IloRange>();
+	public AbstractOPPModel(Application app, Architecture arc) throws ModelException {
+		super();
+		this.setApplication(app);
+		this.setArchitecture(arc);
+		this.compile(this.app, this.arc);
+	}
+	
+	public AbstractOPPModel() {}
+	
+	@Override
+	public Application getApplication() {
+		return this.app;
+	}
+	
+	private void setApplication(Application app) {
+		this.app = app;
 	}
 	
 	@Override
+	public Architecture getArchitecture() {
+		return this.arc;
+	}
+	
+	private void setArchitecture(Architecture arc) {
+		this.arc = arc;
+	}
+	
+	@Override
+	public abstract void compile(Application app, Architecture arc) throws ModelException;
+
+	public IloNumVar getXVariable(long id, long id2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IloNumVar getYVariable(long i, long j, long u, long v) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public List<IloNumVar> getVariables() {
 		return this.variables;
 	}
@@ -56,7 +91,6 @@ public class AbstractCPlexModel implements CPlexModel {
 		this.objective = objective;
 	}
 	
-	@Override
 	public IloCplex getCPlexModel() {
 		return this.cplex;
 	}
@@ -72,7 +106,7 @@ public class AbstractCPlexModel implements CPlexModel {
 		
 		for (IloRange constraint : this.getConstraints()) {
 			try {
-				this.cplex.addRange(constraint.getLB(), constraint.getExpr(), constraint.getUB(), constraint.getName());
+				this.cplex.addRange(constraint.getLB(), constraint.getExpr(), constraint.getUB());
 			} catch (IloException exc) {
 				throw new ModelException("Error while compiling constraint: " + exc.getMessage());
 			}
@@ -85,17 +119,21 @@ public class AbstractCPlexModel implements CPlexModel {
 			throw new ModelException("Error while compiling objective: " + exc.getMessage());
 		}				
 	}
-	
-	@Override 
-	public String toString() {
-		try {
-			return "Objetive:" + this.getObjective().getSense().toString() + " " + this.getObjective().getExpr().toString() + ";" +
-				   "Constraints:" + this.getConstraints().toString() + ";" + 
-					"Variables:" + this.getVariables().toString();
-		} catch (IloException exc) {
-			System.err.println(exc.getMessage());
-			return null;
-		}		
+
+	public IloNumVar[][] getX() {
+		return X;
+	}
+
+	public void setX(IloNumVar[][] x) {
+		X = x;
+	}
+
+	public IloNumVar[][][][] getY() {
+		return Y;
+	}
+
+	public void setY(IloNumVar[][][][] y) {
+		Y = y;
 	}
 
 }
