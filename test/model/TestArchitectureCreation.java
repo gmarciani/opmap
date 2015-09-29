@@ -3,14 +3,15 @@ package model;
 import org.junit.Test;
 
 import model.architecture.Architecture;
+import model.architecture.ArchitectureFactory;
 import model.architecture.link.LogicalLink;
 import model.architecture.node.Computational;
 
-public class TestArchitecture {
+public class TestArchitectureCreation {
 
 	@Test 
 	public void normal() {
-		Architecture arc = new Architecture("Sample Grid Architecture");
+		Architecture arc = new Architecture("Sample Distributed Architecture");
 		
 		Computational node1 = new Computational(1, "sensor1", 1, 1, 1.0);
 		Computational node2 = new Computational(2, "station2", 1, 1, 1.0);
@@ -26,6 +27,18 @@ public class TestArchitecture {
 		arc.addEdge(node1, node3, new LogicalLink(1.0, 1.0, 1.0));
 		arc.addEdge(node2, node4, new LogicalLink(1.0, 1.0, 1.0));
 		arc.addEdge(node3, node4, new LogicalLink(1.0, 1.0, 1.0));
+		
+		System.out.println(arc);
+	}
+	
+	@Test
+	public void random() {
+		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		
+		Architecture arc = arcFactory.setName("Random Distributed Architecture")
+									 .setDescription("Created by ArchitectureFactory")
+				 					 .setNodes(5)
+				 					 .create();
 		
 		System.out.println(arc);
 	}

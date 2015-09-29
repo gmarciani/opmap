@@ -1,23 +1,22 @@
 package model;
 
 import static org.junit.Assert.fail;
-import java.util.Set;
 
 import org.junit.Test;
 
 import control.exceptions.ModelException;
 import model.application.Application;
+import model.application.ApplicationFactory;
 import model.application.operator.Operational;
-import model.application.operator.OperationalPath;
 import model.application.operator.Role;
 
-public class TestApplication {
+public class TestApplicationCreation {
 
 	@Test 
 	public void normal() {
 		Application app = null;
 		try {
-			app = getSimpleApp();
+			app = getAcyclicApp();
 		} catch (ModelException exc) {
 			fail();
 		}
@@ -31,7 +30,7 @@ public class TestApplication {
 		@SuppressWarnings("unused")
 		Application app;
 		try {
-			app = getCycledApp();
+			app = getCyclicApp();
 		} catch (ModelException exc) {
 			return;
 		}
@@ -39,21 +38,20 @@ public class TestApplication {
 		fail();
 	}
 	
-	@Test 
-	public void pathsFromSourceToSink() throws ModelException {
-		Application app;
+	@Test
+	public void random() {
+		ApplicationFactory appFactory = new ApplicationFactory();
 		
-		app = getSimpleApp();
+		Application app = appFactory.setName("Random DSP Application")
+									.setDescription("Created by ApplicationFactory")
+									.setNodes(5)
+									.create();
 		
-		Operational source = app.getSources().stream().findAny().get();
-		
-		Set<OperationalPath> paths = app.getOperationalPaths(source);
-		
-		System.out.println(paths);
+		System.out.println(app);
 	}
 	
-	private static Application getSimpleApp() throws ModelException {
-		Application app = new Application("Simple DSP Application");
+	private static Application getAcyclicApp() throws ModelException {
+		Application app = new Application("Sample Acyclic DSP Application");
 		
 		Operational node1 = new Operational(0, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0);
 		Operational node2 = new Operational(1, Role.PIP, "selection1", x -> x/2, 1, 1.0);
@@ -77,8 +75,8 @@ public class TestApplication {
 		return app;
 	}
 	
-	private static Application getCycledApp() throws ModelException {
-		Application app = new Application("Cycled DSP Application");
+	private static Application getCyclicApp() throws ModelException {
+		Application app = new Application("Sample Cyclic DSP Application");
 		
 		Operational node1 = new Operational(1, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0);
 		Operational node2 = new Operational(2, Role.PIP, "selection1", x -> x/2, 1, 1.0);
