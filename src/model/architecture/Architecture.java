@@ -26,10 +26,12 @@ public class Architecture extends DefaultDirectedGraph<Computational, LogicalLin
 	}
 	
 	public Architecture(String name) {
-		super(LogicalLink.class);
-		this.setName(name);
-		this.setDescription(null);
+		this(name, null);
 	}	
+	
+	public Architecture() {
+		this(null, null);
+	}
 	
 	public String getName() {
 		return this.name;
