@@ -35,9 +35,11 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 	}
 	
 	public Application(String name) {
-		super(DataStream.class);
-		this.setName(name);
-		this.setDescription(null);
+		this(name, null);
+	}
+	
+	public Application() {
+		this(null, null);
 	}
 	
 	public String getName() {
