@@ -7,13 +7,13 @@ public class Computational implements Comparable<Computational>, Serializable {
 	
 	private static final long serialVersionUID = 4664378299375410058L;
 	
-	private long id;
+	private int id;
 	private String name;
 	private int resources;
 	private double speedup;
 	private double availability;
 
-	public Computational(long id, String name, int resources, double speedup, double availability) {
+	public Computational(int id, String name, int resources, double speedup, double availability) {
 		this.setId(id);
 		this.setName(name);
 		this.setResources(resources);
@@ -21,11 +21,11 @@ public class Computational implements Comparable<Computational>, Serializable {
 		this.setAvailability(availability);
 	}
 	
-	public long getId() {
+	public int getId() {
 		return this.id;
 	}
 
-	private void setId(long id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 

@@ -85,6 +85,15 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 		}
 	}
 	
+	public Set<OperationalPath> getAllOperationalPaths() {
+		Set<OperationalPath> paths = new HashSet<OperationalPath>();
+		
+		for (Operational source : this.getSources())
+			paths.addAll(this.getOperationalPaths(source));
+		
+		return paths;
+	}
+	
 	public Set<OperationalPath> getOperationalPaths(Operational source) {
 		Set<OperationalPath> paths = new HashSet<OperationalPath>();
 		List<DataStream> pathEdge = new LinkedList<DataStream>();

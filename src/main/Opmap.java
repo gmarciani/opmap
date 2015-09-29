@@ -2,13 +2,13 @@ package main;
 
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
+import control.solver.MPSolver;
+import control.solver.OPPSolver;
 import model.application.Application;
 import model.architecture.Architecture;
 import model.optmodel.OPPModel;
 import model.optmodel.mp.OPPStandard;
 import model.report.Report;
-import model.solver.OPPSolver;
-import model.solver.mp.MPSolver;
 
 public class Opmap {
 

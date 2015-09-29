@@ -1,9 +1,7 @@
 package model.application.operator;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import model.application.operator.Role;
 
@@ -11,25 +9,23 @@ public class Operational implements Comparable<Operational>, Serializable {
 
 	private static final long serialVersionUID = -8266724889784176862L;
 	
-	private long id;
+	private int id;
 	private Role role;
 	private String name;
 	private Function<Long, Long> transformation;
 	private int resources;	
 	private double speed;	
 	private long flowIn;
-	private long flowOut;
-	private Set<Long> pinnables;			
+	private long flowOut;			
 
-	public Operational(long id, Role role, String name, Function<Long, Long> transformation, 
-						   int resources, double speed, Set<Long> pinnables) {
+	public Operational(int id, Role role, String name, Function<Long, Long> transformation, 
+						   int resources, double speed) {
 		this.setId(id);
 		this.setRole(role);
 		this.setName(name);
 		this.setTransformation(transformation);		
 		this.setResources(resources);
 		this.setSpeed(speed);
-		this.setPinnables(pinnables);
 		
 		if (this.isSource())
 			this.setFlowOut(this.getTransformation().apply(new Long(0)));
@@ -37,11 +33,11 @@ public class Operational implements Comparable<Operational>, Serializable {
 			this.setFlowOut(0);
 	}
 	
-	public long getId() {
+	public int getId() {
 		return this.id;
 	}
 	
-	private void setId(long id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -100,26 +96,6 @@ public class Operational implements Comparable<Operational>, Serializable {
 
 	public void setFlowOut(long flowOut) {
 		this.flowOut = flowOut;
-	}
-	
-	public Set<Long> getPinnables() {
-		return this.pinnables;
-	}
-
-	private void setPinnables(Set<Long> pinnables) {
-		if (this.pinnables == null)
-			this.pinnables = new LinkedHashSet<Long>();
-		else if (!this.pinnables.isEmpty())
-			this.pinnables.clear();
-		this.pinnables.addAll(pinnables);
-	}
-	
-	public void addPinnables(Set<Long> pinnables) {
-		this.pinnables.addAll(pinnables);
-	}
-	
-	public void addPinnable(Long nodeId) {
-		this.getPinnables().add(nodeId);
 	}
 	
 	public boolean isSource() {

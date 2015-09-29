@@ -40,7 +40,8 @@ public abstract class AbstractOPPModel implements OPPModel {
 		this.arc = arc;
 	}
 	
-	protected IloCplex getCPlex() {
+	@Override
+	public IloCplex getCPlex() {
 		return this.cplex;
 	}
 	

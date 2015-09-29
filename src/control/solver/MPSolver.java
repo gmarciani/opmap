@@ -17,10 +17,10 @@ public class MPSolver extends AbstractOPPSolver {
 		double start, end;
 		
 		try {
-			start = model.getCPlexModel().getCplexTime();
-			if (model.getCPlexModel().solve()) {
+			start = model.getCPlex().getCplexTime();
+			if (model.getCPlex().solve()) {
 				System.out.println("SOLVED!");
-				end = model.getCPlexModel().getCplexTime();
+				end = model.getCPlex().getCplexTime();
 				report = new Report(model, start, end);
 			}				
 		} catch (IloException exc) {
