@@ -51,6 +51,10 @@ public class LinePlot {
         
 	}
 	
+	public String getTitle() {
+		return this.title;
+	}
+	
 	private void createPlot() {			
 		
 		this.plot = ChartFactory.createXYLineChart(

@@ -7,6 +7,8 @@ import model.architecture.Architecture;
 
 public interface OPPModel {
 	
+	public String getName();
+	
 	public Application getApplication();
 	
 	public Architecture getArchitecture();

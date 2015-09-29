@@ -1,7 +1,12 @@
 package control;
 
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.util.Random;
 
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.junit.Test;
 
 import control.exceptions.ModelException;
@@ -17,13 +22,14 @@ import model.architecture.node.Computational;
 import model.optmodel.OPPModel;
 import model.optmodel.mp.OPPStandard;
 import model.report.Report;
+import view.LinePlot;
 
 public class SolveStandard {
 
 	@Test
-	public void test() throws ModelException, SolverException {
-		Application app = createSampleApplication();
-		Architecture arc = createSampleArchitecture();
+	public void solve() throws ModelException, SolverException {
+		Application app = createSampleApplication(5);
+		Architecture arc = createSampleArchitecture(10);
 		
 		System.out.println(app);
 		System.out.println(arc);
@@ -36,11 +42,42 @@ public class SolveStandard {
 		
 		Report report = solver.solve(model);
 
-		System.out.println(report);
-		
+		System.out.println(report);		
 	}
 	
-	private Application createSampleApplication() throws ModelException {
+	@Test
+	public void solveAndPlot() throws ModelException, SolverException {
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		XYSeries standard = new XYSeries("Standard");
+		 
+		for (int nodes = 1; nodes <= 100; nodes+=10) {
+			Application app = createSampleApplication(nodes);
+			Architecture arc = createSampleArchitecture(nodes);
+			
+			OPPModel model = new OPPStandard(app, arc);
+			
+			OPPSolver solver = new MPSolver();
+			
+			Report report = solver.solve(model);
+			
+			if (report != null)
+				standard.add(nodes, report.getTime());
+			else
+				standard.add(nodes, 0.0);		
+		}
+		
+		dataset.addSeries(standard);
+		
+		LinePlot plot = new LinePlot("SolveAndPlot", "This is the sample plot subtitle", dataset);
+		
+		try {
+			plot.save("./test/plot/svg/" + plot.getTitle() + ".svg", 500, 300);
+		} catch (IOException exc) {
+			fail("Plot SVG export failure: " + exc.getMessage());
+		}
+	}
+	
+	private Application createSampleApplication(int nodes) throws ModelException {
 		Application app = new Application("Sample DSP application");
 		
 		Operational node1 = new Operational(0, Role.SRC, "gridsensor",  x -> new Long(1000), 1, rndDouble(1.0, 100.0));
@@ -65,30 +102,13 @@ public class SolveStandard {
 		return app;
 	}
 
-	private Architecture createSampleArchitecture() {
+	private Architecture createSampleArchitecture(int nodes) {
 		Architecture arc = new Architecture("Sample Cloud application");
 		
-		Computational node0 = new Computational(0, "sensor1",  2, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node1 = new Computational(1, "sensor2",  2, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node2 = new Computational(2, "sensor3",  2, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node3 = new Computational(3, "station1", 4, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node4 = new Computational(4, "station2", 4, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node5 = new Computational(5, "station3", 4, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node6 = new Computational(6, "station4", 4, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node7 = new Computational(7, "dcenter1", 8, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node8 = new Computational(8, "work1",    2, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-		Computational node9 = new Computational(9, "work2",    2, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
-
-		arc.addVertex(node0);
-		arc.addVertex(node1);
-		arc.addVertex(node2);
-		arc.addVertex(node3);
-		arc.addVertex(node4);
-		arc.addVertex(node5);
-		arc.addVertex(node6);
-		arc.addVertex(node7);
-		arc.addVertex(node8);
-		arc.addVertex(node9);
+		for (int i = 0; i < nodes; i++) {
+			Computational node = new Computational(i, "comp" + i,  4, rndDouble(1.0, 10.0), rndDouble(0.5, 1.0));
+			arc.addVertex(node);
+		}
 		
 		for (Computational exnodeSRC : arc.vertexSet()) {
 			for (Computational exnodeDST : arc.vertexSet()) {
@@ -97,8 +117,7 @@ public class SolveStandard {
 				} else {
 					arc.addEdge(exnodeSRC, exnodeDST, new LogicalLink(rndDouble(1.0, 100.0), rndDouble(1.0, 1000.0), rndDouble(0.5, 1.0)));
 					arc.addEdge(exnodeDST, exnodeSRC, new LogicalLink(rndDouble(1.0, 100.0), rndDouble(1.0, 1000.0), rndDouble(0.5, 1.0)));
-				}
-					
+				}					
 			}				
 		}
 		

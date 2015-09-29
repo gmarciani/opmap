@@ -23,6 +23,11 @@ public abstract class AbstractOPPModel implements OPPModel {
 	}
 	
 	@Override
+	public String getName() {
+		return this.getCPlex().getName();
+	}
+	
+	@Override
 	public Application getApplication() {
 		return this.app;
 	}
