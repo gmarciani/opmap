@@ -3,7 +3,6 @@ package model.application;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import control.exceptions.ModelException;
 import model.application.dstream.DataStream;
 import model.application.operator.Operational;
 import model.application.operator.OperationalPath;
@@ -74,7 +72,7 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 		return super.addVertex(opnode);
 	}
 		
-	public boolean addStream(Operational src, Operational dst) throws ModelException {
+	public boolean addStream(Operational src, Operational dst) {
 		DataStream dstream = new DataStream();
 		dstream.setFlow(src.getFlowOut());
 		dst.addFlowIn(dstream.getFlow());
@@ -83,7 +81,7 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 		try {
 			return super.addDagEdge(src, dst, dstream);
 		} catch (org.jgrapht.experimental.dag.DirectedAcyclicGraph.CycleFoundException exc) {
-			throw new ModelException("An application must be acyclic: found cycle while adding the following dstream " + dstream);
+			return false;
 		}
 	}
 	
@@ -98,11 +96,10 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 	
 	public Set<OperationalPath> getOperationalPaths(Operational source) {
 		Set<OperationalPath> paths = new HashSet<OperationalPath>();
-		List<DataStream> pathEdge = new LinkedList<DataStream>();
 		
 		for (Operational sink : this.getSinks()) {
-			pathEdge = DijkstraShortestPath.findPathBetween(this, source, sink);
-			if (pathEdge.isEmpty())
+			List<DataStream> pathEdge = DijkstraShortestPath.findPathBetween(this, source, sink);
+			if (pathEdge == null)
 				continue;
 			OperationalPath path = new OperationalPath();
 			Iterator<DataStream> iter = pathEdge.iterator();			

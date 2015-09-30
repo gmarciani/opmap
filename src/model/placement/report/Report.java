@@ -1,9 +1,9 @@
-package model.report;
+package model.placement.report;
 
 import control.exceptions.SolverException;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex.Status;
-import model.optmodel.OPPModel;
+import model.placement.optmodel.OPPModel;
 
 public class Report {
 	

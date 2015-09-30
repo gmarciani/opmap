@@ -3,8 +3,8 @@ package control.solver;
 import control.exceptions.SolverException;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
-import model.optmodel.OPPModel;
-import model.report.Report;
+import model.placement.optmodel.OPPModel;
+import model.placement.report.Report;
 
 public abstract class AbstractOPPSolver implements OPPSolver {
 	

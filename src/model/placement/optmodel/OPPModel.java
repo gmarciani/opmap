@@ -1,4 +1,4 @@
-package model.optmodel;
+package model.placement.optmodel;
 
 import control.exceptions.ModelException;
 import ilog.cplex.IloCplex;

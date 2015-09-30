@@ -1,4 +1,4 @@
-package control;
+package control.solver;
 
 import static org.junit.Assert.fail;
 
@@ -18,9 +18,9 @@ import model.application.Application;
 import model.application.ApplicationFactory;
 import model.architecture.Architecture;
 import model.architecture.ArchitectureFactory;
-import model.optmodel.OPPModel;
-import model.optmodel.mp.OPPStandard;
-import model.report.Report;
+import model.placement.optmodel.OPPModel;
+import model.placement.optmodel.OPPStandard;
+import model.placement.report.Report;
 
 public class StandardModel {
 	
@@ -66,17 +66,19 @@ public class StandardModel {
 	@Test
 	public void solveAndPlotByComputationals() throws ModelException, SolverException {
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		int opmin = 10;
-		int opmax = 50;
-		int oppas = 10;
+		int opmin = 2;
+		int opmax = 20;
+		int oppas = 2;
 		int exmin = 10;
-		int exmax = 100;
+		int exmax = 50;
 		int expas = 10;
 		
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {
 			XYSeries series = new XYSeries("Operationals-" + opnodes);
 			
 			for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {
+				
+				System.out.println("# Solving: opnodes=" + opnodes + " and exnodes=" + exnodes);
 				Application app = appFactory.setName("Sample DSP Application")
 											.setDescription("StandardModel.solveAndPlotByComputationals")
 											.setNodes(opnodes)
@@ -95,16 +97,16 @@ public class StandardModel {
 				if (report != null)
 					series.add(exnodes, report.getTime());
 				else
-					series.add(exnodes, 0.0);		
+					series.add(exnodes, 0.0);
 			}
 			
 			dataset.addSeries(series);
 		}		
 		
-		JFreeChart plot = Plotter.create("Standard Model", "Computationals", "Time (ms)", dataset);		
+		JFreeChart plot = Plotter.create("Standard Model", "Computationals", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, "./test/plot/svg/" + plot.getTitle() + ".svg");
+			Plotter.save(plot, "./test/plot/svg/" + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}

@@ -6,9 +6,9 @@ import control.solver.MPSolver;
 import control.solver.OPPSolver;
 import model.application.Application;
 import model.architecture.Architecture;
-import model.optmodel.OPPModel;
-import model.optmodel.mp.OPPStandard;
-import model.report.Report;
+import model.placement.optmodel.OPPModel;
+import model.placement.optmodel.OPPStandard;
+import model.placement.report.Report;
 
 public class Opmap {
 

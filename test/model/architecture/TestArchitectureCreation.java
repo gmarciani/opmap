@@ -1,4 +1,4 @@
-package model;
+package model.architecture;
 
 import org.junit.Test;
 

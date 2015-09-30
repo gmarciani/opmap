@@ -1,4 +1,4 @@
-package model.optmodel.mp;
+package model.placement.optmodel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ import model.application.operator.OperationalPath;
 import model.architecture.Architecture;
 import model.architecture.link.LogicalLink;
 import model.architecture.node.Computational;
-import model.optmodel.AbstractOPPModel;
 
 public class OPPStandard extends AbstractOPPModel {
 	
@@ -153,14 +152,14 @@ public class OPPStandard extends AbstractOPPModel {
 				}					
 				
 				IloLinearNumExpr Rptx = modeler.linearNumExpr();
-				for (Operational opnode : path.subList(0, path.size() - 2)) {
+				for (int k = 0; k < path.size() - 1; k++) {
 					for (LogicalLink link : arc.edgeSet()) {
-						int i = opnode.getId();
-						int j = path.get(i + 1).getId();
+						int i = path.get(k).getId();
+						int j = path.get(k + 1).getId();
 						int u = arc.getEdgeSource(link).getId();
 						int v = arc.getEdgeTarget(link).getId();
 						Rptx.addTerm(link.getDelay(), Y[i][j][u][v]);
-					}					
+					} 
 				}				
 				
 				IloNumExpr Rp = modeler.sum(Rpex, Rptx);

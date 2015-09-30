@@ -1,4 +1,4 @@
-package plot;
+package control.plotter;
 
 import java.io.IOException;
 import java.util.Random;
