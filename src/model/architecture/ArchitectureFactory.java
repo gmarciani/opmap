@@ -51,10 +51,10 @@ public class ArchitectureFactory {
 		for (Computational exnodeSRC : arc.vertexSet()) {
 			for (Computational exnodeDST : arc.vertexSet()) {
 				if (exnodeSRC.getId() == exnodeDST.getId()) {
-					arc.addEdge(exnodeSRC, exnodeDST, new LogicalLink(0.0, Double.MAX_VALUE, 1.0));
+					arc.addEdge(exnodeSRC, exnodeDST, new LogicalLink(exnodeSRC, exnodeDST, 0.0, Double.MAX_VALUE, 1.0));
 				} else {
-					arc.addEdge(exnodeSRC, exnodeDST, new LogicalLink(Randomizer.rndDouble(this.rnd, 1.0, 100.0), Randomizer.rndDouble(this.rnd, 1.0, 1000.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0)));
-					arc.addEdge(exnodeDST, exnodeSRC, new LogicalLink(Randomizer.rndDouble(this.rnd, 1.0, 100.0), Randomizer.rndDouble(this.rnd, 1.0, 1000.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0)));
+					arc.addEdge(exnodeSRC, exnodeDST, new LogicalLink(exnodeSRC, exnodeDST, Randomizer.rndDouble(this.rnd, 1.0, 100.0), Randomizer.rndDouble(this.rnd, 1.0, 1000.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0)));
+					arc.addEdge(exnodeDST, exnodeSRC, new LogicalLink(exnodeSRC, exnodeDST, Randomizer.rndDouble(this.rnd, 1.0, 100.0), Randomizer.rndDouble(this.rnd, 1.0, 1000.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0)));
 				}					
 			}				
 		}
