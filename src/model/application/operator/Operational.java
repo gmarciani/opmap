@@ -1,9 +1,12 @@
 package model.application.operator;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import model.application.operator.Role;
+import model.architecture.node.Computational;
 
 public class Operational implements Comparable<Operational>, Serializable {
 
@@ -16,10 +19,11 @@ public class Operational implements Comparable<Operational>, Serializable {
 	private int resources;	
 	private double speed;	
 	private long flowIn;
-	private long flowOut;			
-
+	private long flowOut;	
+	private Set<Computational> pinnables;
+	
 	public Operational(int id, Role role, String name, Function<Long, Long> transformation, 
-						   int resources, double speed) {
+			   			int resources, double speed, Set<Computational> pinnables) {
 		this.setId(id);
 		this.setRole(role);
 		this.setName(name);
@@ -28,9 +32,16 @@ public class Operational implements Comparable<Operational>, Serializable {
 		this.setSpeed(speed);
 		
 		if (this.isSource())
-			this.setFlowOut(this.getTransformation().apply(new Long(0)));
+		this.setFlowOut(this.getTransformation().apply(new Long(0)));
 		else if (this.isSink())
-			this.setFlowOut(0);
+		this.setFlowOut(0);
+		
+		this.setPinnables(pinnables);
+	}
+
+	public Operational(int id, Role role, String name, Function<Long, Long> transformation, 
+						int resources, double speed) {
+		this(id, role, name, transformation, resources, speed, null);
 	}
 	
 	public int getId() {
@@ -98,6 +109,21 @@ public class Operational implements Comparable<Operational>, Serializable {
 		this.flowOut = flowOut;
 	}
 	
+	public Set<Computational> getPinnables() {
+		return this.pinnables;
+	}
+	
+	private void setPinnables(Set<Computational> pinnables) {
+		this.pinnables = pinnables;
+	}
+	
+	public boolean addPinnable(final Computational exnode) {
+		if (this.pinnables == null) {
+			this.pinnables = new HashSet<Computational>();
+		}
+		return this.pinnables.add(exnode);
+	}
+	
 	public boolean isSource() {
 		return this.getRole().equals(Role.SRC);
 	}
@@ -112,6 +138,13 @@ public class Operational implements Comparable<Operational>, Serializable {
 	
 	public void addFlowIn(long flow) {
 		this.setFlowIn(this.getFlowIn() + flow);
+	}
+	
+	public boolean isPinnable(Computational exnode) {
+		if (this.pinnables == null)
+			return true;
+		else
+			return this.pinnables.contains(exnode);
 	}
 	
 	@Override 
@@ -131,14 +164,15 @@ public class Operational implements Comparable<Operational>, Serializable {
 	
 	@Override 
 	public String toString() {
-		return "OperationalNode(" +
+		return "Operational(" +
 			   "id:" + this.getId() + ";" + 
-			   "operator:" + this.getName() + "; " +
-			   "role:" + this.getRole() + "; " +
+			   "operator:" + this.getName() + ";" +
+			   "role:" + this.getRole() + ";" +
 			   "resources:" + this.getResources() + ";" + 
 			   "speed:" + this.getSpeed() + ";" + 
 			   "flowIn:" + this.getFlowIn() + ";" + 
-			   "flowOut:" + this.getFlowOut() + ")";
+			   "flowOut:" + this.getFlowOut() + ";" + 
+			   "pinnables:" + this.getPinnables() + ")";
 	}
 	
 	@Override 

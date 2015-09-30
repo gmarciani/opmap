@@ -54,6 +54,8 @@ public class OperationalPath extends ArrayList<Operational> {
 			str += iter.next().getId();
 			if (iter.hasNext())
 				str += ", ";
+			else
+				str += ")";
 		}
 		
 		return str;

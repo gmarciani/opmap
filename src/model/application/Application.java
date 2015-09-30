@@ -73,13 +73,13 @@ public class Application extends DirectedAcyclicGraph<Operational, DataStream> {
 	}
 		
 	public boolean addStream(Operational src, Operational dst) {
-		DataStream dstream = new DataStream();
-		dstream.setFlow(src.getFlowOut());
-		dst.addFlowIn(dstream.getFlow());
-		super.addVertex(src);
-		super.addVertex(dst);
+		DataStream dstream = new DataStream(src, dst);
+		//dstream.setFlow(src.getFlowOut());
+		//dst.addFlowIn(dstream.getFlow());
+		super.addVertex(dstream.getSrc());
+		super.addVertex(dstream.getDst());
 		try {
-			return super.addDagEdge(src, dst, dstream);
+			return super.addDagEdge(dstream.getSrc(), dstream.getDst(), dstream);
 		} catch (org.jgrapht.experimental.dag.DirectedAcyclicGraph.CycleFoundException exc) {
 			return false;
 		}
