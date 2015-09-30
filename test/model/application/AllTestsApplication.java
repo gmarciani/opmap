@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ 
 	TestApplicationCreation.class, 
-	TestApplicationPath.class 
+	TestApplicationPath.class,
+	TestApplicationFactory.class
 })
 public class AllTestsApplication {
 
