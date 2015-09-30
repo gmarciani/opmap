@@ -1,5 +1,7 @@
 package model.architecture;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import model.architecture.Architecture;
@@ -13,20 +15,20 @@ public class TestArchitectureCreation {
 	public void normal() {
 		Architecture arc = new Architecture("Sample Distributed Architecture");
 		
-		Computational node1 = new Computational(1, "sensor1", 1, 1, 1.0);
-		Computational node2 = new Computational(2, "station2", 1, 1, 1.0);
-		Computational node3 = new Computational(3, "station3", 1, 1, 1.0);
-		Computational node4 = new Computational(4, "datacenter", 1, 1, 1.0);
+		Computational node0 = new Computational(0, "sensor1", 1, 1, 1.0);
+		Computational node1 = new Computational(1, "station2", 1, 1, 1.0);
+		Computational node2 = new Computational(2, "station3", 1, 1, 1.0);
+		Computational node3 = new Computational(3, "datacenter", 1, 1, 1.0);
 
-		arc.addVertex(node1);
-		arc.addVertex(node2);
-		arc.addVertex(node3);
-		arc.addVertex(node4);		
+		if (!arc.addVertex(node0)) fail("Computational insert failure");
+		if (!arc.addVertex(node1)) fail("Computational insert failure");
+		if (!arc.addVertex(node2)) fail("Computational insert failure");
+		if (!arc.addVertex(node3)) fail("Computational insert failure");
 		
-		arc.addEdge(node1, node2, new LogicalLink(1.0, 1.0, 1.0));
-		arc.addEdge(node1, node3, new LogicalLink(1.0, 1.0, 1.0));
-		arc.addEdge(node2, node4, new LogicalLink(1.0, 1.0, 1.0));
-		arc.addEdge(node3, node4, new LogicalLink(1.0, 1.0, 1.0));
+		if (!arc.addEdge(node0, node1, new LogicalLink(node0, node1, 1.0, 1.0, 1.0))) fail("Logical Link insert failure");
+		if (!arc.addEdge(node0, node2, new LogicalLink(node0, node2, 1.0, 1.0, 1.0))) fail("Logical Link insert failure");
+		if (!arc.addEdge(node1, node3, new LogicalLink(node1, node3, 1.0, 1.0, 1.0))) fail("Logical Link insert failure");
+		if (!arc.addEdge(node2, node3, new LogicalLink(node2, node3, 1.0, 1.0, 1.0))) fail("Logical Link insert failure");
 		
 		System.out.println(arc);
 	}
