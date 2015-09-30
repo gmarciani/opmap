@@ -24,6 +24,13 @@ import model.architecture.node.Computational;
 
 public class OPPStandard extends AbstractOPPModel {
 	
+	protected static final double DEFAULT_RMAX = 10000.0;
+	protected static final double DEFAULT_RMIN = 1.0;
+	protected static final double DEFAULT_AMAX = 1.0;
+	protected static final double DEFAULT_AMIN = 0.0;
+	protected static final double DEFAULT_RW   = 0.5;
+	protected static final double DEFAULT_AW	 = 0.5;
+	
 	private double Rmax;
 	private double Rmin;
 	private double Amax;
@@ -47,7 +54,7 @@ public class OPPStandard extends AbstractOPPModel {
 	}
 	
 	public OPPStandard(Application app, Architecture arc) throws ModelException {
-		this(app, arc, 10000.0, 1.0, 1.0, 0.009, 0.5, 0.5);
+		this(app, arc, DEFAULT_RMAX, DEFAULT_RMIN, DEFAULT_AMAX, DEFAULT_AMIN, DEFAULT_RW, DEFAULT_AW);
 	}	
 	
 	public double getRmax() {
@@ -135,7 +142,7 @@ public class OPPStandard extends AbstractOPPModel {
 		}		
 		
 		/********************************************************************************
-		 * Response Time		
+		 * Response-Time		
 		 ********************************************************************************/
 		Set<OperationalPath> paths = this.getApplication().getAllOperationalPaths();
 		List<IloNumExpr> Rpaths = new ArrayList<IloNumExpr>(paths.size());
@@ -167,7 +174,7 @@ public class OPPStandard extends AbstractOPPModel {
 			}				
 			R = modeler.max(Rpaths.toArray(new IloNumExpr[Rpaths.size()]));
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining response time: " + exc.getMessage());
+			throw new ModelException("Error while defining Response-Time: " + exc.getMessage());
 		}
 		
 		/********************************************************************************
@@ -200,11 +207,11 @@ public class OPPStandard extends AbstractOPPModel {
 					
 			Alg = modeler.sum(Aex, Atx);
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining availability: " + exc.getMessage());
+			throw new ModelException("Error while defining Availability: " + exc.getMessage());
 		}
 
 		/********************************************************************************
-		 * Objective		
+		 * Objective Function
 		 ********************************************************************************/	
 		IloNumExpr objRExpr, objAExpr, objExpr;
 		try {			
@@ -214,11 +221,28 @@ public class OPPStandard extends AbstractOPPModel {
 			IloObjective obj = modeler.maximize(objExpr);
 			super.getCPlex().addObjective(obj.getSense(), obj.getExpr(), "Standard Objective");
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining objective: " + exc.getMessage());
+			throw new ModelException("Error while defining Objective Function: " + exc.getMessage());
 		}		
 		
 		/********************************************************************************
-		 * Capacity		
+		 * Eligibility Bound
+		 ********************************************************************************/
+		try {
+			for (Operational opnode : app.vertexSet()) {
+				for (Computational exnode : arc.vertexSet()) {
+					int i = opnode.getId();
+					int u = exnode.getId();
+					IloRange cnsCapacity = modeler.ge(opnode.isPinnable(exnode)?1:0, X[i][u]);
+					super.getCPlex().addRange(cnsCapacity.getLB(), cnsCapacity.getExpr(), cnsCapacity.getUB(), 
+							"Eligibility Bound [opnode:" + opnode.getName() + ";exnode:" + exnode.getName() + "]");
+				}					
+			}			
+		} catch (IloException exc) {
+			throw new ModelException("Error while defining Eligibility Bound: " + exc.getMessage());
+		}
+		
+		/********************************************************************************
+		 * Capacity Bound	
 		 ********************************************************************************/
 		try {
 			for (Computational exnode : arc.vertexSet()) {
@@ -230,14 +254,14 @@ public class OPPStandard extends AbstractOPPModel {
 				}					
 				IloRange cnsCapacity = modeler.ge(exnode.getResources(), exprCapacity);
 				super.getCPlex().addRange(cnsCapacity.getLB(), cnsCapacity.getExpr(), cnsCapacity.getUB(), 
-						"Capacity Bound " + exnode.getName());
+						"Capacity Bound [exnode:" + exnode.getName() + "]");
 			}			
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining capacity bound: " + exc.getMessage());
+			throw new ModelException("Error while defining Capacity Bound: " + exc.getMessage());
 		}	
 		
 		/********************************************************************************
-		 * Uniqueness		
+		 * Uniqueness Bound	
 		 ********************************************************************************/		
 		try {
 			for (Operational opnode : app.vertexSet()) {
@@ -249,14 +273,14 @@ public class OPPStandard extends AbstractOPPModel {
 				}
 				IloRange cnsUnicity = modeler.eq(1.0, exprUnicity);
 				super.getCPlex().addRange(cnsUnicity.getLB(), cnsUnicity.getExpr(), cnsUnicity.getUB(), 
-						"Unicity Bound " + opnode.getName());
+						"Uniqueness Bound [opnode:" + opnode.getName() + "]");
 			}			
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining unicity bound: " + exc.getMessage());
+			throw new ModelException("Error while defining Uniqueness Bound: " + exc.getMessage());
 		}
 		
 		/********************************************************************************
-		 * Connectivity		
+		 * Connectivity Bound
 		 ********************************************************************************/
 		try {
 			for (DataStream dstream : app.edgeSet()) {
@@ -284,7 +308,7 @@ public class OPPStandard extends AbstractOPPModel {
 				}				
 			}			
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining conectivity bound (one): " + exc.getMessage());
+			throw new ModelException("Error while defining Connectivity Bound: " + exc.getMessage());
 		}
 	}	
 	

@@ -24,6 +24,11 @@ import model.architecture.node.Computational;
 
 public class OPPAlternative extends AbstractOPPModel {
 	
+	private static final double DEFAULT_RMAX = 10000.0;
+	private static final double DEFAULT_AMIN = 0.0;
+	private static final double DEFAULT_RW   = 0.5;
+	private static final double DEFAULT_AW	 = 0.5;
+	
 	private double Rmax;
 	private double Amin;
 	
@@ -43,7 +48,7 @@ public class OPPAlternative extends AbstractOPPModel {
 	}
 
 	public OPPAlternative(Application app, Architecture arc) throws ModelException {
-		this(app, arc, 10000.0, 0.009, 0.5, 0.5);
+		this(app, arc, DEFAULT_RMAX, DEFAULT_AMIN, DEFAULT_RW, DEFAULT_AW);
 	}
 
 	public double getRmax() {
