@@ -3,41 +3,41 @@ package model.application.dstream;
 import java.io.Serializable;
 import java.util.Objects;
 
-import model.application.operator.Operational;
-import model.architecture.link.LogicalLink;
+import model.application.operator.OPNode;
+import model.architecture.link.Link;
 
-public class DataStream implements Comparable<DataStream>, Serializable {
+public class DStream implements Comparable<DStream>, Serializable {
 	
 	private static final long serialVersionUID = -5368252928484810293L;
 	
-	private Operational src;
-	private Operational dst;
+	private OPNode src;
+	private OPNode dst;
 	private long flow;	
 
-	public DataStream(Operational src, Operational dst, long flow) {
+	public DStream(OPNode src, OPNode dst, long flow) {
 		this.setSrc(src);
 		this.setDst(dst);
 		this.setFlow(flow);
 		this.getDst().addFlowIn(this.getFlow());
 	}
 	
-	public DataStream(Operational src, Operational dst) {
+	public DStream(OPNode src, OPNode dst) {
 		this(src, dst, src.getFlowOut());
 	}
 	
-	public Operational getSrc() {
+	public OPNode getSrc() {
 		return this.src;
 	}
 	
-	private void setSrc(Operational src) {
+	private void setSrc(OPNode src) {
 		this.src = src;
 	}
 	
-	public Operational getDst() {
+	public OPNode getDst() {
 		return this.dst;
 	}
 	
-	private void setDst(Operational dst) {
+	private void setDst(OPNode dst) {
 		this.dst = dst;
 	}
 
@@ -49,7 +49,7 @@ public class DataStream implements Comparable<DataStream>, Serializable {
 		this.flow = flow;
 	}	
 	
-	public boolean isPinnable(LogicalLink link) {
+	public boolean isPinnable(Link link) {
 		return this.getSrc().isPinnable(link.getSrc()) &&
 				this.getDst().isPinnable(link.getDst());
 	}
@@ -59,20 +59,30 @@ public class DataStream implements Comparable<DataStream>, Serializable {
 		if (this.getClass() != obj.getClass())
 			return false;
 		
-		DataStream other = (DataStream) obj;
+		DStream other = (DStream) obj;
 		
 		return this.getSrc().equals(other.getSrc()) &&
 				this.getDst().equals(other.getDst());
 	}
 	
 	@Override 
-	public int compareTo(DataStream other) {
+	public int compareTo(DStream other) {
 		return Long.valueOf(this.getFlow()).compareTo(Long.valueOf(other.getFlow()));
+	}
+	
+	public String toPrettyString() {
+		String str = "#stream# ";
+		
+		str += "src:" + this.getSrc().getId() + "|";
+		str += "dst:" + this.getDst().getId() + "|";
+		str += "flow:" + this.getFlow();
+		
+		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		return "DataStream(" + 
+		return "DStream(" + 
 			   "src:" + this.getSrc().getId() + ";" +
 			   "dst:" + this.getDst().getId() + ";" +
 			   "flow:" + this.getFlow() + ")";
@@ -80,7 +90,7 @@ public class DataStream implements Comparable<DataStream>, Serializable {
 	
 	@Override 
 	public int hashCode() {
-		return Objects.hash(this.getFlow());
+		return Objects.hash(this.getSrc().getId(), this.getDst().getId());
 	}
 	
 }

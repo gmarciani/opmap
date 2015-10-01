@@ -2,8 +2,8 @@ package model.application;
 
 import java.util.Random;
 import control.random.Randomizer;
-import model.application.operator.Operational;
-import model.application.operator.Role;
+import model.application.operator.OPNode;
+import model.application.operator.OPRole;
 
 public class ApplicationFactory {
 	
@@ -49,32 +49,32 @@ public class ApplicationFactory {
 		int nxtid = 0;
 		
 		for (int srcnode = 1; srcnode <= this.srcnodes; srcnode++, nxtid++) {
-			Operational node = new Operational(nxtid, Role.SRC, "source" + srcnode, x -> new Long(1000), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			OPNode node = new OPNode(nxtid, OPRole.SRC, "source" + srcnode, x -> new Long(1000), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
 			app.addOperational(node);
 		}
 		
 		for (int pipnode = 1; pipnode <= this.pipnodes; pipnode++, nxtid++) {
-			Operational node = new Operational(nxtid, Role.PIP, "operator" + pipnode, x -> Math.round(x * 0.95), 1,	Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			OPNode node = new OPNode(nxtid, OPRole.PIP, "operator" + pipnode, x -> Math.round(x * 0.95), 1,	Randomizer.rndDouble(this.rnd, 1.0, 100.0));
 			app.addOperational(node);
 		}		
 		
 		for (int snknode = 1; snknode <= this.snknodes; snknode++, nxtid++) {
-			Operational node = new Operational(nxtid, Role.SNK, "sink" + snknode, x -> new Long(1), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			OPNode node = new OPNode(nxtid, OPRole.SNK, "sink" + snknode, x -> new Long(1), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
 			app.addOperational(node);
 		}		
 		
-		for (Operational pipnodeSRC : app.getPipes()) {
-			for (Operational pipnodeDST : app.getPipes()) {
+		for (OPNode pipnodeSRC : app.getPipes()) {
+			for (OPNode pipnodeDST : app.getPipes()) {
 				if (pipnodeSRC.getId() == pipnodeDST.getId())
 					continue;
 				app.addStream(pipnodeSRC, pipnodeDST);
 			}
 		}
 		
-		for (Operational srcnode : app.getSources())
+		for (OPNode srcnode : app.getSources())
 			app.addStream(srcnode, Randomizer.rndItem(this.rnd, app.getPipes()));
 		
-		for (Operational snknode : app.getSinks())
+		for (OPNode snknode : app.getSinks())
 			app.addStream(Randomizer.rndItem(this.rnd, app.getPipes()), snknode);
 		
 		return app;		
