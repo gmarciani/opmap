@@ -24,7 +24,7 @@ public class TestArchitectureCreation {
 
 	@Test 
 	public void simple() {
-		Architecture arc = new Architecture("Sample Distributed Architecture", "Created manually");
+		Architecture arc = new Architecture("Sample Architecture", "Created manually");
 		
 		EXNode node0 = new EXNode(0, "sensor1", 1, 1, 1.0);
 		EXNode node1 = new EXNode(1, "station2", 1, 1, 1.0);

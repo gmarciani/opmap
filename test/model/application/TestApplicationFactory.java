@@ -17,10 +17,10 @@ public class TestApplicationFactory {
 	}
 
 	@Test
-	public void simple() {
+	public void byNodes() {
 		ApplicationFactory appFactory = new ApplicationFactory();
 		
-		Application app = appFactory.setName("Random DSP Application")
+		Application app = appFactory.setName("Random Application")
 									.setDescription("Created randomly")
 									.setNodes(5)
 									.create();

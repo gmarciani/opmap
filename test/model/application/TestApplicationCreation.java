@@ -24,7 +24,7 @@ public class TestApplicationCreation {
 
 	@Test 
 	public void acyclic() {		
-		Application app = new Application("Sample Acyclic DSP Application", "Created manually");
+		Application app = new Application("Sample Acyclic Application", "Created manually");
 		
 		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
 		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
@@ -46,7 +46,7 @@ public class TestApplicationCreation {
 	
 	@Test 
 	public void cyclic() {		
-		Application app = new Application("Sample Cyclic DSP Application", "Created manually");
+		Application app = new Application("Sample Cyclic Application", "Created manually");
 		
 		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
 		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);

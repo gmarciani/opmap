@@ -17,10 +17,10 @@ public class TestArchitectureFactory {
 	}
 
 	@Test
-	public void simple() {
+	public void byNodes() {
 		ArchitectureFactory arcFactory = new ArchitectureFactory();
 		
-		Architecture arc = arcFactory.setName("Random Distributed Architecture")
+		Architecture arc = arcFactory.setName("Random Architecture")
 									 .setDescription("Created randomly")
 				 					 .setNodes(5)
 				 					 .create();
