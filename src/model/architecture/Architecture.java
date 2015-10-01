@@ -9,10 +9,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import model.architecture.link.LogicalLink;
-import model.architecture.node.Computational;
+import model.architecture.link.Link;
+import model.architecture.node.EXNode;
 
-public class Architecture extends DefaultDirectedGraph<Computational, LogicalLink> {
+public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 
 	private static final long serialVersionUID = 7470862065393196611L;
 	
@@ -20,7 +20,7 @@ public class Architecture extends DefaultDirectedGraph<Computational, LogicalLin
 	private String description;
 	
 	public Architecture(String name, String description) {
-		super(LogicalLink.class);
+		super(Link.class);
 		this.setName(name);
 		this.setDescription(description);	
 	}
@@ -61,7 +61,26 @@ public class Architecture extends DefaultDirectedGraph<Computational, LogicalLin
 		return json;
 	}
 	
-	@Override public String toString() {
+	public String toPrettyString() {
+		String str = "# Architecture #\n";
+		
+		str += "name: " + this.getName() + "\n";
+		str += "desc: " + this.getDescription() + "\n";
+		str += "nodes:\n";
+		
+		for (EXNode exnode : this.vertexSet())
+			str += "\t" + exnode.toPrettyString() + "\n";
+		
+		str += "edges:\n";
+		
+		for (Link link : this.edgeSet())
+			str += "\t" + link.toPrettyString() + "\n";			
+		
+		return str;
+	}
+	
+	@Override 
+	public String toString() {
 		return "Architecture(" + 
 			   "name:" + this.getName() + ";" + 
 			   "description:" + this.getDescription() + ";" + 

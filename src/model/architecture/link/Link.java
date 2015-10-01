@@ -3,20 +3,20 @@ package model.architecture.link;
 import java.io.Serializable;
 import java.util.Objects;
 
-import model.architecture.node.Computational;
+import model.architecture.node.EXNode;
 
 
-public class LogicalLink implements Comparable<LogicalLink>, Serializable {
+public class Link implements Comparable<Link>, Serializable {
 
 	private static final long serialVersionUID = 7389110561491378819L;
 	
-	private Computational src;
-	private Computational dst;
+	private EXNode src;
+	private EXNode dst;
 	private double delay;
 	private double bandwidth;
 	private double availability;
 	
-	public LogicalLink(Computational src, Computational dst, double delay, double bandwidth, double availability) {
+	public Link(EXNode src, EXNode dst, double delay, double bandwidth, double availability) {
 		this.setSrc(src);
 		this.setDst(dst);
 		this.setDelay(delay);
@@ -24,23 +24,23 @@ public class LogicalLink implements Comparable<LogicalLink>, Serializable {
 		this.setAvailability(availability);
 	}
 	
-	public LogicalLink(Computational src, Computational dst) {
+	public Link(EXNode src, EXNode dst) {
 		this(src, dst, 0.0, 0.0, 0.0);
 	}
 
-	public Computational getSrc() {
+	public EXNode getSrc() {
 		return this.src;
 	}
 
-	private void setSrc(Computational src) {
+	private void setSrc(EXNode src) {
 		this.src = src;
 	}
 
-	public Computational getDst() {
+	public EXNode getDst() {
 		return this.dst;
 	}
 
-	private void setDst(Computational dst) {
+	private void setDst(EXNode dst) {
 		this.dst = dst;
 	}	
 	
@@ -76,21 +76,33 @@ public class LogicalLink implements Comparable<LogicalLink>, Serializable {
 		if (this.getClass() != obj.getClass())
 			return false;
 		
-		LogicalLink other = (LogicalLink) obj;
+		Link other = (Link) obj;
 		
 		return this.getSrc().equals(other.getSrc()) &&
 				this.getDst().equals(other.getDst());
 	}
 	
 	@Override 
-	public int compareTo(LogicalLink other) {
+	public int compareTo(Link other) {
 		return Double.valueOf(this.getBandwidth() * this.getAvailability() / this.getDelay()).compareTo(
 				Double.valueOf(other.getBandwidth() * other.getAvailability() / other.getDelay()));
 	}
 	
+	public String toPrettyString() {
+		String str = "#link# ";
+		
+		str += "src:" + this.getSrc().getId() + "|";
+		str += "dst:" + this.getDst().getId() + "|";
+		str += "delay:" + this.getDelay() + "|";
+		str += "bandwidth:" + this.getBandwidth() + "|"; 
+		str += "availability:" + this.getAvailability();
+		
+		return str;
+	}
+	
 	@Override 
 	public String toString() {
-		return "LogicalLink(" + 
+		return "Link(" + 
 			   "src:" + this.getSrc().getId() + ";" +
 			   "dst:" + this.getDst().getId() + ";" +
 			   "delay:" + this.getDelay() + ";" + 
@@ -100,11 +112,7 @@ public class LogicalLink implements Comparable<LogicalLink>, Serializable {
 	
 	@Override 
 	public int hashCode() {
-		return Objects.hash(this.getSrc().getId(),
-				this.getDst().getId(),
-				this.getDelay(), 
-				this.getBandwidth(), 
-				this.getAvailability());
+		return Objects.hash(this.getSrc().getId(), this.getDst().getId());
 	}
 
 }

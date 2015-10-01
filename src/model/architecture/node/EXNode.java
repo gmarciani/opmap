@@ -3,7 +3,7 @@ package model.architecture.node;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Computational implements Comparable<Computational>, Serializable {
+public class EXNode implements Comparable<EXNode>, Serializable {
 	
 	private static final long serialVersionUID = 4664378299375410058L;
 	
@@ -13,7 +13,7 @@ public class Computational implements Comparable<Computational>, Serializable {
 	private double speedup;
 	private double availability;
 
-	public Computational(int id, String name, int resources, double speedup, double availability) {
+	public EXNode(int id, String name, int resources, double speedup, double availability) {
 		this.setId(id);
 		this.setName(name);
 		this.setResources(resources);
@@ -66,19 +66,32 @@ public class Computational implements Comparable<Computational>, Serializable {
 		if (this.getClass() != obj.getClass())
 			return false;
 		
-		Computational other = (Computational) obj;
+		EXNode other = (EXNode) obj;
 		
 		return (this.getId() == other.getId());
 	}
 
 	@Override 
-	public int compareTo(Computational other) {
+	public int compareTo(EXNode other) {
 		return Double.valueOf(this.getResources() * this.getSpeedup() * this.getAvailability()).compareTo(
 				Double.valueOf(other.getResources() * other.getSpeedup() * other.getAvailability()));
 	}	
 	
-	@Override public String toString() {
-		return "ComputationalNode(" +
+	public String toPrettyString() {
+		String str = "#exnode# ";
+		
+		str += "id:" + this.getId() + "|";
+		str += "name:" + this.getName() + "|";
+		str += "resources:" + this.getResources() + "|";
+		str += "speedup:" + this.getSpeedup() + "|";
+		str += "availability:" + this.getAvailability();
+		
+		return str;		
+	}
+	
+	@Override 
+	public String toString() {
+		return "EXNode(" +
 				"id:" + this.getId() + ";" + 
 				"name:" + this.getName() + ";" + 
 				"resources:" + this.getResources() + ";" + 
