@@ -39,16 +39,18 @@ public class StandardModel {
 	@Test
 	public void create() throws ModelException {
 		ApplicationFactory appFactory = new ApplicationFactory();
-		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		ArchitectureFactory arcFactory = new ArchitectureFactory();		
+		int opnodes = 5;
+		int exnodes = 5;
 		
-		Application app = appFactory.setName("Sample DSP Application")
-									.setDescription("StandardModel.create")
-				 					.setNodes(5)
-				 					.create();
-		Architecture arc = arcFactory.setName("Sample Distributed Architecture")
-									 .setDescription("StandardModel.create")
-									 .setNodes(5)
-									 .create();
+		Application app = appFactory.setName("Sample Application")
+									.setDescription("Created randomly with opnodes=" + opnodes)
+									.setNodes(opnodes)
+									.create();
+		Architecture arc = arcFactory.setName("Sample Architecture")
+				 					 .setDescription("Created randomly with exnodes=" + exnodes)
+				 					 .setNodes(exnodes)
+				 					 .create();
 		
 		OPPModel model = new OPPStandard(app, arc);
 		
@@ -58,15 +60,17 @@ public class StandardModel {
 	@Test
 	public void solveAndReport() throws ModelException, SolverException {
 		ApplicationFactory appFactory = new ApplicationFactory();
-		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		ArchitectureFactory arcFactory = new ArchitectureFactory();		
+		int opnodes = 5;
+		int exnodes = 5;
 		
-		Application app = appFactory.setName("Sample DSP Application")
-									.setDescription("StandardModel.solveAndReport")
-									.setNodes(5)
+		Application app = appFactory.setName("Sample Application")
+									.setDescription("Created randomly with opnodes=" + opnodes)
+									.setNodes(opnodes)
 									.create();
-		Architecture arc = arcFactory.setName("Sample Distributed Architecture")
-				 					 .setDescription("StandardModel.solveAndReport")
-				 					 .setNodes(5)
+		Architecture arc = arcFactory.setName("Sample Architecture")
+				 					 .setDescription("Created randomly with exnodes=" + exnodes)
+				 					 .setNodes(exnodes)
 				 					 .create();
 		
 		OPPModel model = new OPPStandard(app, arc);
@@ -79,30 +83,30 @@ public class StandardModel {
 	}
 	
 	@Test
-	public void solveAndPlotByComputationals() throws ModelException, SolverException {
+	public void solveAndPlotByEXNodes() throws ModelException, SolverException {
 		ApplicationFactory appFactory = new ApplicationFactory();
 		ArchitectureFactory arcFactory = new ArchitectureFactory();
 		
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		int opmin = 2;
-		int opmax = 20;
+		int opmax = 10;
 		int oppas = 2;
 		int exmin = 10;
-		int exmax = 50;
-		int expas = 10;
+		int exmax = 30;
+		int expas = 5;
 		
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {
-			XYSeries series = new XYSeries("Operationals-" + opnodes);
+			XYSeries series = new XYSeries(opnodes + " OPNodes");
 			
 			for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {
 				
 				System.out.println("# Solving: opnodes=" + opnodes + " and exnodes=" + exnodes);
-				Application app = appFactory.setName("Sample DSP Application")
-											.setDescription("StandardModel.solveAndPlotByComputationals")
+				Application app = appFactory.setName("Sample Application")
+											.setDescription("Created randomly with opnodes=" + opnodes)
 											.setNodes(opnodes)
 											.create();
-				Architecture arc = arcFactory.setName("Sample Distributed Architecture")
-	 					 					 .setDescription("StandardModel.solveAndPlotByComputationals")
+				Architecture arc = arcFactory.setName("Sample Architecture")
+	 					 					 .setDescription("Created randomly with exnodes=" + exnodes)
 	 					 					 .setNodes(exnodes)
 	 					 					 .create();
 				
@@ -121,10 +125,10 @@ public class StandardModel {
 			dataset.addSeries(series);
 		}		
 		
-		JFreeChart plot = Plotter.create("Standard Model", "Computationals", "Time (s)", dataset);		
+		JFreeChart plot = Plotter.create("Standard Model", "EXNodes", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, "./test/plot/svg/" + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, "./test/control/plotter/svg/" + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
