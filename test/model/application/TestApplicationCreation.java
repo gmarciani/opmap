@@ -2,16 +2,28 @@ package model.application;
 
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import model.application.Application;
 import model.application.operator.OPNode;
 import model.application.operator.OPRole;
 
 public class TestApplicationCreation {
+	
+	@Rule public TestName name = new TestName();
+	
+	@Before
+	public void testInfo() {
+		System.out.println("\n/********************************************************************************");
+		System.out.println(" * TEST: " + this.getClass().getSimpleName() + " " + name.getMethodName());
+		System.out.println(" ********************************************************************************/\n");
+	}
 
 	@Test 
-	public void acyclic() {
+	public void acyclic() {		
 		Application app = new Application("Sample Acyclic DSP Application", "Created manually");
 		
 		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
@@ -33,7 +45,7 @@ public class TestApplicationCreation {
 	}
 	
 	@Test 
-	public void cyclic() {
+	public void cyclic() {		
 		Application app = new Application("Sample Cyclic DSP Application", "Created manually");
 		
 		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);

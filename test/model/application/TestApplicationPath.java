@@ -3,7 +3,10 @@ package model.application;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import control.exceptions.ModelException;
 import model.application.Application;
@@ -12,6 +15,15 @@ import model.application.operator.OPPath;
 import model.application.operator.OPRole;
 
 public class TestApplicationPath {
+	
+	@Rule public TestName name = new TestName();
+	
+	@Before
+	public void testInfo() {
+		System.out.println("\n/********************************************************************************");
+		System.out.println(" * TEST: " + this.getClass().getSimpleName() + " " + name.getMethodName());
+		System.out.println(" ********************************************************************************/\n");
+	}
 
 	@Test 
 	public void aPath() throws ModelException {
@@ -39,6 +51,7 @@ public class TestApplicationPath {
 			}
 			System.out.println(str);
 		}
+		
 	}
 	
 	private static Application getSampleApp() throws ModelException {

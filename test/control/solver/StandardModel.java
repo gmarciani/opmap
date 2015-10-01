@@ -7,7 +7,10 @@ import java.io.IOException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
@@ -24,11 +27,20 @@ import model.placement.report.Report;
 
 public class StandardModel {
 	
-	ApplicationFactory appFactory = new ApplicationFactory();
-	ArchitectureFactory arcFactory = new ArchitectureFactory();
+	@Rule public TestName name = new TestName();
+	
+	@Before
+	public void testInfo() {
+		System.out.println("\n/********************************************************************************");
+		System.out.println(" * TEST: " + this.getClass().getSimpleName() + " " + name.getMethodName());
+		System.out.println(" ********************************************************************************/\n");
+	}
 	
 	@Test
 	public void create() throws ModelException {
+		ApplicationFactory appFactory = new ApplicationFactory();
+		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		
 		Application app = appFactory.setName("Sample DSP Application")
 									.setDescription("StandardModel.create")
 				 					.setNodes(5)
@@ -45,6 +57,9 @@ public class StandardModel {
 
 	@Test
 	public void solveAndReport() throws ModelException, SolverException {
+		ApplicationFactory appFactory = new ApplicationFactory();
+		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		
 		Application app = appFactory.setName("Sample DSP Application")
 									.setDescription("StandardModel.solveAndReport")
 									.setNodes(5)
@@ -65,6 +80,9 @@ public class StandardModel {
 	
 	@Test
 	public void solveAndPlotByComputationals() throws ModelException, SolverException {
+		ApplicationFactory appFactory = new ApplicationFactory();
+		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		int opmin = 2;
 		int opmax = 20;

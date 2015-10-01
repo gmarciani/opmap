@@ -8,11 +8,23 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import control.plotter.Plotter;
 
 public class TestLinePlot {
+	
+	@Rule public TestName name = new TestName();
+	
+	@Before
+	public void testInfo() {
+		System.out.println("\n/********************************************************************************");
+		System.out.println(" * TEST: " + this.getClass().getSimpleName() + " " + name.getMethodName());
+		System.out.println(" ********************************************************************************/\n");
+	}
 
 	@Test 
 	public void createAndDisplay() throws InterruptedException {		
