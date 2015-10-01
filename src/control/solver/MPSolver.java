@@ -2,8 +2,8 @@ package control.solver;
 
 import control.exceptions.SolverException;
 import ilog.concert.IloException;
+import model.placement.Report;
 import model.placement.optmodel.OPPModel;
-import model.placement.report.Report;
 
 public class MPSolver extends AbstractOPPSolver {
 

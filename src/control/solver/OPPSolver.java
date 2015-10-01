@@ -2,8 +2,8 @@ package control.solver;
 
 import control.exceptions.SolverException;
 import ilog.cplex.IloCplex;
+import model.placement.Report;
 import model.placement.optmodel.OPPModel;
-import model.placement.report.Report;
 
 public interface OPPSolver {
 	

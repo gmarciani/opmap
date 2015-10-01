@@ -21,9 +21,9 @@ import model.application.Application;
 import model.application.ApplicationFactory;
 import model.architecture.Architecture;
 import model.architecture.ArchitectureFactory;
+import model.placement.Report;
 import model.placement.optmodel.OPPModel;
-import model.placement.optmodel.OPPStandard;
-import model.placement.report.Report;
+import model.placement.optmodel.standard.OPPStandard;
 
 public class StandardModel {
 	

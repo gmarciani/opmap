@@ -1,10 +1,11 @@
-package model.placement.optmodel;
+package model.placement.optmodel.alternative;
 
 import control.exceptions.ModelException;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
 import model.application.Application;
 import model.architecture.Architecture;
+import model.placement.optmodel.OPPModel;
 
 public abstract class AbstractOPPModel implements OPPModel {
 	

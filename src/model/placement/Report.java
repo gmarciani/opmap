@@ -1,4 +1,4 @@
-package model.placement.report;
+package model.placement;
 
 import control.exceptions.SolverException;
 import ilog.concert.IloException;
