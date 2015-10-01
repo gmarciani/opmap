@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,9 +18,9 @@ import model.application.dstream.DStream;
 import model.application.operator.OPNode;
 import model.application.operator.OPPath;
 
-public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
+public class Application extends DefaultDirectedWeightedGraph<OPNode, DStream> {
 
-	private static final long serialVersionUID = -6105440850975900864L;
+	private static final long serialVersionUID = 7253751791492037927L;
 	
 	private String name;
 	private String description;
@@ -73,15 +73,12 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		
 	public boolean addStream(OPNode src, OPNode dst) {
 		DStream dstream = new DStream(src, dst);
-		//dstream.setFlow(src.getFlowOut());
-		//dst.addFlowIn(dstream.getFlow());
+		boolean res;
 		super.addVertex(dstream.getSrc());
-		super.addVertex(dstream.getDst());
-		try {
-			return super.addDagEdge(dstream.getSrc(), dstream.getDst(), dstream);
-		} catch (org.jgrapht.experimental.dag.DirectedAcyclicGraph.CycleFoundException exc) {
-			return false;
-		}
+		super.addVertex(dstream.getDst());	
+		if (res = super.addEdge(dstream.getSrc(), dstream.getDst(), dstream))
+			super.setEdgeWeight(dstream, dstream.getWeight());
+		return res;
 	}
 	
 	public Set<OPPath> getAllOperationalPaths() {
@@ -93,11 +90,11 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return paths;
 	}
 	
-	public Set<OPPath> getOperationalPaths(OPNode source) {
+	public Set<OPPath> getOperationalPaths(OPNode srcnode) {
 		Set<OPPath> paths = new HashSet<OPPath>();
 		
-		for (OPNode sink : this.getSinks()) {
-			List<DStream> pathEdge = DijkstraShortestPath.findPathBetween(this, source, sink);
+		for (OPNode snknode : this.getSinks()) {
+			List<DStream> pathEdge = this.findWorstPath(srcnode, snknode);
 			if (pathEdge == null)
 				continue;
 			OPPath path = new OPPath(pathEdge);
@@ -105,6 +102,10 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		}			
 		
 		return paths;
+	}
+	
+	protected List<DStream> findWorstPath(OPNode srcnode, OPNode snknode) {
+		return BellmanFordShortestPath.findPathBetween(this, srcnode, snknode);
 	}
 	
 	public static Application readJSON(String json) throws JsonParseException, JsonMappingException, IOException {

@@ -43,23 +43,45 @@ public class OPPath extends ArrayList<DStream> {
 		return nodes;
 	}
 	
+	public OPNode getSrc() {
+		return super.get(0).getSrc();
+	}
+	
+	public OPNode getDst() {
+		return super.get(super.size() - 1).getDst();
+	}
+	
 	public String toPrettyString() {
 		String str = "#oppath# ";
+		
+		str += "src:" + this.getSrc().getId() + "|";
+		str += "dst:" + this.getDst().getId() + "|";
 		
 		if (super.isEmpty()) {
 			str += "empty";
 			return str;
 		}
 		
+		str += "nodes:";
+		
+		Iterator<OPNode> nodes = this.getNodes().iterator();
+		while (nodes.hasNext()) {
+			OPNode opnode = nodes.next();
+			str += opnode.getId();
+			if (nodes.hasNext())
+				str += ",";
+			else
+				str += "|";
+		}
+		
 		str += "streams:";
 		
-		Iterator<DStream> iter = super.iterator();
-		
+		Iterator<DStream> iter = super.iterator();		
 		while (iter.hasNext()) {
 			DStream dstream = iter.next();
 			str += "(" + dstream.getSrc().getId() + "," + dstream.getDst().getId() + ")";
 			if (iter.hasNext())
-				str += "|";
+				str += ",";
 		}
 		
 		return str;
@@ -76,7 +98,7 @@ public class OPPath extends ArrayList<DStream> {
 			DStream dstream = iter.next();
 			str += "(" + dstream.getSrc().getId() + "," + dstream.getDst().getId() + ")";
 			if (iter.hasNext())
-				str += ", ";
+				str += ",";
 			else
 				str += ")";
 		}

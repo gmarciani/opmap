@@ -1,14 +1,15 @@
 package model.application.dstream;
 
-import java.io.Serializable;
 import java.util.Objects;
+
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import model.application.operator.OPNode;
 import model.architecture.link.Link;
 
-public class DStream implements Comparable<DStream>, Serializable {
+public class DStream extends DefaultWeightedEdge {
 	
-	private static final long serialVersionUID = -5368252928484810293L;
+	private static final long serialVersionUID = -1128317756010407723L;
 	
 	private OPNode src;
 	private OPNode dst;
@@ -54,6 +55,10 @@ public class DStream implements Comparable<DStream>, Serializable {
 				this.getDst().isPinnable(link.getDst());
 	}
 	
+	public double getWeight() {
+		return -this.getFlow();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this.getClass() != obj.getClass())
@@ -63,11 +68,6 @@ public class DStream implements Comparable<DStream>, Serializable {
 		
 		return this.getSrc().equals(other.getSrc()) &&
 				this.getDst().equals(other.getDst());
-	}
-	
-	@Override 
-	public int compareTo(DStream other) {
-		return Long.valueOf(this.getFlow()).compareTo(Long.valueOf(other.getFlow()));
 	}
 	
 	public String toPrettyString() {
