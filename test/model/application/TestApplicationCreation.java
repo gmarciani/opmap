@@ -5,20 +5,20 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import model.application.Application;
-import model.application.operator.Operational;
-import model.application.operator.Role;
+import model.application.operator.OPNode;
+import model.application.operator.OPRole;
 
 public class TestApplicationCreation {
 
 	@Test 
 	public void acyclic() {
-		Application app = new Application("Sample Acyclic DSP Application");
+		Application app = new Application("Sample Acyclic DSP Application", "Created manually");
 		
-		Operational node1 = new Operational(0, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0);
-		Operational node2 = new Operational(1, Role.PIP, "selection1", x -> x/2, 1, 1.0);
-		Operational node3 = new Operational(2, Role.PIP, "selection2", x -> x/2, 1, 1.0);
-		Operational node4 = new Operational(3, Role.SNK, "datacenter1", x -> new Long(1), 1, 1.0);
-		Operational node5 = new Operational(4, Role.SNK, "datacenter2", x -> new Long(1), 1, 1.0);
+		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
+		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
+		OPNode node3 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
+		OPNode node4 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
+		OPNode node5 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
 		
 		if (!app.addStream(node1, node2)) fail("Fake cycle detected");
 		if (!app.addStream(node1, node3)) fail("Fake cycle detected");
@@ -27,18 +27,20 @@ public class TestApplicationCreation {
 		if (!app.addStream(node3, node4)) fail("Fake cycle detected");
 		if (!app.addStream(node3, node5)) fail("Fake cycle detected");
 		
-		System.out.println(app);		
+		System.out.println(app);
+		
+		System.out.println(app.toPrettyString());
 	}
 	
 	@Test 
 	public void cyclic() {
-		Application app = new Application("Sample Cyclic DSP Application");
+		Application app = new Application("Sample Cyclic DSP Application", "Created manually");
 		
-		Operational node1 = new Operational(0, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0);
-		Operational node2 = new Operational(1, Role.PIP, "selection1", x -> x/2, 1, 1.0);
-		Operational node3 = new Operational(2, Role.PIP, "selection2", x -> x/2, 1, 1.0);
-		Operational node4 = new Operational(3, Role.SNK, "datacenter1", x -> new Long(1), 1, 1.0);
-		Operational node5 = new Operational(4, Role.SNK, "datacenter2", x -> new Long(1), 1, 1.0);
+		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
+		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
+		OPNode node3 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
+		OPNode node4 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
+		OPNode node5 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
 		
 		if (!app.addStream(node1, node2)) fail("Fake cycle detected");
 		if (!app.addStream(node1, node3)) fail("Fake cycle detected");
@@ -48,6 +50,8 @@ public class TestApplicationCreation {
 		if (!app.addStream(node3, node5)) fail("Fake cycle detected");
 		
 		if (app.addStream(node3, node5))  fail("Real cycle not detected");
+		
+		System.out.println(app.toPrettyString());
 	}
 	
 }

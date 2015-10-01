@@ -1,38 +1,54 @@
 package model.application;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.Test;
 
 import control.exceptions.ModelException;
 import model.application.Application;
-import model.application.operator.Operational;
-import model.application.operator.OperationalPath;
-import model.application.operator.Role;
+import model.application.operator.OPNode;
+import model.application.operator.OPPath;
+import model.application.operator.OPRole;
 
 public class TestApplicationPath {
 
 	@Test 
-	public void pathsFromSourceToSink() throws ModelException {
+	public void aPath() throws ModelException {
 		Application app;
 		
 		app = getSampleApp();
 		
-		Operational source = app.getSources().stream().findAny().get();
+		OPNode source = app.getSources().stream().findAny().get();
 		
-		Set<OperationalPath> paths = app.getOperationalPaths(source);
+		Set<OPPath> paths = app.getOperationalPaths(source);
 		
 		System.out.println(paths);
+		
+		for (OPPath oppath : paths)
+			System.out.println(oppath.toPrettyString());
+		
+		for (OPPath oppath : paths) {
+			String str = "#oppath# nodes:";
+			Iterator<OPNode> iter = oppath.getNodes().iterator();
+			while (iter.hasNext()) {
+				OPNode opnode = iter.next();
+				str += opnode.getId();
+				if (iter.hasNext())
+					str += "|";
+			}
+			System.out.println(str);
+		}
 	}
 	
 	private static Application getSampleApp() throws ModelException {
-		Application app = new Application("Sample DSP Application");
+		Application app = new Application("Sample DSP Application", "Created manually");
 		
-		Operational node1 = new Operational(0, Role.SRC, "gridsensor", x -> new Long(1000), 1, 1.0);
-		Operational node2 = new Operational(1, Role.PIP, "selection1", x -> x/2, 1, 1.0);
-		Operational node3 = new Operational(2, Role.PIP, "selection2", x -> x/2, 1, 1.0);
-		Operational node4 = new Operational(3, Role.SNK, "datacenter1", x -> new Long(1), 1, 1.0);
-		Operational node5 = new Operational(4, Role.SNK, "datacenter2", x -> new Long(1), 1, 1.0);
+		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
+		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
+		OPNode node3 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
+		OPNode node4 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
+		OPNode node5 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
 				
 		app.addOperational(node1);
 		app.addOperational(node2);
