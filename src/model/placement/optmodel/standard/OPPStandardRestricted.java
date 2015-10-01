@@ -3,7 +3,6 @@ package model.placement.optmodel.standard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import control.exceptions.ModelException;
 import ilog.concert.IloException;
@@ -86,7 +85,7 @@ public class OPPStandardRestricted extends AbstractOPPStandard {
 		try {
 			for (OPPath path : paths) {
 				IloLinearNumExpr Rpex = modeler.linearNumExpr();				
-				for (OPNode opnode : path) {
+				for (OPNode opnode : path.getNodes()) {
 					for (EXNode exnode : this.getArchitecture().vertexSet()) {
 						int i = opnode.getId();
 						int u = exnode.getId();
@@ -97,8 +96,8 @@ public class OPPStandardRestricted extends AbstractOPPStandard {
 				IloLinearNumExpr Rptx = modeler.linearNumExpr();
 				for (int k = 0; k < path.size() - 1; k++) {
 					for (Link link : arc.edgeSet()) {
-						int i = path.get(k).getId();
-						int j = path.get(k + 1).getId();
+						int i = path.getNodes().get(k).getId();
+						int j = path.getNodes().get(k + 1).getId();
 						int u = arc.getEdgeSource(link).getId();
 						int v = arc.getEdgeTarget(link).getId();
 						Rptx.addTerm(link.getDelay(), Y[i][j][u][v]);

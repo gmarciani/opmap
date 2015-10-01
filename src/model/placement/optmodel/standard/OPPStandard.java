@@ -6,11 +6,9 @@ import java.util.Set;
 
 import control.exceptions.ModelException;
 import ilog.concert.IloException;
-import ilog.concert.IloIntVar;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloModeler;
 import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
 import ilog.concert.IloObjective;
 import ilog.concert.IloRange;
 import ilog.cplex.IloCplexModeler;
@@ -21,6 +19,10 @@ import model.application.operator.OPPath;
 import model.architecture.Architecture;
 import model.architecture.link.Link;
 import model.architecture.node.EXNode;
+import model.placement.variables.PlacementX;
+import model.placement.variables.PlacementY;
+import model.placement.variables.standard.StandardPlacementX;
+import model.placement.variables.standard.StandardPlacementY;
 
 public class OPPStandard extends AbstractOPPStandard {
 
@@ -43,34 +45,14 @@ public class OPPStandard extends AbstractOPPStandard {
 		/********************************************************************************
 		 * Decision Variables		
 		 ********************************************************************************/
-		IloNumVar X[][] 	= new IloIntVar[app.vertexSet().size()][arc.vertexSet().size()];
-		IloNumVar Y[][][][] = new IloIntVar[app.vertexSet().size()][app.vertexSet().size()][arc.vertexSet().size()][arc.vertexSet().size()];
-		
+		PlacementX X;
+		PlacementY Y;
 		try {
-			for (OPNode opnode : this.getApplication().vertexSet()) {
-				for (EXNode exnode : this.getArchitecture().vertexSet()) {
-					int i = opnode.getId();
-					int u = exnode.getId();
-					X[i][u] = modeler.boolVar("X[" + i + "][" + u + "]");
-				}					
-			}				
+			X = new StandardPlacementX(app.vertexSet(), arc.vertexSet());
+			Y = new StandardPlacementY(app.edgeSet(), arc.edgeSet());
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining X variables: " + exc.getMessage());
+			throw new ModelException("Error while defining decision variables X and Y: " + exc.getMessage());
 		}
-		
-		try {
-			for (DStream dstream : this.getApplication().edgeSet()) {
-				for (Link link : this.getArchitecture().edgeSet()) {
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
-					Y[i][j][u][v] = modeler.boolVar("Y[" + i + "][" + j + "][" + u + "][" + v + "]");									 																			   
-				}					
-			}			
-		} catch (IloException exc) {
-			throw new ModelException("Error while defining Y variables: " + exc.getMessage());
-		}		
 		
 		/********************************************************************************
 		 * Response-Time		
@@ -81,22 +63,22 @@ public class OPPStandard extends AbstractOPPStandard {
 		try {
 			for (OPPath path : paths) {
 				IloLinearNumExpr Rpex = modeler.linearNumExpr();				
-				for (OPNode opnode : path) {
+				for (OPNode opnode : path.getNodes()) {
 					for (EXNode exnode : this.getArchitecture().vertexSet()) {
 						int i = opnode.getId();
 						int u = exnode.getId();
-						Rpex.addTerm(opnode.getSpeed() / exnode.getSpeedup(), X[i][u]);
+						Rpex.addTerm(opnode.getSpeed() / exnode.getSpeedup(), X.get(i, u));
 					}						
 				}					
 				
 				IloLinearNumExpr Rptx = modeler.linearNumExpr();
 				for (int k = 0; k < path.size() - 1; k++) {
 					for (Link link : arc.edgeSet()) {
-						int i = path.get(k).getId();
-						int j = path.get(k + 1).getId();
+						int i = path.getNodes().get(k).getId();
+						int j = path.getNodes().get(k + 1).getId();
 						int u = arc.getEdgeSource(link).getId();
 						int v = arc.getEdgeTarget(link).getId();
-						Rptx.addTerm(link.getDelay(), Y[i][j][u][v]);
+						Rptx.addTerm(link.getDelay(), Y.get(i, j, u, v));
 					} 
 				}				
 				
@@ -122,17 +104,17 @@ public class OPPStandard extends AbstractOPPStandard {
 				for (EXNode exnode : this.getArchitecture().vertexSet()) {
 					int i = opnode.getId();
 					int u = exnode.getId();
-					Aex.addTerm(Math.log(exnode.getAvailability()), X[i][u]);
+					Aex.addTerm(Math.log(exnode.getAvailability()), X.get(i, u));
 				}					
 			}				
 			
 			for (DStream dstream : this.getApplication().edgeSet()) {
 				for (Link link : this.getArchitecture().edgeSet()) {
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
-					Atx.addTerm(Math.log(link.getAvailability()), Y[i][j][u][v]);
+					int i = dstream.getSrc().getId();
+					int j = dstream.getDst().getId();
+					int u = link.getSrc().getId();
+					int v = link.getDst().getId();
+					Atx.addTerm(Math.log(link.getAvailability()), Y.get(i, j, u, v));
 				}					
 			}
 					
@@ -163,7 +145,7 @@ public class OPPStandard extends AbstractOPPStandard {
 				for (EXNode exnode : arc.vertexSet()) {
 					int i = opnode.getId();
 					int u = exnode.getId();
-					IloRange cnsCapacity = modeler.ge(opnode.isPinnable(exnode)?1:0, X[i][u]);
+					IloRange cnsCapacity = modeler.ge(opnode.isPinnable(exnode)?1:0, X.get(i, u));
 					super.getCPlex().addRange(cnsCapacity.getLB(), cnsCapacity.getExpr(), cnsCapacity.getUB(), 
 							"Eligibility Bound [opnode:" + opnode.getName() + ";exnode:" + exnode.getName() + "]");
 				}					
@@ -181,7 +163,7 @@ public class OPPStandard extends AbstractOPPStandard {
 				for (OPNode opnode : app.vertexSet()) {
 					int i = opnode.getId();
 					int u = exnode.getId();
-					exprCapacity.addTerm(opnode.getResources(), X[i][u]);
+					exprCapacity.addTerm(opnode.getResources(), X.get(i, u));
 				}					
 				IloRange cnsCapacity = modeler.ge(exnode.getResources(), exprCapacity);
 				super.getCPlex().addRange(cnsCapacity.getLB(), cnsCapacity.getExpr(), cnsCapacity.getUB(), 
@@ -200,7 +182,7 @@ public class OPPStandard extends AbstractOPPStandard {
 				for (EXNode exnode : arc.vertexSet()) {
 					int i = opnode.getId();
 					int u = exnode.getId();
-					exprUnicity.addTerm(1.0, X[i][u]);
+					exprUnicity.addTerm(1.0, X.get(i, u));
 				}
 				IloRange cnsUnicity = modeler.eq(1.0, exprUnicity);
 				super.getCPlex().addRange(cnsUnicity.getLB(), cnsUnicity.getExpr(), cnsUnicity.getUB(), 
@@ -218,21 +200,21 @@ public class OPPStandard extends AbstractOPPStandard {
 				for (Link link : arc.edgeSet()) {
 					IloLinearNumExpr exprConn1 = modeler.linearNumExpr();
 					IloLinearNumExpr exprConn2 = modeler.linearNumExpr();
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
+					int i = dstream.getSrc().getId();
+					int j = dstream.getDst().getId();
+					int u = link.getSrc().getId();
+					int v = link.getDst().getId();
 					
-					exprConn1.addTerm(1.0, X[i][u]);
-					exprConn1.addTerm(1.0, X[j][v]);
-					exprConn1.addTerm(-1.0, Y[i][j][u][v]);
+					exprConn1.addTerm(1.0, X.get(i, u));
+					exprConn1.addTerm(1.0, X.get(j, v));
+					exprConn1.addTerm(-1.0, Y.get(i, j, u, v));
 					IloRange cnsConn1 = modeler.ge(1.0, exprConn1);
 					super.getCPlex().addRange(cnsConn1.getLB(), cnsConn1.getExpr(), cnsConn1.getUB(), 
 							"Connectivity Bound (1) [" + i + "][" + j + "][" + u + "][" + v + "]");
 					
-					exprConn2.addTerm(1.0, X[i][u]);
-					exprConn2.addTerm(1.0, X[j][v]);
-					exprConn2.addTerm(-2.0, Y[i][j][u][v]);
+					exprConn2.addTerm(1.0, X.get(i, u));
+					exprConn2.addTerm(1.0, X.get(j, v));
+					exprConn2.addTerm(-2.0, Y.get(i, j, u, v));
 					IloRange cnsConnectivityTwo = modeler.le(0.0, exprConn2);
 					super.getCPlex().addRange(cnsConnectivityTwo.getLB(), cnsConnectivityTwo.getExpr(), cnsConnectivityTwo.getUB(), 
 							"Connectivity Bound (2) [" + i + "][" + j + "][" + u + "][" + v + "]");
