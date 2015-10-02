@@ -2,7 +2,7 @@ package model.architecture;
 
 import java.util.Random;
 
-import control.random.Randomizer;
+import commons.Randomizer;
 import model.architecture.link.Link;
 import model.architecture.node.EXNode;
 

@@ -1,7 +1,8 @@
 package model.application;
 
 import java.util.Random;
-import control.random.Randomizer;
+
+import commons.Randomizer;
 import model.application.operator.OPNode;
 import model.application.operator.OPRole;
 
