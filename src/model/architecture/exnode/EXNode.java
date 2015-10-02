@@ -1,4 +1,4 @@
-package model.architecture.node;
+package model.architecture.exnode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -73,8 +73,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 
 	@Override 
 	public int compareTo(EXNode other) {
-		return Double.valueOf(this.getResources() * this.getSpeedup() * this.getAvailability()).compareTo(
-				Double.valueOf(other.getResources() * other.getSpeedup() * other.getAvailability()));
+		return Integer.valueOf(this.getId()).compareTo(other.getId());
 	}	
 	
 	public String toPrettyString() {

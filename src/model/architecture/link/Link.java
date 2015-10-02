@@ -3,7 +3,7 @@ package model.architecture.link;
 import java.io.Serializable;
 import java.util.Objects;
 
-import model.architecture.node.EXNode;
+import model.architecture.exnode.EXNode;
 
 
 public class Link implements Comparable<Link>, Serializable {
@@ -84,8 +84,7 @@ public class Link implements Comparable<Link>, Serializable {
 	
 	@Override 
 	public int compareTo(Link other) {
-		return Double.valueOf(this.getBandwidth() * this.getAvailability() / this.getDelay()).compareTo(
-				Double.valueOf(other.getBandwidth() * other.getAvailability() / other.getDelay()));
+		return Integer.valueOf(this.getSrc().getId()).compareTo(other.getSrc().getId());
 	}
 	
 	public String toPrettyString() {

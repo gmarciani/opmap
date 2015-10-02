@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import model.application.operator.OPNode;
+import model.application.opnode.OPNode;
 import model.architecture.link.Link;
 
-public class DStream extends DefaultWeightedEdge {
+public class DStream extends DefaultWeightedEdge implements Comparable<DStream> {
 	
 	private static final long serialVersionUID = -1128317756010407723L;
 	
@@ -68,6 +68,11 @@ public class DStream extends DefaultWeightedEdge {
 		
 		return this.getSrc().equals(other.getSrc()) &&
 				this.getDst().equals(other.getDst());
+	}
+	
+	@Override
+	public int compareTo(DStream other) {
+		return Integer.valueOf(this.getSrc().getId()).compareTo(other.getSrc().getId());
 	}
 	
 	public String toPrettyString() {

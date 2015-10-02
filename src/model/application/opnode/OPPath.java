@@ -1,4 +1,4 @@
-package model.application.operator;
+package model.application.opnode;
 
 import java.util.ArrayList;
 import java.util.Deque;

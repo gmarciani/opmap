@@ -5,8 +5,8 @@ import java.util.Set;
 import commons.Pair;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplexModeler;
-import model.application.operator.OPNode;
-import model.architecture.node.EXNode;
+import model.application.opnode.OPNode;
+import model.architecture.exnode.EXNode;
 import model.placement.variable.AbstractPlacementX;
 
 public class RestrictedPlacementX extends AbstractPlacementX {

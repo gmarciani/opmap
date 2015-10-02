@@ -7,6 +7,7 @@ import org.junit.rules.TestName;
 
 import model.architecture.Architecture;
 import model.architecture.ArchitectureFactory;
+import sample.Default;
 
 public class TestArchitectureFactory {
 	
@@ -22,10 +23,11 @@ public class TestArchitectureFactory {
 	@Test
 	public void byNodes() {
 		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		int exnodes = Default.RNDEXNODES;
 		
 		Architecture arc = arcFactory.setName("Random Architecture")
-									 .setDescription("Created randomly")
-				 					 .setNodes(5)
+									 .setDescription("Created randomly with exnodes=" + exnodes)
+				 					 .setNodes(exnodes)
 				 					 .create();
 		
 		System.out.println(arc.toPrettyString());

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import commons.Plotter;
+import commons.Randomizer;
 
 public class TestLinePlot {
 	
@@ -27,8 +28,8 @@ public class TestLinePlot {
 	}
 
 	@Test 
-	public void createAndDisplay() throws InterruptedException {		
-		JFreeChart plot = Plotter.create("Sample Line Plot", "Domain", "Range", sampleDataset());
+	public void randomDisplay() throws InterruptedException {		
+		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
 		Plotter.display(plot);
 		
@@ -36,13 +37,13 @@ public class TestLinePlot {
 	}
 	
 	@Test 
-	public void createAndExport() throws IOException {		
-		JFreeChart plot = Plotter.create("Sample Line Plot", "Domain", "Range", sampleDataset());
+	public void randomSave() throws IOException {		
+		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
-		Plotter.save(plot, "./test/plot/svg/svg-sample.svg");		
+		Plotter.save(plot, "./test/plotter/svg/sample-random.svg");		
 	}
 	
-	private XYDataset sampleDataset() {		
+	private static XYDataset sampleDataset() {		
 		Random rnd = new Random();		
         
         XYSeries series1 = new XYSeries("First");
@@ -50,7 +51,7 @@ public class TestLinePlot {
         XYSeries series3 = new XYSeries("Third");
         
         for (int input = 100; input <= 1000; input+=100) {
-        	double value = getRandom(rnd, 100, 1000000);
+        	double value = Randomizer.rndDouble(rnd, 100, 1000000);
         	series1.add(input, value);
         	series2.add(input, value * 10);
         	series3.add(input, value * 100);
@@ -63,9 +64,5 @@ public class TestLinePlot {
                 
         return dataset;        
     }
-	
-	private double getRandom(Random rnd, double min, double max) {
-		return min + (max - min) * rnd.nextDouble();
-	}
 
 }

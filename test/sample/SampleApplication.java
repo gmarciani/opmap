@@ -3,8 +3,8 @@ package sample;
 import control.exceptions.ModelException;
 import model.application.Application;
 import model.application.ApplicationFactory;
-import model.application.operator.OPNode;
-import model.application.operator.OPRole;
+import model.application.opnode.OPNode;
+import model.application.opnode.OPRole;
 
 public final class SampleApplication {
 

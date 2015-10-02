@@ -1,12 +1,13 @@
-package model.application.operator;
+package model.application.opnode;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import model.application.operator.OPRole;
-import model.architecture.node.EXNode;
+
+import model.application.opnode.OPRole;
+import model.architecture.exnode.EXNode;
 
 public class OPNode implements Comparable<OPNode>, Serializable {
 
@@ -159,7 +160,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	
 	@Override 
 	public int compareTo(OPNode other) {
-		return Double.valueOf(this.getSpeed()).compareTo(other.getSpeed());
+		return Integer.valueOf(this.getId()).compareTo(other.getId());
 	}	
 	
 	public String toPrettyString() {

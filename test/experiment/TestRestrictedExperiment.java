@@ -68,7 +68,7 @@ public class TestRestrictedExperiment {
 		JFreeChart plot = Plotter.create("Standard Restricted Model (EXNodes)", "EXNodes", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, "./test/control/plotter/svg/" + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, "./test/plotter/svg/" + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
@@ -105,7 +105,7 @@ public class TestRestrictedExperiment {
 		JFreeChart plot = Plotter.create("Standard Restricted Model (OPNodes)", "OPNodes", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, "./test/control/plotter/svg/" + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, "./test/plotter/svg/" + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}

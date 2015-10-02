@@ -1,10 +1,13 @@
 package model.application;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import commons.Randomizer;
-import model.application.operator.OPNode;
-import model.application.operator.OPRole;
+import model.application.opnode.OPNode;
+import model.application.opnode.OPRole;
 
 public class ApplicationFactory {
 	
@@ -43,6 +46,9 @@ public class ApplicationFactory {
 	
 	public Application create() {
 		Application app = new Application();
+		Set<OPNode> srcs = new HashSet<OPNode>();
+		Set<OPNode> snks = new HashSet<OPNode>();
+		Set<OPNode> pips = new HashSet<OPNode>();		
 		
 		app.setName(this.name);
 		app.setDescription(this.description);
@@ -50,33 +56,35 @@ public class ApplicationFactory {
 		int nxtid = 0;
 		
 		for (int srcnode = 1; srcnode <= this.srcnodes; srcnode++, nxtid++) {
-			OPNode node = new OPNode(nxtid, OPRole.SRC, "source" + srcnode, x -> new Long(1000), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
-			app.addOperational(node);
+			OPNode node = new OPNode(nxtid, OPRole.SRC, "src" + srcnode, x -> new Long(1000), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			srcs.add(node);
 		}
 		
 		for (int pipnode = 1; pipnode <= this.pipnodes; pipnode++, nxtid++) {
-			OPNode node = new OPNode(nxtid, OPRole.PIP, "operator" + pipnode, x -> Math.round(x * 0.95), 1,	Randomizer.rndDouble(this.rnd, 1.0, 100.0));
-			app.addOperational(node);
+			OPNode node = new OPNode(nxtid, OPRole.PIP, "opr" + pipnode, x -> Math.round(x * 0.95), 1,	Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			pips.add(node);
 		}		
 		
 		for (int snknode = 1; snknode <= this.snknodes; snknode++, nxtid++) {
-			OPNode node = new OPNode(nxtid, OPRole.SNK, "sink" + snknode, x -> new Long(1), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
-			app.addOperational(node);
-		}		
+			OPNode node = new OPNode(nxtid, OPRole.SNK, "snk" + snknode, x -> new Long(1), 1, Randomizer.rndDouble(this.rnd, 1.0, 100.0));
+			snks.add(node);
+		}				
 		
-		for (OPNode pipnodeSRC : app.getPipes()) {
-			for (OPNode pipnodeDST : app.getPipes()) {
+		for (OPNode srcnode : srcs.stream().sorted().collect(Collectors.toList()))
+			app.addStream(srcnode, Randomizer.rndItem(this.rnd, pips));
+		
+		for (OPNode pipnodeSRC : pips.stream().sorted().collect(Collectors.toList())) {
+			for (OPNode pipnodeDST : pips.stream().sorted().collect(Collectors.toList())) {
 				if (pipnodeSRC.getId() == pipnodeDST.getId())
 					continue;
 				app.addStream(pipnodeSRC, pipnodeDST);
 			}
 		}
 		
-		for (OPNode srcnode : app.getSources())
-			app.addStream(srcnode, Randomizer.rndItem(this.rnd, app.getPipes()));
+		for (OPNode snknode : snks.stream().sorted().collect(Collectors.toList()))
+			app.addStream(Randomizer.rndItem(this.rnd, pips), snknode);
 		
-		for (OPNode snknode : app.getSinks())
-			app.addStream(Randomizer.rndItem(this.rnd, app.getPipes()), snknode);
+		app.pack();
 		
 		return app;		
 	}

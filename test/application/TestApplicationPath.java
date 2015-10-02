@@ -9,7 +9,7 @@ import org.junit.rules.TestName;
 
 import control.exceptions.ModelException;
 import model.application.Application;
-import model.application.operator.OPPath;
+import model.application.opnode.OPPath;
 import sample.SampleApplication;
 
 public class TestApplicationPath {
@@ -30,8 +30,6 @@ public class TestApplicationPath {
 		System.out.println(app.toPrettyString());
 		
 		Set<OPPath> paths = app.getAllOperationalPaths();
-		
-		System.out.println(paths);
 		
 		for (OPPath oppath : paths)
 			System.out.println(oppath.toPrettyString());

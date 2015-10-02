@@ -16,11 +16,11 @@ import ilog.concert.IloRange;
 import ilog.cplex.IloCplexModeler;
 import model.application.Application;
 import model.application.dstream.DStream;
-import model.application.operator.OPNode;
-import model.application.operator.OPPath;
+import model.application.opnode.OPNode;
+import model.application.opnode.OPPath;
 import model.architecture.Architecture;
+import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
-import model.architecture.node.EXNode;
 
 public class OPPRestricted extends AbstractOPPStandard {
 

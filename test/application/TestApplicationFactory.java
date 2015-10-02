@@ -7,6 +7,7 @@ import org.junit.rules.TestName;
 
 import model.application.Application;
 import model.application.ApplicationFactory;
+import sample.Default;
 
 public class TestApplicationFactory {
 	
@@ -22,10 +23,11 @@ public class TestApplicationFactory {
 	@Test
 	public void byNodes() {
 		ApplicationFactory appFactory = new ApplicationFactory();
+		int opnodes = Default.RNDOPNODES;
 		
-		Application app = appFactory.setName("Random Application")
-									.setDescription("Created randomly")
-									.setNodes(5)
+		Application app = appFactory.setName("Sample Application")
+									.setDescription("Created randomly with opnodes=" + opnodes)
+									.setNodes(opnodes)
 									.create();
 		
 		System.out.println(app.toPrettyString());

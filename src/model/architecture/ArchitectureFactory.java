@@ -3,8 +3,8 @@ package model.architecture;
 import java.util.Random;
 
 import commons.Randomizer;
+import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
-import model.architecture.node.EXNode;
 
 public class ArchitectureFactory {
 	
@@ -44,7 +44,7 @@ public class ArchitectureFactory {
 		arc.setDescription(this.description);
 		
 		for (int i = 0; i < this.nodes; i++) {
-			EXNode node = new EXNode(i, "comp" + i,  4, Randomizer.rndDouble(this.rnd, 1.0, 10.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0));
+			EXNode node = new EXNode(i, "exnode" + i,  4, Randomizer.rndDouble(this.rnd, 1.0, 10.0), Randomizer.rndDouble(this.rnd, 0.5, 1.0));
 			arc.addVertex(node);
 		}
 		

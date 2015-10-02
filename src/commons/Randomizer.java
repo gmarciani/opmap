@@ -14,7 +14,7 @@ public final class Randomizer {
 	}
 	
 	public static int rndInteger(Random rnd, final int lb, final int ub) {			
-		return rnd.nextInt((ub - lb) + 1) + lb;
+		return rnd.nextInt(ub) + lb;
 	}
 	
 	public static double rndDouble(Random rnd, final double lb, final double ub) {		
@@ -44,8 +44,8 @@ public final class Randomizer {
 	}
 	
 	public static <T> T rndItem(Random rnd, List<T> list) {
-		int index = rndInteger(rnd, 0, list.size() - 1);
-		return list.get(index);
+		int elem = rndInteger(rnd, 0, list.size());
+		return list.get(elem);
 	}
 
 }

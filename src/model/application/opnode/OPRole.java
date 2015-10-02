@@ -1,4 +1,4 @@
-package model.application.operator;
+package model.application.opnode;
 
 public enum OPRole {
 	SRC("source"),

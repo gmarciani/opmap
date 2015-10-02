@@ -1,6 +1,7 @@
 package model.architecture;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import org.jgrapht.graph.DefaultDirectedGraph;
 
@@ -9,8 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
-import model.architecture.node.EXNode;
 
 public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 
@@ -68,12 +69,12 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 		str += "desc: " + this.getDescription() + "\n";
 		str += "nodes:\n";
 		
-		for (EXNode exnode : this.vertexSet())
+		for (EXNode exnode : this.vertexSet().stream().sorted().collect(Collectors.toList()))
 			str += "\t" + exnode.toPrettyString() + "\n";
 		
 		str += "edges:\n";
 		
-		for (Link link : this.edgeSet())
+		for (Link link : this.edgeSet().stream().sorted().collect(Collectors.toList()))
 			str += "\t" + link.toPrettyString() + "\n";			
 		
 		return str;

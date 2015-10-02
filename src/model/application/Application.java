@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.BellmanFordShortestPath;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,10 +15,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import model.application.dstream.DStream;
-import model.application.operator.OPNode;
-import model.application.operator.OPPath;
+import model.application.opnode.OPNode;
+import model.application.opnode.OPPath;
 
-public class Application extends DefaultDirectedWeightedGraph<OPNode, DStream> {
+public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 
 	private static final long serialVersionUID = 7253751791492037927L;
 	
@@ -73,12 +73,19 @@ public class Application extends DefaultDirectedWeightedGraph<OPNode, DStream> {
 		
 	public boolean addStream(OPNode src, OPNode dst) {
 		DStream dstream = new DStream(src, dst);
-		boolean res;
-		super.addVertex(dstream.getSrc());
-		super.addVertex(dstream.getDst());	
-		if (res = super.addEdge(dstream.getSrc(), dstream.getDst(), dstream))
-			super.setEdgeWeight(dstream, dstream.getWeight());
-		return res;
+		if (!super.vertexSet().contains(dstream.getSrc()))
+			super.addVertex(dstream.getSrc());
+		if (!super.vertexSet().contains(dstream.getDst()))
+			super.addVertex(dstream.getDst());	
+		try {
+			if (super.addDagEdge(dstream.getSrc(), dstream.getDst(), dstream)) {
+				super.setEdgeWeight(dstream, dstream.getWeight());
+				return true;
+			}
+			return false;
+		} catch (CycleFoundException exc) {
+			return false;
+		}
 	}
 	
 	public Set<OPPath> getAllOperationalPaths() {
@@ -120,6 +127,10 @@ public class Application extends DefaultDirectedWeightedGraph<OPNode, DStream> {
 		return json;
 	}
 	
+	public void pack() {
+		//			
+	}
+	
 	public String toPrettyString() {
 		String str = "# Application #\n";
 		
@@ -127,12 +138,12 @@ public class Application extends DefaultDirectedWeightedGraph<OPNode, DStream> {
 		str += "desc: " + this.getDescription() + "\n";
 		str += "nodes:\n";
 		
-		for (OPNode opnode : this.vertexSet())
+		for (OPNode opnode : this.vertexSet().stream().sorted().collect(Collectors.toList()))
 			str += "\t" + opnode.toPrettyString() + "\n";
 		
 		str += "edges:\n";
 		
-		for (DStream dstream : this.edgeSet())
+		for (DStream dstream : this.edgeSet().stream().sorted().collect(Collectors.toList()))
 			str += "\t" + dstream.toPrettyString() + "\n";			
 		
 		return str;

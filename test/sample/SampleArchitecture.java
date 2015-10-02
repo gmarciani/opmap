@@ -4,8 +4,8 @@ import static org.junit.Assert.fail;
 
 import model.architecture.Architecture;
 import model.architecture.ArchitectureFactory;
+import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
-import model.architecture.node.EXNode;
 
 public final class SampleArchitecture {
 
