@@ -23,9 +23,15 @@ public class Pair<X1 extends Comparable<X1>, X2 extends Comparable<X2>> implemen
 		return this.x2;
 	}
 	
+	public String toPrettyString() {
+		return "(" + this.getX1() + "," + this.getX2() + ")";
+	}
+	
 	@Override 
 	public String toString() {
-		return "(" + this.getX1() + "," + this.getX2() + ")";
+		return "Pair(" + 
+				"x1:" + this.getX1() + ";" + 
+				"x2:" + this.getX2() + ")";
 	}
 	
 	@Override 

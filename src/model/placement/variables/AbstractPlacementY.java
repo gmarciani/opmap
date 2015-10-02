@@ -22,5 +22,10 @@ public class AbstractPlacementY extends HashMap<Quadruple<Integer, Integer, Inte
 	public IloNumVar get(final int i, final int j, final int u, final int v) {
 		return super.get(new Quadruple<Integer, Integer, Integer, Integer>(i, j, u, v));
 	}
+	
+	@Override
+	public String toString() {
+		return "Y(" + super.toString() + ")";
+	}
 
 }

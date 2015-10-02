@@ -1,7 +1,6 @@
 package model.placement.variables;
 
 import java.util.HashMap;
-
 import ilog.concert.IloModeler;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplexModeler;
@@ -22,5 +21,10 @@ public class AbstractPlacementX extends HashMap<Pair<Integer, Integer>, IloNumVa
 	public IloNumVar get(final int i, final int u) {
 		return super.get(new Pair<Integer, Integer>(i, u));
 	}	
+	
+	@Override
+	public String toString() {
+		return "X(" + super.toString() + ")";
+	}
 
 }

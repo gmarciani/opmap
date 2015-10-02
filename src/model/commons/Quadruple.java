@@ -35,10 +35,18 @@ public class Quadruple<X1 extends Comparable<X1>, X2 extends Comparable<X2>, X3 
 	public X4 getX4() {
 		return this.x4;
 	}
+	
+	public String toPrettyString() {
+		return "(" + this.getX1() + "," + this.getX2() + "," + this.getX3() + "," + this.getX4() + ")";
+	}
 
 	@Override 
 	public String toString() {
-		return "(" + this.getX1() + "," + this.getX2() + "," + this.getX3() + "," + this.getX4() + ")";
+		return "Quadruple(" + 
+			   "x1:" + this.getX1() + ";" + 
+			   "x2:" + this.getX2() + ";" + 
+			   "x3:" + this.getX3() + ";" + 
+			   "x4:" + this.getX4() + ")";
 	}
 	
 	@Override 

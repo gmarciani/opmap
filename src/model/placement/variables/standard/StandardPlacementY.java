@@ -22,8 +22,7 @@ public class StandardPlacementY extends AbstractPlacementY {
 				int v = link.getDst().getId();
 				super.put(new Quadruple<Integer, Integer, Integer, Integer>(i, j, u, v), super.modeler.boolVar("Y[" + i + "][" + j + "][" + u + "][" + v + "]"));
 			}
-		}
-		
+		}		
 	}
 
 }
