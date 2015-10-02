@@ -4,10 +4,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import experiment.TestStandardModelExperiment;
+
 @RunWith(Suite.class)
 @SuiteClasses({ 
-	StandardModel.class ,
-	AlternativeModel.class
+	TestStandardModel.class ,
+	TestAlternativeModel.class,
+	TestStandardModelExperiment.class
 })
 public class AllTestsSolver {
 

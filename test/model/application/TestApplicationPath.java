@@ -25,7 +25,7 @@ public class TestApplicationPath {
 
 	@Test 
 	public void allPaths() throws ModelException {
-		Application app = SampleApplication.getSampleApp();
+		Application app = SampleApplication.getDeterministicSample();
 		
 		System.out.println(app.toPrettyString());
 		

@@ -12,6 +12,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import commons.SampleApplication;
+import commons.SampleArchitecture;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import control.plotter.Plotter;
@@ -24,8 +26,9 @@ import model.architecture.ArchitectureFactory;
 import model.placement.Report;
 import model.placement.optmodel.OPPModel;
 import model.placement.optmodel.alternative.OPPAlternative;
+import model.placement.optmodel.standard.OPPStandard;
 
-public class AlternativeModel {
+public class TestAlternativeModel {
 	
 	@Rule public TestName name = new TestName();
 	
@@ -38,38 +41,20 @@ public class AlternativeModel {
 	
 	@Test
 	public void create() throws ModelException {
-		ApplicationFactory appFactory = new ApplicationFactory();
-		ArchitectureFactory arcFactory = new ArchitectureFactory();
+		Application app = SampleApplication.getRandomSample();
+		Architecture arc = SampleArchitecture.getRandomSample();
 		
-		Application app = appFactory.setName("Sample DSP Application")
-									.setDescription("AlternativeModel.create")
-				 					.setNodes(5)
-				 					.create();
-		Architecture arc = arcFactory.setName("Sample Distributed Architecture")
-									 .setDescription("AlternativeModel.create")
-									 .setNodes(5)
-									 .create();
-		
-		OPPModel model = new OPPAlternative(app, arc);
+		OPPModel model = new OPPStandard(app, arc);
 		
 		System.out.println(model);
 	}
 
 	@Test
-	public void solveAndReport() throws ModelException, SolverException {
-		ApplicationFactory appFactory = new ApplicationFactory();
-		ArchitectureFactory arcFactory = new ArchitectureFactory();
+	public void solve() throws ModelException, SolverException {
+		Application app = SampleApplication.getRandomSample();
+		Architecture arc = SampleArchitecture.getRandomSample();
 		
-		Application app = appFactory.setName("Sample DSP Application")
-									.setDescription("AlternativeModel.solveAndReport")
-									.setNodes(5)
-									.create();
-		Architecture arc = arcFactory.setName("Sample Distributed Architecture")
-				 					 .setDescription("AlternativeModel.solveAndReport")
-				 					 .setNodes(5)
-				 					 .create();
-		
-		OPPModel model = new OPPAlternative(app, arc);
+		OPPModel model = new OPPStandard(app, arc);
 		
 		OPPSolver solver = new MPSolver();
 		

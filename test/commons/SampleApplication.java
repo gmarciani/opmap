@@ -2,6 +2,7 @@ package commons;
 
 import control.exceptions.ModelException;
 import model.application.Application;
+import model.application.ApplicationFactory;
 import model.application.operator.OPNode;
 import model.application.operator.OPRole;
 
@@ -9,7 +10,7 @@ public final class SampleApplication {
 
 	private SampleApplication() {}
 	
-	public static Application getSampleApp() throws ModelException {
+	public static Application getDeterministicSample() throws ModelException {
 		Application app = new Application("Sample Application", "Created manually");
 		
 		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
@@ -30,6 +31,21 @@ public final class SampleApplication {
 		app.addStream(node2, node4);
 		app.addStream(node3, node4);
 		app.addStream(node3, node5);
+		
+		return app;
+	}
+	
+	public static Application getRandomSample() {
+		return getRandomSample(Default.RNDOPNODES);
+	}
+	
+	public static Application getRandomSample(final int opnodes) {
+		ApplicationFactory appFactory = new ApplicationFactory();	
+		
+		Application app = appFactory.setName("Sample Application")
+									.setDescription("Created randomly with opnodes=" + opnodes)
+									.setNodes(opnodes)
+									.create();
 		
 		return app;
 	}
