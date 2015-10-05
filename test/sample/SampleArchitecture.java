@@ -14,10 +14,10 @@ public final class SampleArchitecture {
 	public static Architecture getSample() {
 		Architecture arc = new Architecture("Sample Architecture", "Created manually");
 		
-		EXNode node0 = new EXNode(0, "sensor1", 1, 1, 1.0);
-		EXNode node1 = new EXNode(1, "station2", 1, 1, 1.0);
-		EXNode node2 = new EXNode(2, "station3", 1, 1, 1.0);
-		EXNode node3 = new EXNode(3, "datacenter", 1, 1, 1.0);
+		EXNode node0 = new EXNode(0, "gsensor1", Default.EXNODE_RESOURCES, Default.EXNODE_SPEEDUP, Default.EXNODE_AVAILABILITY);
+		EXNode node1 = new EXNode(1, "station2", Default.EXNODE_RESOURCES, Default.EXNODE_SPEEDUP, Default.EXNODE_AVAILABILITY);
+		EXNode node2 = new EXNode(2, "station3", Default.EXNODE_RESOURCES, Default.EXNODE_SPEEDUP, Default.EXNODE_AVAILABILITY);
+		EXNode node3 = new EXNode(3, "dcenter1", Default.EXNODE_RESOURCES, Default.EXNODE_SPEEDUP, Default.EXNODE_AVAILABILITY);
 
 		if (!arc.addVertex(node0)) fail("Computational insert failure");
 		if (!arc.addVertex(node1)) fail("Computational insert failure");
@@ -33,7 +33,7 @@ public final class SampleArchitecture {
 	}
 	
 	public static final Architecture getRandomSample() {
-		return getRandomSample(Default.RNDEXNODES);
+		return getRandomSample(Default.EXNODE_RDN);
 	}
 	
 	public static Architecture getRandomSample(final int exnodes) {

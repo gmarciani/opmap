@@ -50,9 +50,9 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 		this.flow = flow;
 	}	
 	
-	public boolean isPinnable(Link link) {
-		return this.getSrc().isPinnable(link.getSrc()) &&
-				this.getDst().isPinnable(link.getDst());
+	public boolean isPinnableOn(Link link) {
+		return this.getSrc().isPinnableOn(link.getSrc()) &&
+				this.getDst().isPinnableOn(link.getDst());
 	}
 	
 	public double getWeight() {

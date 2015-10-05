@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -127,8 +128,14 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return json;
 	}
 	
-	public void pack() {
-		//			
+	public static boolean isConsistent(final Application app) {
+		ConnectivityInspector<OPNode, DStream> inspector = new ConnectivityInspector<OPNode, DStream>(app);
+		
+		for (OPNode srcnode : app.getSources())
+			for (OPNode snknode : app.getSinks())
+				if (!inspector.pathExists(srcnode, snknode))
+					return false;
+		return true;
 	}
 	
 	public String toPrettyString() {

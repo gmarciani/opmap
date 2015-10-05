@@ -6,7 +6,7 @@
 	<version>1.0</version>
 	
 	<name>opmap</name>
-	<description>Operator Placement Problem for Data Stream Processing Applications</description>
+	<description>Operator Placement Problem (OPP) for Data Stream Processing (DSP) Applications</description>
 	<url>http://github.com/gmarciani/opmap</url>
 	
 	<organization>
@@ -16,16 +16,16 @@
 	
 	
 	<properties>
-		<junit.version>4.12</junit.version>
-		<jackson.version>2.6.1</jackson.version>
-		<apache.commons-lang.version>3.4</apache.commons-lang.version>
-		<fastutil.version>7.0.7</fastutil.version>
+		<jgrapht.version>0.9.1</jgrapht.version>
 		<jfreechart.version>1.0.19</jfreechart.version>
 		<jfreesvg.version>3.0</jfreesvg.version>
-		<jgrapht.version>0.9.1</jgrapht.version>
+		<fastutil.version>7.0.7</fastutil.version>
+		<jackson.version>2.6.1</jackson.version>
+		<apache.math.version>3.5</apache.math.version>
+		<apache.lang.version>3.4</apache.lang.version>
+		<junit.version>4.12</junit.version>		
 	</properties>
-
-
+	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -40,32 +40,7 @@
 		</plugins>
 	</build>  
   
-	<dependencies>
-  
-  		<dependency>
-  			<groupId>junit</groupId>
-  			<artifactId>junit</artifactId>
-  			<version>${junit.version}</version>
-  			<scope>test</scope>
-  		</dependency>
-  	
-	  	<dependency>
-	  		<groupId>com.fasterxml.jackson.core</groupId>
-	  		<artifactId>jackson-databind</artifactId>
-	  		<version>${jackson.version}</version>
-	  	</dependency>
-
-	  	<dependency>
-	  		<groupId>it.unimi.dsi</groupId>
-	  		<artifactId>fastutil</artifactId>
-	  		<version>${fastutil.version}</version>
-	  	</dependency>
-	  	
-	  	<dependency>
-	  		<groupId>org.apache.commons</groupId>
-	  		<artifactId>commons-lang3</artifactId>
-	  		<version>${apache.commons-lang.version}</version>
-	  	</dependency>  	
+	<dependencies>	  		  	 	
 	  	
 	  	<dependency>
 	  		<groupId>org.jgrapht</groupId>
@@ -90,6 +65,37 @@
 	  		<artifactId>jfreesvg</artifactId>
 	  		<version>${jfreesvg.version}</version>
 	  	</dependency>
+	  	
+	  	<dependency>
+	  		<groupId>it.unimi.dsi</groupId>
+	  		<artifactId>fastutil</artifactId>
+	  		<version>${fastutil.version}</version>
+	  	</dependency>
+	  	
+	  	<dependency>
+	  		<groupId>com.fasterxml.jackson.core</groupId>
+	  		<artifactId>jackson-databind</artifactId>
+	  		<version>${jackson.version}</version>
+	  	</dependency>
+	  	
+	  	<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>{apache.math.version}</version>
+		</dependency>
+		
+		<dependency>
+	  		<groupId>org.apache.commons</groupId>
+	  		<artifactId>commons-lang3</artifactId>
+	  		<version>${apache.lang.version}</version>
+	  	</dependency> 		
+  
+  		<dependency>
+  			<groupId>junit</groupId>
+  			<artifactId>junit</artifactId>
+  			<version>${junit.version}</version>
+  			<scope>test</scope>
+  		</dependency>
   	
   </dependencies>
   

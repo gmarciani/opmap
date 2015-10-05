@@ -7,20 +7,32 @@ public class Pair<X1 extends Comparable<X1>, X2 extends Comparable<X2>> implemen
 
 	private static final long serialVersionUID = 4803770078086427961L;
 
-	private final X1 x1;
-	private final X2 x2;
+	private X1 x1;
+	private X2 x2;
 
 	public Pair(X1 x1, X2 x2) {
 		this.x1 = x1;
 		this.x2 = x2;
 	}
 	
+	public Pair() {
+		this(null, null);
+	}
+	
 	public X1 getX1() {
 		return this.x1;
 	}
 	
+	public void setX1(final X1 x1) {
+		this.x1 = x1;
+	}
+	
 	public X2 getX2() {
 		return this.x2;
+	}
+	
+	public void setX2(final X2 x2) {
+		this.x2 = x2;
 	}
 	
 	public String toPrettyString() {

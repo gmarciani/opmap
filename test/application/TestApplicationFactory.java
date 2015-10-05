@@ -1,5 +1,6 @@
 package application;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,12 +24,15 @@ public class TestApplicationFactory {
 	@Test
 	public void byNodes() {
 		ApplicationFactory appFactory = new ApplicationFactory();
-		int opnodes = Default.RNDOPNODES;
+		int opnodes = Default.OPNODE_RND;
 		
 		Application app = appFactory.setName("Sample Application")
 									.setDescription("Created randomly with opnodes=" + opnodes)
 									.setNodes(opnodes)
 									.create();
+		
+		if (!Application.isConsistent(app))
+			fail("Source component disconnected from sink component");		
 		
 		System.out.println(app.toPrettyString());
 	}

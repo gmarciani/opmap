@@ -21,10 +21,10 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	private double speed;	
 	private long flowIn;
 	private long flowOut;	
-	private Set<EXNode> pinnables;
+	private Set<Integer> pinnables;
 	
 	public OPNode(int id, OPRole role, String name, Function<Long, Long> transformation, 
-			   			int resources, double speed, Set<EXNode> pinnables) {
+			   			int resources, double speed, Set<Integer> pinnables) {
 		this.setId(id);
 		this.setRole(role);
 		this.setName(name);
@@ -110,19 +110,19 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		this.flowOut = flowOut;
 	}
 	
-	public Set<EXNode> getPinnables() {
+	public Set<Integer> getPinnables() {
 		return this.pinnables;
 	}
 	
-	private void setPinnables(Set<EXNode> pinnables) {
+	private void setPinnables(Set<Integer> pinnables) {
 		this.pinnables = pinnables;
 	}
 	
 	public boolean addPinnable(final EXNode exnode) {
 		if (this.pinnables == null) {
-			this.pinnables = new HashSet<EXNode>();
+			this.pinnables = new HashSet<Integer>();
 		}
-		return this.pinnables.add(exnode);
+		return this.pinnables.add(exnode.getId());
 	}
 	
 	public boolean isSource() {
@@ -141,11 +141,11 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		this.setFlowIn(this.getFlowIn() + flow);
 	}
 	
-	public boolean isPinnable(EXNode exnode) {
+	public boolean isPinnableOn(EXNode exnode) {
 		if (this.pinnables == null)
 			return true;
 		else
-			return this.pinnables.contains(exnode);
+			return this.pinnables.contains(exnode.getId());
 	}
 	
 	@Override 

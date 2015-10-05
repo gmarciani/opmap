@@ -13,11 +13,11 @@ import model.application.Application;
 import model.architecture.Architecture;
 import model.placement.Report;
 import model.placement.optmodel.OPPModel;
-import model.placement.optmodel.cplex.OPPRestricted;
+import model.placement.optmodel.cplex.OPPConservative;
 import sample.SampleApplication;
 import sample.SampleArchitecture;
 
-public class TestRestricted {
+public class TestConservative {
 
 	@Rule public TestName name = new TestName();
 	
@@ -33,7 +33,7 @@ public class TestRestricted {
 		Application app = SampleApplication.getRandomSample();
 		Architecture arc = SampleArchitecture.getRandomSample();
 		
-		OPPModel model = new OPPRestricted(app, arc);
+		OPPModel model = new OPPConservative(app, arc);
 		
 		System.out.println(model);
 		
@@ -48,12 +48,12 @@ public class TestRestricted {
 		System.out.println(app.toPrettyString());		
 		System.out.println(arc.toPrettyString());
 		
-		OPPModel model = new OPPRestricted(app, arc);
+		OPPModel model = new OPPConservative(app, arc);
 		
 		OPPSolver solver = new MPSolver();
 		
 		Report report = solver.solve(model);
-		
+
 		if (report != null)
 			System.out.println(report.toPrettyString());
 		else 

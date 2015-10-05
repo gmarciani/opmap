@@ -13,11 +13,11 @@ public final class SampleApplication {
 	public static Application getDeterministicSample() throws ModelException {
 		Application app = new Application("Sample Application", "Created manually");
 		
-		OPNode node1 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
-		OPNode node2 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
-		OPNode node3 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
-		OPNode node4 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
-		OPNode node5 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
+		OPNode node1 = new OPNode(0, OPRole.SRC, "prod1", x -> new Long(Default.OPNODE_SRC_FLOW), 					Default.OPNODE_RESOURCES, Default.OPNODE_SPEED);
+		OPNode node2 = new OPNode(1, OPRole.PIP, "oprt1", x -> new Long(Math.round(x * Default.OPNODE_PIP_TRANS)), 	Default.OPNODE_RESOURCES, Default.OPNODE_SPEED);
+		OPNode node3 = new OPNode(2, OPRole.PIP, "oprt2", x -> new Long(Math.round(x * Default.OPNODE_PIP_TRANS)), 	Default.OPNODE_RESOURCES, Default.OPNODE_SPEED);
+		OPNode node4 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(Default.OPNODE_SNK_FLOW), 					Default.OPNODE_RESOURCES, Default.OPNODE_SPEED);
+		OPNode node5 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(Default.OPNODE_SNK_FLOW), 					Default.OPNODE_RESOURCES, Default.OPNODE_SPEED);
 				
 		app.addOperational(node1);
 		app.addOperational(node2);
@@ -36,7 +36,7 @@ public final class SampleApplication {
 	}
 	
 	public static Application getRandomSample() {
-		return getRandomSample(Default.RNDOPNODES);
+		return getRandomSample(Default.OPNODE_RND);
 	}
 	
 	public static Application getRandomSample(final int opnodes) {

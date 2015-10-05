@@ -1,4 +1,4 @@
-package model.placement.optmodel.alternative;
+package model.placement.optmodel;
 
 import control.exceptions.ModelException;
 import model.application.Application;
@@ -6,10 +6,10 @@ import model.architecture.Architecture;
 
 public abstract class AbstractOPPAlternative extends AbstractOPPModel {
 	
-	protected static final double DEFAULT_RMAX = 10000.0;
-	protected static final double DEFAULT_AMIN = 0.0;
-	protected static final double DEFAULT_RW   = 0.5;
-	protected static final double DEFAULT_AW	 = 0.5;
+	protected static final double DEFAULT_RMAX 	= 10000.0;
+	protected static final double DEFAULT_AMIN 	= 0.5;
+	protected static final double DEFAULT_RW   	= 0.5;
+	protected static final double DEFAULT_AW	= 0.5;
 	
 	protected double Rmax;
 	protected double Amin;
@@ -17,11 +17,9 @@ public abstract class AbstractOPPAlternative extends AbstractOPPModel {
 	protected double Rw;
 	protected double Aw;
 
-	public AbstractOPPAlternative(Application app, Architecture arc,
-									double Rmax, double Amin,
-									double Rw, double Aw) throws ModelException {
-		super(app, arc);
-		super.getCPlex().setName("OPP MP Alternative");
+	public AbstractOPPAlternative(String name, Application app, Architecture arc,
+								  double Rmax, double Amin, double Rw, double Aw) throws ModelException {
+		super(name, app, arc);
 	}
 	
 	public double getRmax() {

@@ -8,10 +8,10 @@ public class Quadruple<X1 extends Comparable<X1>, X2 extends Comparable<X2>, X3 
 
 	private static final long serialVersionUID = -6828072546564797505L;
 
-	private final X1 x1;
-	private final X2 x2;
-	private final X3 x3;
-	private final X4 x4;
+	private X1 x1;
+	private X2 x2;
+	private X3 x3;
+	private X4 x4;
 
 	public Quadruple(X1 x1, X2 x2, X3 x3, X4 x4) {
 		this.x1 = x1;
@@ -20,20 +20,40 @@ public class Quadruple<X1 extends Comparable<X1>, X2 extends Comparable<X2>, X3 
 		this.x4 = x4;
 	}
 	
+	public Quadruple() {
+		this(null, null, null, null);
+	}
+	
 	public X1 getX1() {
 		return this.x1;
+	}
+	
+	public void setX1(final X1 x1) {
+		this.x1 = x1;
 	}
 	
 	public X2 getX2() {
 		return this.x2;
 	}
 	
+	public void setX2(final X2 x2) {
+		this.x2 = x2;
+	}
+	
 	public X3 getX3() {
 		return this.x3;
+	}
+	
+	public void setX3(final X3 x3) {
+		this.x3 = x3;
 	}
 
 	public X4 getX4() {
 		return this.x4;
+	}
+	
+	public void setX4(final X4 x4) {
+		this.x4 = x4;
 	}
 	
 	public String toPrettyString() {

@@ -1,4 +1,4 @@
-package model.placement.optmodel.alternative;
+package model.placement.optmodel.cplex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,9 @@ import java.util.Set;
 
 import control.exceptions.ModelException;
 import ilog.concert.IloException;
-import ilog.concert.IloIntVar;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloModeler;
 import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
 import ilog.concert.IloObjective;
 import ilog.concert.IloRange;
 import ilog.cplex.IloCplexModeler;
@@ -21,19 +19,20 @@ import model.application.opnode.OPPath;
 import model.architecture.Architecture;
 import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
+import model.placement.optmodel.AbstractOPPStandard;
+import model.placement.variable.restricted.RestrictedPlacementX;
+import model.placement.variable.restricted.RestrictedPlacementY;
 
-public class OPPAlternative extends AbstractOPPAlternative {
+public class OPPRestricted extends AbstractOPPStandard {
 
-	public OPPAlternative(Application app, Architecture arc,
-			   				double Rmax, double Amin,
-			   				double Rw, double Aw) throws ModelException {
-		super(app, arc, Rmax, Amin, Rw, Aw);
-		super.getCPlex().setName("OPP MP Alternative");
+	public OPPRestricted(Application app, Architecture arc,
+			   			 double Rmax, double Rmin, double Amax, double Amin, double Rw, double Aw) throws ModelException {
+		super("OPP Restricted", app, arc, Rmax, Rmin, Amax, Amin, Rw, Aw);
 		this.compile(super.getApplication(), super.getArchitecture());
 	}
-
-	public OPPAlternative(Application app, Architecture arc) throws ModelException {
-		this(app, arc, DEFAULT_RMAX, DEFAULT_AMIN, DEFAULT_RW, DEFAULT_AW);
+	
+	public OPPRestricted(Application app, Architecture arc) throws ModelException {
+		this(app, arc, DEFAULT_RMAX, DEFAULT_RMIN, DEFAULT_AMAX, DEFAULT_AMIN, DEFAULT_RW, DEFAULT_AW);
 	}
 
 	@Override
@@ -43,69 +42,52 @@ public class OPPAlternative extends AbstractOPPAlternative {
 		/********************************************************************************
 		 * Decision Variables		
 		 ********************************************************************************/
-		IloNumVar X[][] 	= new IloIntVar[app.vertexSet().size()][arc.vertexSet().size()];
-		IloNumVar Y[][][][] = new IloIntVar[app.vertexSet().size()][app.vertexSet().size()][arc.vertexSet().size()][arc.vertexSet().size()];
-		
 		try {
-			for (OPNode opnode : this.getApplication().vertexSet()) {
-				for (EXNode exnode : this.getArchitecture().vertexSet()) {
-					int i = opnode.getId();
-					int u = exnode.getId();
-					X[i][u] = modeler.boolVar("X[" + i + "][" + u + "]");
-				}					
-			}				
+			this.X = new RestrictedPlacementX(app, arc);
+			this.Y = new RestrictedPlacementY(app, arc);
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining X variables: " + exc.getMessage());
-		}
-		
-		try {
-			for (DStream dstream : this.getApplication().edgeSet()) {
-				for (Link link : this.getArchitecture().edgeSet()) {
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
-					Y[i][j][u][v] = modeler.boolVar("Y[" + i + "][" + j + "][" + u + "][" + v + "]");									 																			   
-				}					
-			}			
-		} catch (IloException exc) {
-			throw new ModelException("Error while defining Y variables: " + exc.getMessage());
+			throw new ModelException("Error while defining decision variables X and Y: " + exc.getMessage());
 		}		
 		
 		/********************************************************************************
-		 * Response Time		
+		 * Response-Time		
 		 ********************************************************************************/
 		Set<OPPath> paths = this.getApplication().getAllOperationalPaths();
 		List<IloNumExpr> Rpaths = new ArrayList<IloNumExpr>(paths.size());
 		IloNumExpr R;
 		try {
 			for (OPPath path : paths) {
-				IloLinearNumExpr Rpex = modeler.linearNumExpr();				
+				IloLinearNumExpr Rpex = modeler.linearNumExpr();	
+				IloLinearNumExpr Rptx = modeler.linearNumExpr();
+				
 				for (OPNode opnode : path.getNodes()) {
 					for (EXNode exnode : this.getArchitecture().vertexSet()) {
+						if (!opnode.isPinnableOn(exnode))
+							continue;
 						int i = opnode.getId();
 						int u = exnode.getId();
-						Rpex.addTerm(opnode.getSpeed() / exnode.getSpeedup(), X[i][u]);
+						Rpex.addTerm(opnode.getSpeed() / exnode.getSpeedup(), this.X.get(i, u));
 					}						
-				}					
+				}							
 				
-				IloLinearNumExpr Rptx = modeler.linearNumExpr();
-				for (int k = 0; k < path.size() - 1; k++) {
+				for (DStream dstream : path) {
 					for (Link link : arc.edgeSet()) {
-						int i = path.getNodes().get(k).getId();
-						int j = path.getNodes().get(k + 1).getId();
-						int u = arc.getEdgeSource(link).getId();
-						int v = arc.getEdgeTarget(link).getId();
-						Rptx.addTerm(link.getDelay(), Y[i][j][u][v]);
-					} 
-				}				
+						if (!dstream.isPinnableOn(link))
+							continue;
+						int i = dstream.getSrc().getId();
+						int j = dstream.getDst().getId();
+						int u = link.getSrc().getId();
+						int v = link.getDst().getId();
+						Rptx.addTerm(link.getDelay(), this.Y.get(i, j, u, v));
+					}
+				}					
 				
 				IloNumExpr Rp = modeler.sum(Rpex, Rptx);
 				Rpaths.add(Rp);
 			}				
 			R = modeler.max(Rpaths.toArray(new IloNumExpr[Rpaths.size()]));
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining response time: " + exc.getMessage());
+			throw new ModelException("Error while defining Response-Time: " + exc.getMessage());
 		}
 		
 		/********************************************************************************
@@ -120,110 +102,121 @@ public class OPPAlternative extends AbstractOPPAlternative {
 			
 			for (OPNode opnode : this.getApplication().vertexSet()) {
 				for (EXNode exnode : this.getArchitecture().vertexSet()) {
+					if (!opnode.isPinnableOn(exnode))
+						continue;
 					int i = opnode.getId();
 					int u = exnode.getId();
-					Aex.addTerm(Math.log(exnode.getAvailability()), X[i][u]);
+					Aex.addTerm(Math.log(exnode.getAvailability()), this.X.get(i, u));
 				}					
 			}				
 			
 			for (DStream dstream : this.getApplication().edgeSet()) {
 				for (Link link : this.getArchitecture().edgeSet()) {
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
-					Atx.addTerm(Math.log(link.getAvailability()), Y[i][j][u][v]);
+					if (!dstream.isPinnableOn(link))
+						continue;
+					int i = dstream.getSrc().getId();
+					int j = dstream.getDst().getId();
+					int u = link.getSrc().getId();
+					int v = link.getDst().getId();
+					Atx.addTerm(Math.log(link.getAvailability()), this.Y.get(i, j, u, v));
 				}					
 			}
 					
 			Alg = modeler.sum(Aex, Atx);
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining availability: " + exc.getMessage());
+			throw new ModelException("Error while defining Availability: " + exc.getMessage());
 		}
 
 		/********************************************************************************
-		 * Objective		
+		 * Objective
 		 ********************************************************************************/	
+		IloObjective obj;
 		IloNumExpr objRExpr, objAExpr, objExpr;
 		try {			
-			objRExpr = modeler.prod(R, this.getRw() / this.getRmax());
-			objAExpr = modeler.prod(Alg, this.getAw() / Math.log(this.getAmin()));
-			objExpr = modeler.sum(modeler.negative(objRExpr), modeler.negative(objAExpr));
-			IloObjective obj = modeler.maximize(objExpr);
-			super.getCPlex().addObjective(obj.getSense(), obj.getExpr(), "Alternative Objective");
+			objRExpr = modeler.prod(modeler.sum(this.getRmax(), modeler.negative(R)), this.getRw() / (this.getRmax() - this.getRmin()));
+			objAExpr = modeler.prod(modeler.sum(modeler.negative(Alg), Math.log(this.getAmin())), this.getAw() / (Math.log(this.getAmax()) - Math.log(this.getAmin())));
+			objExpr  = modeler.sum(objRExpr, objAExpr);
+			obj 	 = modeler.maximize(objExpr);
+			super.getCPlex().addObjective(obj.getSense(), obj.getExpr(), "StandardObj");
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining objective: " + exc.getMessage());
-		}		
+			throw new ModelException("Error while defining Objective Function: " + exc.getMessage());
+		}	
 		
 		/********************************************************************************
-		 * Capacity		
+		 * Capacity Bound	
 		 ********************************************************************************/
 		try {
 			for (EXNode exnode : arc.vertexSet()) {
 				IloLinearNumExpr exprCapacity = modeler.linearNumExpr();
 				for (OPNode opnode : app.vertexSet()) {
+					if (!opnode.isPinnableOn(exnode))
+						continue;
 					int i = opnode.getId();
 					int u = exnode.getId();
-					exprCapacity.addTerm(opnode.getResources(), X[i][u]);
+					exprCapacity.addTerm(opnode.getResources(), this.X.get(i, u));
 				}					
 				IloRange cnsCapacity = modeler.ge(exnode.getResources(), exprCapacity);
 				super.getCPlex().addRange(cnsCapacity.getLB(), cnsCapacity.getExpr(), cnsCapacity.getUB(), 
-						"Capacity Bound " + exnode.getName());
+						"CapacityBound-exnode:" + exnode.getId());
 			}			
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining capacity bound: " + exc.getMessage());
-		}	
-		
-		/********************************************************************************
-		 * Uniqueness		
-		 ********************************************************************************/		
-		try {
-			for (OPNode opnode : app.vertexSet()) {
-				IloLinearNumExpr exprUnicity = modeler.linearNumExpr();
-				for (EXNode exnode : arc.vertexSet()) {
-					int i = opnode.getId();
-					int u = exnode.getId();
-					exprUnicity.addTerm(1.0, X[i][u]);
-				}
-				IloRange cnsUnicity = modeler.eq(1.0, exprUnicity);
-				super.getCPlex().addRange(cnsUnicity.getLB(), cnsUnicity.getExpr(), cnsUnicity.getUB(), 
-						"Unicity Bound " + opnode.getName());
-			}			
-		} catch (IloException exc) {
-			throw new ModelException("Error while defining unicity bound: " + exc.getMessage());
+			throw new ModelException("Error while defining Capacity Bound: " + exc.getMessage());
 		}
 		
 		/********************************************************************************
-		 * Connectivity		
+		 * Uniqueness Bound	
+		 ********************************************************************************/		
+		try {
+			for (OPNode opnode : app.vertexSet()) {
+				IloLinearNumExpr exprUniqueness = modeler.linearNumExpr();
+				for (EXNode exnode : arc.vertexSet()) {
+					if (!opnode.isPinnableOn(exnode))
+						continue;
+					int i = opnode.getId();
+					int u = exnode.getId();
+					exprUniqueness.addTerm(1.0, this.X.get(i, u));
+				}
+				IloRange cnsUniqueness = modeler.eq(1.0, exprUniqueness);
+				super.getCPlex().addRange(cnsUniqueness.getLB(), cnsUniqueness.getExpr(), cnsUniqueness.getUB(), 
+						"UniquenessBound-opnode:" + opnode.getId());
+			}			
+		} catch (IloException exc) {
+			throw new ModelException("Error while defining Uniqueness Bound: " + exc.getMessage());
+		}
+		
+		/********************************************************************************
+		 * Connectivity Bound
 		 ********************************************************************************/
 		try {
 			for (DStream dstream : app.edgeSet()) {
 				for (Link link : arc.edgeSet()) {
+					if (!dstream.isPinnableOn(link))
+						continue;
 					IloLinearNumExpr exprConn1 = modeler.linearNumExpr();
 					IloLinearNumExpr exprConn2 = modeler.linearNumExpr();
-					int i = app.getEdgeSource(dstream).getId();
-					int j = app.getEdgeTarget(dstream).getId();
-					int u = arc.getEdgeSource(link).getId();
-					int v = arc.getEdgeTarget(link).getId();
+					int i = dstream.getSrc().getId();
+					int j = dstream.getDst().getId();
+					int u = link.getSrc().getId();
+					int v = link.getDst().getId();
 					
-					exprConn1.addTerm(1.0, X[i][u]);
-					exprConn1.addTerm(1.0, X[j][v]);
-					exprConn1.addTerm(-1.0, Y[i][j][u][v]);
+					exprConn1.addTerm(1.0, this.X.get(i, u));
+					exprConn1.addTerm(1.0, this.X.get(j, v));
+					exprConn1.addTerm(-1.0, this.Y.get(i, j, u, v));
 					IloRange cnsConn1 = modeler.ge(1.0, exprConn1);
 					super.getCPlex().addRange(cnsConn1.getLB(), cnsConn1.getExpr(), cnsConn1.getUB(), 
-							"Connectivity Bound (1) [" + i + "][" + j + "][" + u + "][" + v + "]");
+							"ConnectivityBound1-dstream" + i + "," + j + "-link:" + u + "," + v);
 					
-					exprConn2.addTerm(1.0, X[i][u]);
-					exprConn2.addTerm(1.0, X[j][v]);
-					exprConn2.addTerm(-2.0, Y[i][j][u][v]);
+					exprConn2.addTerm(1.0, this.X.get(i, u));
+					exprConn2.addTerm(1.0, this.X.get(j, v));
+					exprConn2.addTerm(-2.0, this.Y.get(i, j, u, v));
 					IloRange cnsConnectivityTwo = modeler.le(0.0, exprConn2);
 					super.getCPlex().addRange(cnsConnectivityTwo.getLB(), cnsConnectivityTwo.getExpr(), cnsConnectivityTwo.getUB(), 
-							"Connectivity Bound (2) [" + i + "][" + j + "][" + u + "][" + v + "]");
+							"ConnectivityBound2-dstream" + i + "," + j + "-link:" + u + "," + v);
 				}				
 			}			
 		} catch (IloException exc) {
-			throw new ModelException("Error while defining conectivity bound (one): " + exc.getMessage());
-		}
+			throw new ModelException("Error while defining Connectivity Bound: " + exc.getMessage());
+		}		
 	}
 
 }

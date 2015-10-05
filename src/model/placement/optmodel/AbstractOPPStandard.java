@@ -1,18 +1,17 @@
-package model.placement.optmodel.standard;
+package model.placement.optmodel;
 
 import control.exceptions.ModelException;
 import model.application.Application;
 import model.architecture.Architecture;
-import model.placement.optmodel.alternative.AbstractOPPModel;
 
 public abstract class AbstractOPPStandard extends AbstractOPPModel {
 	
-	protected static final double DEFAULT_RMAX = 10000.0;
-	protected static final double DEFAULT_RMIN = 1.0;
-	protected static final double DEFAULT_AMAX = 1.0;
-	protected static final double DEFAULT_AMIN = 0.0;
-	protected static final double DEFAULT_RW   = 0.5;
-	protected static final double DEFAULT_AW	 = 0.5;
+	protected static final double DEFAULT_RMAX 	= 10000.0;
+	protected static final double DEFAULT_RMIN 	= 1.0;
+	protected static final double DEFAULT_AMAX 	= 1.0;
+	protected static final double DEFAULT_AMIN 	= 0.0;
+	protected static final double DEFAULT_RW   	= 0.5;
+	protected static final double DEFAULT_AW	= 0.5;
 	
 	protected double Rmax;
 	protected double Rmin;
@@ -22,11 +21,9 @@ public abstract class AbstractOPPStandard extends AbstractOPPModel {
 	protected double Rw;
 	protected double Aw;
 
-	public AbstractOPPStandard(Application app, Architecture arc,
-			   double Rmax, double Rmin, double Amax, double Amin,
-			   double Rw, double Aw) throws ModelException {
-		super(app, arc);
-		super.getCPlex().setName("OPP MP Standard");
+	public AbstractOPPStandard(String name, Application app, Architecture arc,
+			   				   double Rmax, double Rmin, double Amax, double Amin, double Rw, double Aw) throws ModelException {
+		super(name, app, arc);
 		this.setRmax(Rmax);
 		this.setRmin(Rmin);
 		this.setAmax(Amax);

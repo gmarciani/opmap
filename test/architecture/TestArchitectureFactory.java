@@ -23,7 +23,7 @@ public class TestArchitectureFactory {
 	@Test
 	public void byNodes() {
 		ArchitectureFactory arcFactory = new ArchitectureFactory();
-		int exnodes = Default.RNDEXNODES;
+		int exnodes = Default.EXNODE_RDN;
 		
 		Architecture arc = arcFactory.setName("Random Architecture")
 									 .setDescription("Created randomly with exnodes=" + exnodes)

@@ -1,23 +1,28 @@
-package model.placement.optmodel.alternative;
+package model.placement.optmodel;
 
 import control.exceptions.ModelException;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
 import model.application.Application;
 import model.architecture.Architecture;
-import model.placement.optmodel.OPPModel;
+import model.placement.variable.PlacementX;
+import model.placement.variable.PlacementY;
 
 public abstract class AbstractOPPModel implements OPPModel {
 	
+	protected IloCplex cplex;	
 	protected Application app;
 	protected Architecture arc;	
-	protected IloCplex cplex;
+	
+	protected PlacementX X;
+	protected PlacementY Y;
 
-	public AbstractOPPModel(Application app, Architecture arc) throws ModelException {
+	public AbstractOPPModel(String name, Application app, Architecture arc) throws ModelException {
 		this.setApplication(app);
 		this.setArchitecture(arc);
 		try {
 			this.cplex = new IloCplex();
+			this.cplex.setName(name);
 		} catch (IloException exc) {
 			throw new ModelException("Error while creating model: " + exc.getMessage());
 		}
@@ -47,6 +52,16 @@ public abstract class AbstractOPPModel implements OPPModel {
 	}
 	
 	@Override
+	public PlacementX getPlacementX() {
+		return this.X;
+	}
+	
+	@Override
+	public PlacementY getPlacementY() {
+		return this.Y;
+	}
+	
+	@Override
 	public IloCplex getCPlex() {
 		return this.cplex;
 	}
@@ -56,9 +71,9 @@ public abstract class AbstractOPPModel implements OPPModel {
 	
 	@Override
 	public String toString() {
-		return "OPPModel: " + this.getCPlex().getName() + "\n" + 
-			   "objective: " + this.getCPlex().getObjective();
-				
+		return "OPPModel(" + 
+			   "name:" + this.getCPlex().getName() + "|" +
+			   "objective:" + this.getCPlex().getObjective() + ")";			
 	}
 
 }
