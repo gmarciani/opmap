@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -11,11 +12,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-
-import commons.GMath;
-import commons.Plotter;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
+import control.plotter.Plotter;
 import control.solver.OPPSolver;
 import control.solver.mp.MPSolver;
 import model.application.Application;
@@ -48,7 +47,7 @@ public class TestExperimentAlternative {
 		int expas = Default.Experiments.ModelResolution.EXPAS;		
 		int repts = Default.Experiments.ModelResolution.REPETITIONS;
 		
-		long values[] = new long[repts];
+		double values[] = new double[repts];
 		
 		for (int opnodes : compareOpnodes) {
 			XYSeries series = new XYSeries(opnodes + " OPNodes");			
@@ -82,7 +81,7 @@ public class TestExperimentAlternative {
 				}	
 				
 				if (solvable)
-					series.add(exnodes, GMath.getAverage(values));
+					series.add(exnodes, StatUtils.mean(values));
 				else
 					break;
 			}
@@ -110,7 +109,7 @@ public class TestExperimentAlternative {
 		
 		int repts = Default.Experiments.ModelResolution.REPETITIONS;
 		
-		long values[] = new long[repts];
+		double[] values = new double[repts];
 		
 		for (int exnodes : compareExnodes) {
 			XYSeries series = new XYSeries(exnodes + " EXNodes");			
@@ -144,7 +143,7 @@ public class TestExperimentAlternative {
 				}	
 				
 				if (solvable)
-					series.add(exnodes, GMath.getAverage(values));
+					series.add(exnodes, StatUtils.mean(values));
 				else
 					break;
 			}

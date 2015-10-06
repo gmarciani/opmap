@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.Clock;
 import java.time.Instant;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -16,10 +17,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import commons.GMath;
-import commons.Plotter;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
+import control.plotter.Plotter;
 import model.application.Application;
 import model.architecture.Architecture;
 import model.placement.optmodel.OPPModel;
@@ -50,7 +50,7 @@ public class TestExperimentModelCreation {
 		int expas 	= Default.Experiments.ModelCreation.EXPAS;		
 		int repts 	= Default.Experiments.ModelCreation.REPETITIONS;
 		
-		long values[] = new long[repts];
+		double values[] = new double[repts];
 		
 		for (Class<?> optmodel : compareModels) {
 			XYSeries series = new XYSeries(optmodel.getSimpleName());			
@@ -69,7 +69,7 @@ public class TestExperimentModelCreation {
 					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 				}	
 				
-				series.add(exnodes, GMath.getAverage(values));
+				series.add(exnodes, StatUtils.mean(values));
 			}
 			
 			dataset.addSeries(series);
@@ -96,7 +96,7 @@ public class TestExperimentModelCreation {
 		int oppas 	= Default.Experiments.ModelCreation.OPPAS;		
 		int repts 	= Default.Experiments.ModelCreation.REPETITIONS;
 		
-		long values[] = new long[repts];
+		double values[] = new double[repts];
 		
 		for (Class<?> optmodel : compareModels) {
 			XYSeries series = new XYSeries(optmodel.getSimpleName());
@@ -115,7 +115,7 @@ public class TestExperimentModelCreation {
 					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 				}	
 				
-				series.add(exnodes, GMath.getAverage(values));
+				series.add(exnodes, StatUtils.mean(values));
 			}
 			
 			dataset.addSeries(series);

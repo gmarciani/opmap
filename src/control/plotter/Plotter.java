@@ -1,4 +1,4 @@
-package commons;
+package control.plotter;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,11 +1,10 @@
 package model.application;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import commons.Randomizer;
+import org.apache.commons.math3.random.RandomDataGenerator;
 import model.application.opnode.OPNode;
 import model.application.opnode.OPRole;
 
@@ -29,7 +28,7 @@ public class ApplicationGenerator {
 	private static final int 	OPN_RESOURCES[] = {1, 2};
 	private static final double OPN_SPEED[] 	= {5.0, 10.0};	
 	
-	private Random rnd;
+	private RandomDataGenerator rnd;
 	
 	private String 	name;
 	private String 	desc;	
@@ -199,38 +198,38 @@ public class ApplicationGenerator {
 		int nxtid = 0;
 		
 		for (int srcnode = 1; srcnode <= this.srcnodes; srcnode++, nxtid++) {
-			double prod = Randomizer.rndDouble(this.rnd, this.srcProd[0], this.srcProd[1]);
-			int resources = Randomizer.rndInteger(this.rnd, this.opnResources[0], this.opnResources[1]);
-			double speed = Randomizer.rndDouble(this.rnd, this.opnSpeed[0], this.opnSpeed[1]);
+			double prod = this.rnd.nextUniform(this.srcProd[0], this.srcProd[1]);
+			int resources = this.rnd.nextInt(this.opnResources[0], this.opnResources[1]);
+			double speed = this.rnd.nextUniform(this.opnSpeed[0], this.opnSpeed[1]);
 			OPNode node = new OPNode(nxtid, OPRole.SRC, "src" + srcnode, x -> prod, resources, speed);			
 			srcs.add(node);
 		}
 		
 		for (int pipnode = 1; pipnode <= this.pipnodes; pipnode++, nxtid++) {
-			double cons = Randomizer.rndDouble(this.rnd, this.pipCons[0], this.pipCons[1]);
-			int resources = Randomizer.rndInteger(this.rnd, this.opnResources[0], this.opnResources[1]);
-			double speed = Randomizer.rndDouble(this.rnd, this.opnSpeed[0], this.opnSpeed[1]);
+			double cons = this.rnd.nextUniform(this.pipCons[0], this.pipCons[1]);
+			int resources = this.rnd.nextInt(this.opnResources[0], this.opnResources[1]);
+			double speed = this.rnd.nextUniform(this.opnSpeed[0], this.opnSpeed[1]);
 			OPNode node = new OPNode(nxtid, OPRole.SNK, "opr" + pipnode, x -> x * cons, resources, speed);
 			pips.add(node);
 		}		
 		
 		for (int snknode = 1; snknode <= this.snknodes; snknode++, nxtid++) {	
-			double cons = Randomizer.rndDouble(this.rnd, this.snkCons[0], this.snkCons[1]);
-			int resources = Randomizer.rndInteger(this.rnd, this.opnResources[0], this.opnResources[1]);
-			double speed = Randomizer.rndDouble(this.rnd, this.opnSpeed[0], this.opnSpeed[1]);
+			double cons = this.rnd.nextUniform(this.snkCons[0], this.snkCons[1]);
+			int resources = this.rnd.nextInt(this.opnResources[0], this.opnResources[1]);
+			double speed = this.rnd.nextUniform(this.opnSpeed[0], this.opnSpeed[1]);
 			OPNode node = new OPNode(nxtid, OPRole.SNK, "src" + snknode, x -> x * cons, resources, speed);
 			snks.add(node);
 		}				
 		
 		for (OPNode srcnode : srcs.stream().sorted().collect(Collectors.toList())) {
-			OPNode pipnode = Randomizer.rndItem(this.rnd, pips);
+			OPNode pipnode = (OPNode) this.rnd.nextSample(pips, 1)[0];
 			if (app.addStream(srcnode, pipnode))
 				visited.add(pipnode);
 		}
 		
 		while (!visited.containsAll(pips)) {
-			OPNode pipSRC = Randomizer.rndItem(this.rnd, visited);
-			OPNode pipDST = Randomizer.rndItem(this.rnd, pips.stream().filter(e -> !visited.contains(e)).collect(Collectors.toSet()));
+			OPNode pipSRC = (OPNode) this.rnd.nextSample(visited, 1)[0];
+			OPNode pipDST = (OPNode) this.rnd.nextSample(pips.stream().filter(e -> !visited.contains(e)).collect(Collectors.toSet()), 1)[0];
 			
 			if (pipSRC.getId() == pipDST.getId())
 				continue;
@@ -240,13 +239,13 @@ public class ApplicationGenerator {
 		}
 		
 		for (OPNode pipnode : app.getPipes().stream().filter(n -> app.outDegreeOf(n) == 0).collect(Collectors.toList())) {
-			OPNode snknode = Randomizer.rndItem(this.rnd, snks);
+			OPNode snknode = (OPNode) this.rnd.nextSample(snks, 1)[0];
 			app.addStream(pipnode, snknode);
 		}
 			
 		
 		for (OPNode snknode : snks.stream().sorted().collect(Collectors.toList())) {
-			OPNode pipnode = Randomizer.rndItem(this.rnd, pips);
+			OPNode pipnode = (OPNode) this.rnd.nextSample(pips, 1)[0];
 			app.addStream(pipnode, snknode);
 		}			
 		
@@ -254,7 +253,7 @@ public class ApplicationGenerator {
 	}
 	
 	private void reset() {
-		this.rnd = new Random();
+		this.rnd = new RandomDataGenerator();
 		
 		this.name = APP_NAME;
 		this.desc = APP_DESC;
