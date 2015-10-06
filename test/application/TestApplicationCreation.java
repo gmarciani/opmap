@@ -10,10 +10,12 @@ import org.junit.rules.TestName;
 import model.application.Application;
 import model.application.opnode.OPNode;
 import model.application.opnode.OPRole;
+import sample.SampleApplication;
 
 public class TestApplicationCreation {
 	
-	@Rule public TestName name = new TestName();
+	@Rule 
+	public TestName name = new TestName();
 	
 	@Before
 	public void testInfo() {
@@ -23,34 +25,21 @@ public class TestApplicationCreation {
 	}
 
 	@Test 
-	public void acyclic() {		
-		Application app = new Application("Sample Acyclic Application", "Created manually");
-		
-		OPNode node0 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
-		OPNode node1 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
-		OPNode node2 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
-		OPNode node3 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
-		OPNode node4 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
-		
-		if (!app.addStream(node0, node1)) fail("Fake cycle detected");
-		if (!app.addStream(node0, node2)) fail("Fake cycle detected");
-		if (!app.addStream(node1, node2)) fail("Fake cycle detected");
-		if (!app.addStream(node1, node3)) fail("Fake cycle detected");
-		if (!app.addStream(node2, node3)) fail("Fake cycle detected");
-		if (!app.addStream(node2, node4)) fail("Fake cycle detected");
+	public void deterministicAcyclic() {		
+		Application app = SampleApplication.getDeterministicSample();
 		
 		System.out.println(app.toPrettyString());
 	}
 	
 	@Test 
-	public void cyclic() {		
+	public void deterministicCyclic() {		
 		Application app = new Application("Sample Cyclic Application", "Created manually");
 		
-		OPNode node0 = new OPNode(0, OPRole.SRC, "prod", x -> new Long(1000), 1, 1.0);
+		OPNode node0 = new OPNode(0, OPRole.SRC, "prod", x -> 1000.0, 1, 1.0);
 		OPNode node1 = new OPNode(1, OPRole.PIP, "selection1", x -> x/2, 1, 1.0);
 		OPNode node2 = new OPNode(2, OPRole.PIP, "selection2", x -> x/2, 1, 1.0);
-		OPNode node3 = new OPNode(3, OPRole.SNK, "cons1", x -> new Long(1), 1, 1.0);
-		OPNode node4 = new OPNode(4, OPRole.SNK, "cons2", x -> new Long(1), 1, 1.0);
+		OPNode node3 = new OPNode(3, OPRole.SNK, "cons1", x -> 1.0, 1, 1.0);
+		OPNode node4 = new OPNode(4, OPRole.SNK, "cons2", x -> 1.0, 1, 1.0);
 		
 		if (!app.addStream(node0, node1)) fail("Fake cycle detected");
 		if (!app.addStream(node0, node2)) fail("Fake cycle detected");
@@ -64,4 +53,13 @@ public class TestApplicationCreation {
 		System.out.println(app.toPrettyString());
 	}
 	
+	@Test
+	public void random() {
+		Application app = SampleApplication.getRandomSample();
+		
+		if (!Application.isConsistent(app))
+			fail("Source component disconnected from sink component");		
+		
+		System.out.println(app.toPrettyString());
+	}
 }

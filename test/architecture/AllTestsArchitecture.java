@@ -6,8 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
-	TestArchitectureCreation.class,
-	TestArchitectureFactory.class
+	TestArchitectureCreation.class
 })
 public class AllTestsArchitecture {
 

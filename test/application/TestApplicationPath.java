@@ -14,7 +14,8 @@ import sample.SampleApplication;
 
 public class TestApplicationPath {
 	
-	@Rule public TestName name = new TestName();
+	@Rule 
+	public TestName name = new TestName();
 	
 	@Before
 	public void testInfo() {

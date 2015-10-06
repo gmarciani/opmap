@@ -13,11 +13,11 @@ public final class Default {
 	 * Application Deterministic Generator		
 	 ********************************************************************************/
 	
-	public static final int OPNODE_RESOURCES = 1;
-	public static final long OPNODE_SRC_FLOW = 1000;
-	public static final long OPNODE_SNK_FLOW = 1;
-	public static final double OPNODE_PIP_TRANS = 0.5;
-	public static final double OPNODE_SPEED = 1.0;
+	public static final int 	OPNODE_RESOURCES = 1;
+	public static final double 	OPNODE_SRC_FLOW = 1000.0;
+	public static final double 	OPNODE_SNK_FLOW = 1;
+	public static final double 	OPNODE_PIP_TRANS = 0.5;
+	public static final long 	OPNODE_SPEED = 1;
 	
 	/********************************************************************************
 	 * Application Random Generator		
