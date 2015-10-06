@@ -11,15 +11,15 @@ public class OPPath extends ArrayList<DStream> {
 
 	private static final long serialVersionUID = 3178541927310072502L;
 	
-	public OPPath(List<DStream> list) {
+	public OPPath(final List<DStream> list) {
 		super(list);
 	}
 	
-	public OPPath(Deque<DStream> queue) {
+	public OPPath(final Deque<DStream> queue) {
 		super(queue);
 	}
 	
-	public OPPath(DStream[] list) {
+	public OPPath(final DStream[] list) {
 		super();
 		for (DStream dstream : list)
 			super.add(dstream);

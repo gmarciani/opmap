@@ -20,13 +20,13 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 	private String name;
 	private String description;
 	
-	public Architecture(String name, String description) {
+	public Architecture(final String name, final String description) {
 		super(Link.class);
 		this.setName(name);
 		this.setDescription(description);	
 	}
 	
-	public Architecture(String name) {
+	public Architecture(final String name) {
 		this(name, null);
 	}	
 	
@@ -38,7 +38,7 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 		return this.name;
 	}
 	
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 	
@@ -46,17 +46,17 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 		return this.description;
 	}
 	
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 	
-	public static Architecture readJSON(String json) throws JsonParseException, JsonMappingException, IOException {
+	public static Architecture readJSON(final String json) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		Architecture arc = mapper.readValue(json, Architecture.class);
 		return arc;		
 	}
 	
-	public static String writeJSON(Architecture arc) throws JsonProcessingException {
+	public static String writeJSON(final Architecture arc) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(arc);	
 		return json;

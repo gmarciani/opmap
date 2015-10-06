@@ -13,16 +13,16 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 	
 	private OPNode src;
 	private OPNode dst;
-	private long flow;	
+	private double flow;	
 
-	public DStream(OPNode src, OPNode dst, long flow) {
+	public DStream(final OPNode src, final OPNode dst, final double flow) {
 		this.setSrc(src);
 		this.setDst(dst);
 		this.setFlow(flow);
 		this.getDst().addFlowIn(this.getFlow());
 	}
 	
-	public DStream(OPNode src, OPNode dst) {
+	public DStream(final OPNode src, final OPNode dst) {
 		this(src, dst, src.getFlowOut());
 	}
 	
@@ -30,7 +30,7 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 		return this.src;
 	}
 	
-	private void setSrc(OPNode src) {
+	private void setSrc(final OPNode src) {
 		this.src = src;
 	}
 	
@@ -38,15 +38,15 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 		return this.dst;
 	}
 	
-	private void setDst(OPNode dst) {
+	private void setDst(final OPNode dst) {
 		this.dst = dst;
 	}
 
-	public long getFlow() {
+	public double getFlow() {
 		return this.flow;
 	}
 
-	public void setFlow(long flow) {
+	public void setFlow(final double flow) {
 		this.flow = flow;
 	}	
 	

@@ -16,15 +16,15 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	private int id;
 	private OPRole role;
 	private String name;
-	private Function<Long, Long> transformation;
+	private Function<Double, Double> transformation;
 	private int resources;	
 	private double speed;	
-	private long flowIn;
-	private long flowOut;	
+	private double flowIn;
+	private double flowOut;	
 	private Set<Integer> pinnables;
 	
-	public OPNode(int id, OPRole role, String name, Function<Long, Long> transformation, 
-			   			int resources, double speed, Set<Integer> pinnables) {
+	public OPNode(final int id, final OPRole role, final String name, final Function<Double, Double> transformation, 
+			   	  final int resources, final double speed, final Set<Integer> pinnables) {
 		this.setId(id);
 		this.setRole(role);
 		this.setName(name);
@@ -32,16 +32,16 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		this.setResources(resources);
 		this.setSpeed(speed);
 		
-		if (this.isSource())
-		this.setFlowOut(this.getTransformation().apply(new Long(0)));
+		/*if (this.isSource())
+			this.setFlowOut(this.getTransformation().apply(new Long(0)));
 		else if (this.isSink())
-		this.setFlowOut(0);
+			this.setFlowOut(0);*/
 		
 		this.setPinnables(pinnables);
 	}
 
-	public OPNode(int id, OPRole role, String name, Function<Long, Long> transformation, 
-						int resources, double speed) {
+	public OPNode(final int id, final OPRole role, final String name, final Function<Double, Double> transformation, 
+				  final int resources, final double speed) {
 		this(id, role, name, transformation, resources, speed, null);
 	}
 	
@@ -49,7 +49,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.id;
 	}
 	
-	private void setId(int id) {
+	private void setId(final int id) {
 		this.id = id;
 	}
 
@@ -57,7 +57,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.role;
 	}
 	
-	private void setRole(OPRole role) {
+	private void setRole(final OPRole role) {
 		this.role = role;
 	}
 
@@ -65,15 +65,15 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.name;
 	}
 	
-	private void setName(String name) {
+	private void setName(final String name) {
 		this.name = name;
 	}
 	
-	public Function<Long, Long> getTransformation() {
+	public Function<Double, Double> getTransformation() {
 		return this.transformation;
 	}
 	
-	private void setTransformation(Function<Long, Long> transformation) {
+	private void setTransformation(final Function<Double, Double> transformation) {
 		this.transformation = transformation;
 	}
 	
@@ -81,7 +81,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.resources;
 	}
 
-	public void setResources(int resources) {
+	public void setResources(final int resources) {
 		this.resources = resources;
 	}
 
@@ -89,24 +89,24 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
-	public long getFlowIn() {
+	public double getFlowIn() {
 		return this.flowIn;
 	}
 
-	public void setFlowIn(long flowIn) {
+	public void setFlowIn(final double flowIn) {
 		this.flowIn = flowIn;
 		this.flowOut = this.transformation.apply(this.flowIn);
 	}
 
-	public long getFlowOut() {
+	public double getFlowOut() {
 		return this.flowOut;
 	}
 
-	public void setFlowOut(long flowOut) {
+	public void setFlowOut(final double flowOut) {
 		this.flowOut = flowOut;
 	}
 	
@@ -114,7 +114,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.pinnables;
 	}
 	
-	private void setPinnables(Set<Integer> pinnables) {
+	private void setPinnables(final Set<Integer> pinnables) {
 		this.pinnables = pinnables;
 	}
 	
@@ -137,11 +137,11 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.getRole().equals(OPRole.PIP);
 	}	
 	
-	public void addFlowIn(long flow) {
+	public void addFlowIn(final double flow) {
 		this.setFlowIn(this.getFlowIn() + flow);
 	}
 	
-	public boolean isPinnableOn(EXNode exnode) {
+	public boolean isPinnableOn(final EXNode exnode) {
 		if (this.pinnables == null)
 			return true;
 		else

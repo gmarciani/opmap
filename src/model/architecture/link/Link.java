@@ -12,11 +12,11 @@ public class Link implements Comparable<Link>, Serializable {
 	
 	private EXNode src;
 	private EXNode dst;
-	private double delay;
-	private double bandwidth;
+	private long delay;
+	private long bandwidth;
 	private double availability;
 	
-	public Link(EXNode src, EXNode dst, double delay, double bandwidth, double availability) {
+	public Link(final EXNode src, final EXNode dst, final long delay, final long bandwidth, final double availability) {
 		this.setSrc(src);
 		this.setDst(dst);
 		this.setDelay(delay);
@@ -24,15 +24,15 @@ public class Link implements Comparable<Link>, Serializable {
 		this.setAvailability(availability);
 	}
 	
-	public Link(EXNode src, EXNode dst) {
-		this(src, dst, 0.0, 0.0, 0.0);
+	public Link(final EXNode src, final EXNode dst) {
+		this(src, dst, 0, 0, 0.0);
 	}
 
 	public EXNode getSrc() {
 		return this.src;
 	}
 
-	private void setSrc(EXNode src) {
+	private void setSrc(final EXNode src) {
 		this.src = src;
 	}
 
@@ -40,23 +40,23 @@ public class Link implements Comparable<Link>, Serializable {
 		return this.dst;
 	}
 
-	private void setDst(EXNode dst) {
+	private void setDst(final EXNode dst) {
 		this.dst = dst;
 	}	
 	
-	public double getDelay() {
+	public long getDelay() {
 		return this.delay;
 	}
 
-	public void setDelay(double delay) {
+	public void setDelay(final long delay) {
 		this.delay = delay;
 	}
 
-	public double getBandwidth() {
+	public long getBandwidth() {
 		return this.bandwidth;
 	}
 
-	public void setBandwidth(double bandwidth) {
+	public void setBandwidth(final long bandwidth) {
 		this.bandwidth = bandwidth;
 	}
 
@@ -64,7 +64,7 @@ public class Link implements Comparable<Link>, Serializable {
 		return this.availability;
 	}
 
-	public void setAvailability(double availability) {
+	public void setAvailability(final double availability) {
 		if (availability < 0 || availability > 1)
 			this.availability = 0.5;
 		else

@@ -13,7 +13,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 	private double speedup;
 	private double availability;
 
-	public EXNode(int id, String name, int resources, double speedup, double availability) {
+	public EXNode(final int id, final String name, final int resources, final double speedup, final double availability) {
 		this.setId(id);
 		this.setName(name);
 		this.setResources(resources);
@@ -25,7 +25,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 		return this.id;
 	}
 
-	private void setId(int id) {
+	private void setId(final int id) {
 		this.id = id;
 	}
 
@@ -33,7 +33,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -41,7 +41,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 		return this.resources;
 	}
 
-	public void setResources(int resources) {
+	public void setResources(final int resources) {
 		this.resources = resources;
 	}
 
@@ -49,7 +49,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 		return this.speedup;
 	}
 
-	public void setSpeedup(double speedup) {
+	public void setSpeedup(final double speedup) {
 		this.speedup = speedup;
 	}
 
@@ -57,7 +57,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 		return this.availability;
 	}
 
-	public void setAvailability(double availability) {
+	public void setAvailability(final double availability) {
 		this.availability = availability;
 	}	
 	

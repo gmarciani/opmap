@@ -26,13 +26,13 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 	private String name;
 	private String description;
 	
-	public Application(String name, String description) {
+	public Application(final String name, final String description) {
 		super(DStream.class);
 		this.setName(name);
 		this.setDescription(description);
 	}
 	
-	public Application(String name) {
+	public Application(final String name) {
 		this(name, null);
 	}
 	
@@ -44,7 +44,7 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return this.name;
 	}
 	
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 	
@@ -52,7 +52,7 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return this.description;
 	}
 	
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 	
@@ -68,11 +68,11 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return super.vertexSet().stream().filter(v -> v.isPipe()).collect(Collectors.toSet());
 	}
 	
-	public boolean addOperational(OPNode opnode) {
+	public boolean addOperational(final OPNode opnode) {
 		return super.addVertex(opnode);
 	}
 		
-	public boolean addStream(OPNode src, OPNode dst) {
+	public boolean addStream(final OPNode src, final OPNode dst) {
 		DStream dstream = new DStream(src, dst);
 		if (!super.vertexSet().contains(dstream.getSrc()))
 			super.addVertex(dstream.getSrc());
@@ -98,7 +98,7 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return paths;
 	}
 	
-	public Set<OPPath> getOperationalPaths(OPNode srcnode) {
+	public Set<OPPath> getOperationalPaths(final OPNode srcnode) {
 		Set<OPPath> paths = new HashSet<OPPath>();
 		
 		for (OPNode snknode : this.getSinks()) {
@@ -112,17 +112,17 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 		return paths;
 	}
 	
-	protected List<DStream> findWorstPath(OPNode srcnode, OPNode snknode) {
+	protected List<DStream> findWorstPath(final OPNode srcnode, final OPNode snknode) {
 		return BellmanFordShortestPath.findPathBetween(this, srcnode, snknode);
 	}
 	
-	public static Application readJSON(String json) throws JsonParseException, JsonMappingException, IOException {
+	public static Application readJSON(final String json) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		Application app = mapper.readValue(json, Application.class);
 		return app;		
 	}
 	
-	public static String writeJSON(Application app) throws JsonProcessingException {
+	public static String writeJSON(final Application app) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(app);	
 		return json;
