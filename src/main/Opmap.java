@@ -24,7 +24,7 @@ public class Opmap {
 		Report report = solver.solve(model);
 
 		System.out.println(report);
-
+		
 	}
 
 }
