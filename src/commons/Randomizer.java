@@ -17,6 +17,10 @@ public final class Randomizer {
 		return rnd.nextInt(ub) + lb;
 	}
 	
+	public static long rndLong(Random rnd, final long lb, final long ub) {			
+		return lb + (ub - lb) * rnd.nextLong();
+	}
+	
 	public static double rndDouble(Random rnd, final double lb, final double ub) {		
 		return lb + (ub - lb) * rnd.nextDouble();
 	}
