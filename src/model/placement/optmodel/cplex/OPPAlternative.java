@@ -135,7 +135,7 @@ public class OPPAlternative extends AbstractOPPAlternative {
 		try {			
 			objRExpr = modeler.prod(R, this.getRw() / this.getRmax());
 			objAExpr = modeler.prod(Alg, this.getAw() / Math.log(this.getAmin()));
-			objExpr  = modeler.sum(modeler.negative(objRExpr), modeler.negative(objAExpr));
+			objExpr  = modeler.sum(modeler.negative(objRExpr), objAExpr);
 			obj 	 = modeler.maximize(objExpr);
 			super.getCPlex().addObjective(obj.getSense(), obj.getExpr(), "AlternativeObj");
 		} catch (IloException exc) {
