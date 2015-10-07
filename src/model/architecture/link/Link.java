@@ -12,11 +12,11 @@ public class Link implements Comparable<Link>, Serializable {
 	
 	private EXNode src;
 	private EXNode dst;
-	private long delay;
-	private long bandwidth;
+	private double delay;
+	private double bandwidth;
 	private double availability;
 	
-	public Link(final EXNode src, final EXNode dst, final long delay, final long bandwidth, final double availability) {
+	public Link(final EXNode src, final EXNode dst, final double delay, final double bandwidth, final double availability) {
 		this.setSrc(src);
 		this.setDst(dst);
 		this.setDelay(delay);
@@ -44,19 +44,19 @@ public class Link implements Comparable<Link>, Serializable {
 		this.dst = dst;
 	}	
 	
-	public long getDelay() {
+	public double getDelay() {
 		return this.delay;
 	}
 
-	public void setDelay(final long delay) {
+	public void setDelay(final double delay) {
 		this.delay = delay;
 	}
 
-	public long getBandwidth() {
+	public double getBandwidth() {
 		return this.bandwidth;
 	}
 
-	public void setBandwidth(final long bandwidth) {
+	public void setBandwidth(final double bandwidth) {
 		this.bandwidth = bandwidth;
 	}
 

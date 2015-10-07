@@ -2,6 +2,7 @@ package sample;
 
 import static org.junit.Assert.fail;
 
+import control.exceptions.GeneratorException;
 import model.architecture.Architecture;
 import model.architecture.ArchitectureGenerator;
 import model.architecture.exnode.EXNode;
@@ -11,7 +12,10 @@ public final class SampleArchitecture {
 
 	private SampleArchitecture() {}
 	
-	public static Architecture getDeterministicSample() {
+	/********************************************************************************
+	 * Deterministic
+	 ********************************************************************************/	
+	public static Architecture deterministic() {
 		Architecture arc = new Architecture("Sample Architecture", "Created manually");
 		
 		EXNode node0 = new EXNode(0, "gsensor1", Default.EXNODE_RESOURCES, Default.EXNODE_SPEEDUP, Default.EXNODE_AVAILABILITY);
@@ -32,24 +36,53 @@ public final class SampleArchitecture {
 		return arc;
 	}
 	
-	public static final Architecture getRandomSample() {
-		return getRandomSample(Default.EXNODE_RDN);
-	}
 	
-	public static Architecture getRandomSample(final int exnodes) {
+	/********************************************************************************
+	 * Random: Uniform distribution of settings
+	 ********************************************************************************/	
+	public static Architecture randomUniform() {
 		ArchitectureGenerator arcGen = new ArchitectureGenerator();
 		
-		Architecture arc = arcGen.setName("Random Architecture")
-								 .setDescription("Created randomly with exnodes=" + exnodes)
-				 				 .setEXNodes(exnodes)
-				 				 .setEXNodeConnectivity(80.0, 100.0)
-				 				 .setEXNodeResources(2, 4)
-				 				 .setEXNodeSpeedup(2.0, 8.0)
-				 				 .setEXNodeAvailability(0.6, 0.7)
-				 				 .setLinkDelay(30, 3000)
-				 				 .setLinkBandwidth(1000000, 1000000000)
-				 				 .setLinkAvailability(0.7, 0.9)
-				 				 .create();
+		Architecture arc = null;
+		try {
+			arc = arcGen.setName("Random Architecture")
+									 .setDescription("Created randomly (uniform)")
+					 				 .setEXNodes(5)
+					 				 .setEXNodeResources(2, 4)
+					 				 .setEXNodeSpeedup(2.0, 8.0)
+					 				 .setEXNodeAvailability(0.6, 0.7)
+					 				 .setLinkDelay(30, 3000)
+					 				 .setLinkBandwidth(1000000, 1000000000)
+					 				 .setLinkAvailability(0.7, 0.9)
+					 				 .create();
+		} catch (GeneratorException exc) {
+			exc.printStackTrace();
+		}
+		
+		return arc;
+	}
+	
+	/********************************************************************************
+	 * Random: Normal distribution of settings (mean, variance)
+	 ********************************************************************************/	
+	public static Architecture randomNormal() {
+		ArchitectureGenerator arcGen = new ArchitectureGenerator();
+		
+		Architecture arc = null;
+		try {
+			arc = arcGen.setName("Random Architecture")
+									 .setDescription("Created randomly (gaussian)")
+					 				 .setEXNodes(5)
+					 				 .setEXNodeResources(2, 4, 2.0)
+					 				 .setEXNodeSpeedup(2.0, 8.0, 2.0)
+					 				 .setEXNodeAvailability(0.6, 0.7, 2.0)
+					 				 .setLinkDelay(30, 3000, 2.0)
+					 				 .setLinkBandwidth(1000000, 1000000000, 2.0)
+					 				 .setLinkAvailability(0.7, 0.9, 2.0)
+					 				 .create();
+		} catch (GeneratorException exc) {
+			exc.printStackTrace();
+		}
 		
 		return arc;
 	}

@@ -22,14 +22,21 @@ public class TestArchitectureCreation {
 
 	@Test 
 	public void deterministic() {		
-		Architecture arc = SampleArchitecture.getDeterministicSample();
+		Architecture arc = SampleArchitecture.deterministic();
 		
 		System.out.println(arc.toPrettyString());
 	}
 	
 	@Test
-	public void random() {
-		Architecture arc = SampleArchitecture.getRandomSample();
+	public void randomUniform() {
+		Architecture arc = SampleArchitecture.randomUniform();
+		
+		System.out.println(arc.toPrettyString());
+	}
+	
+	@Test
+	public void randomNormal() {
+		Architecture arc = SampleArchitecture.randomNormal();
 		
 		System.out.println(arc.toPrettyString());
 	}
