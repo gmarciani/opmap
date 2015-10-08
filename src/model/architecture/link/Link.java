@@ -101,12 +101,14 @@ public class Link implements Comparable<Link>, Serializable {
 	
 	@Override 
 	public String toString() {
-		return "Link(" + 
-			   "src:" + this.getSrc().getId() + ";" +
-			   "dst:" + this.getDst().getId() + ";" +
-			   "delay:" + this.getDelay() + ";" + 
-			   "bandwidth:" + this.getBandwidth() + ";" + 
-			   "availability:" + this.getAvailability() + ")";
+		String str = String.format("Link(src:%d|dst:%d|delay:%f|bandwidth:%f|availability:%f",
+				this.getSrc().getId(),
+				this.getDst().getId(),
+				this.getDelay(),
+				this.getBandwidth(),
+				this.getAvailability());
+		
+		return str;
 	}
 	
 	@Override 

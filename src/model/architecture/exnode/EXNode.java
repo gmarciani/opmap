@@ -77,25 +77,26 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 	}	
 	
 	public String toPrettyString() {
-		String str = "#exnode# ";
+		String str = String.format("#exnode# id:%d|name:%s|resources:%d|speedup:%f|availability:%f",
+				this.getId(),
+				this.getName(),
+				this.getResources(),
+				this.getSpeedup(),
+				this.getAvailability());
 		
-		str += "id:" + this.getId() + "|";
-		str += "name:" + this.getName() + "|";
-		str += "resources:" + this.getResources() + "|";
-		str += "speedup:" + this.getSpeedup() + "|";
-		str += "availability:" + this.getAvailability();
-		
-		return str;		
+		return str;	
 	}
 	
 	@Override 
 	public String toString() {
-		return "EXNode(" +
-				"id:" + this.getId() + ";" + 
-				"name:" + this.getName() + ";" + 
-				"resources:" + this.getResources() + ";" + 
-				"speedup:" + this.getSpeedup() + ";" + 
-				"availability:" + this.getAvailability() + ")";
+		String str = String.format("EXNode(id:%d|name:%s|resources:%d|speedup:%f|availability:%f)",
+				this.getId(),
+				this.getName(),
+				this.getResources(),
+				this.getSpeedup(),
+				this.getAvailability());
+		
+		return str;
 	}
 	
 	@Override 

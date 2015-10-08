@@ -63,30 +63,24 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 	}
 	
 	public String toPrettyString() {
-		String str = "# Architecture #\n";
-		
-		str += "name: " + this.getName() + "\n";
-		str += "desc: " + this.getDescription() + "\n";
-		str += "nodes:\n";
-		
-		for (EXNode exnode : this.vertexSet().stream().sorted().collect(Collectors.toList()))
-			str += "\t" + exnode.toPrettyString() + "\n";
-		
-		str += "edges:\n";
-		
-		for (Link link : this.edgeSet().stream().sorted().collect(Collectors.toList()))
-			str += "\t" + link.toPrettyString() + "\n";			
+		String str = String.format("#architecture#\nname:%s\ndesc:%s\nexnodes:\n%s\nlinks:\n%s",
+				this.getName(),
+				this.getDescription(),
+				this.vertexSet().stream().sorted().map(exnode -> exnode.toPrettyString()).collect(Collectors.joining("\n")),
+				this.edgeSet().stream().sorted().map(link ->link.toPrettyString()).collect(Collectors.joining("\n")));		
 		
 		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		return "Architecture(" + 
-			   "name:" + this.getName() + ";" + 
-			   "description:" + this.getDescription() + ";" + 
-			   "nodes:" +  this.vertexSet() + ";" + 
-			   "links:" + this.edgeSet() + ")";
+		String str = String.format("Architecture(name:%s|desc:%s|exnodes:%s|links:%s)",
+				this.getName(),
+				this.getDescription(),
+				this.vertexSet(),
+				this.edgeSet());
+		
+		return str;
 	}
 	
 }
