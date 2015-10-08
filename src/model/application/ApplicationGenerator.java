@@ -14,21 +14,21 @@ import model.application.opnode.OPRole;
 
 public final class ApplicationGenerator {	
 	
-	private static final String APP_NAME 	 = "Sample Application";
-	private static final String APP_DESC 	 = "Randomly generated";
+	private static final String APP_NAME 	= "Sample Application";
+	private static final String APP_DESC 	= "Randomly generated";	
 	
-	private static final double OPN_CONN[] 		= {50.0, 100.0};
+	private static final int 	OPN_SRC 	= 1;
+	private static final int 	OPN_PIP 	= 1;
+	private static final int 	OPN_SNK 	= 1;
+	private static final double OPN_CONN[] 	= {0.5, 1.0};
+	private static final double OPN_PINN[]	= {1.0, 1.0};
 	
-	private static final int 	OPN_SRC = 1;
-	private static final int 	OPN_PIP = 1;
-	private static final int 	OPN_SNK = 1;
+	private static final double	SRC_PROD[] 	= {1000, 10000};
+	private static final double PIP_CONS[] 	= {0.5, 0.8};
+	private static final double SNK_CONS[] 	= {0.7, 0.9};
 	
-	private static final double	SRC_PROD[]		= {1000, 10000};
-	private static final double PIP_CONS[]		= {0.5, 0.8};
-	private static final double SNK_CONS[]		= {0.7, 0.9};
-	
-	private static final int 	OPN_RESOURCES[] = {1, 2};
-	private static final double OPN_SPEED[] 	= {5.0, 10.0};	
+	private static final int 	OPN_RES[] 	= {1, 2};
+	private static final double OPN_SPEED[] = {5.0, 10.0};		
 	
 	private RandomDataGenerator rnd;
 	
@@ -41,6 +41,9 @@ public final class ApplicationGenerator {
 	
 	private double opnConn[];
 	private double opnConnVar;
+	
+	private double opnPinn[];
+	private double opnPinnVar;
 	
 	private double srcProd[];
 	private double srcProdVar;
@@ -56,14 +59,18 @@ public final class ApplicationGenerator {
 	
 	private double opnSpeed[];	
 	private double opnSpeedVar;
+	
+	Set<Integer> exnodes;
 
-	public ApplicationGenerator() {
-		this.opnConn = new double[2];		
+	public ApplicationGenerator() {		
+		this.opnConn = new double[2];
+		this.opnPinn = new double[2];
 		this.srcProd = new double[2];
 		this.pipCons = new double[2];
 		this.snkCons = new double[2];		
 		this.opnRes  = new int[2];
-		this.opnSpeed = new double[2];		
+		this.opnSpeed = new double[2];	
+		this.exnodes = new HashSet<Integer>();
 		this.reset();
 	}
 	
@@ -129,6 +136,28 @@ public final class ApplicationGenerator {
 		this.opnConn[0] = min;
 		this.opnConn[1] = max;
 		this.opnConnVar = var;
+		return this;
+	}
+	
+	public ApplicationGenerator setOPNodePinnability(final Set<Integer> exnodes, final double min, final double max) throws GeneratorException {
+		if (min > max || min <= 0 || max <= 0)
+			throw new GeneratorException("Invalid arguments");
+		this.opnPinn[0] = min;
+		this.opnPinn[1] = max;
+		this.opnPinnVar = 0.0;
+		this.exnodes.clear();
+		this.exnodes.addAll(exnodes);
+		return this;
+	}
+	
+	public ApplicationGenerator setOPNodePinnability(final Set<Integer> exnodes, final double min, final double max, final double var) throws GeneratorException {
+		if (min > max || min <= 0 || max <= 0 || var < 0.0)
+			throw new GeneratorException("Invalid arguments");
+		this.opnPinn[0] = min;
+		this.opnPinn[1] = max;
+		this.opnPinnVar = var;
+		this.exnodes.clear();
+		this.exnodes.addAll(exnodes);
 		return this;
 	}
 	
@@ -240,6 +269,8 @@ public final class ApplicationGenerator {
 		
 		this.streams(app, nodes);
 		
+		this.pinnability(app);
+		
 		this.reset();
 		
 		return app;		
@@ -266,7 +297,7 @@ public final class ApplicationGenerator {
 			double cons = GMath.randomNormal(this.rnd, this.pipCons[0], this.pipCons[1], this.pipConsVar);
 			int resources = GMath.randomNormalInt(this.rnd, this.opnRes[0], this.opnRes[1], this.opnResVar);
 			double speed = GMath.randomNormal(this.rnd, this.opnSpeed[0], this.opnSpeed[1], this.opnSpeedVar);
-			OPNode node = new OPNode(nxtid, OPRole.PIP, "opr" + pipnode, x -> x * cons, resources, speed);
+			OPNode node = new OPNode(nxtid, OPRole.PIP, "pip" + pipnode, x -> x * cons, resources, speed);
 			nodes.add(node);
 		}		
 		
@@ -303,8 +334,8 @@ public final class ApplicationGenerator {
 			int outDegree = GMath.randomNormalInt(this.rnd, this.pipnodes * this.opnConn[0], 
 															this.pipnodes * this.opnConn[1], 
 															this.opnConnVar);
-			List<OPNode> possiblePips = pips.stream().filter(node -> !vstd.contains(node) && !pipSRC.equals(node)).collect(Collectors.toList());
-			List<Object> connectables = GMath.randomElements(this.rnd, possiblePips, outDegree);
+			List<OPNode> notvstd = pips.stream().filter(node -> !vstd.contains(node) && !pipSRC.equals(node)).collect(Collectors.toList());
+			List<Object> connectables = GMath.randomElements(this.rnd, notvstd, outDegree);
 			
 			for (Object pipDST : connectables)
 				if (app.addStream(pipSRC, (OPNode)pipDST))
@@ -314,15 +345,56 @@ public final class ApplicationGenerator {
 		Set<OPNode> endpips = app.getPipes().stream().filter(node -> app.outDegreeOf(node) == 0).collect(Collectors.toSet());	
 		for (OPNode pipnode : endpips) {
 			OPNode snknode = (OPNode) GMath.randomElement(this.rnd, snks);
-			app.addStream(pipnode, snknode);
+			if (app.addStream(pipnode, snknode))
+				vstd.add(snknode);
 		}					
 		
-		for (OPNode snknode : snks) {
+		Set<OPNode> notrcdsnks = snks.stream().filter(node -> !vstd.contains(node)).collect(Collectors.toSet());
+		for (OPNode snknode : notrcdsnks) {
 			OPNode pipnode = (OPNode) GMath.randomElement(this.rnd, pips);
-			app.addStream(pipnode, snknode);
+			if (app.addStream(pipnode, snknode))
+				vstd.add(snknode);
 		}
 	}
 	
+	private void pinnability(Application app) {
+		Set<Integer> pinnableAsSrc = new HashSet<Integer>();
+		Set<Integer> pinnableAsSnk = new HashSet<Integer>();
+		Set<Integer> pinnableAsPip = new HashSet<Integer>();
+		Set<Integer> pinnedAsSrc = new HashSet<Integer>();
+		Set<Integer> pinnedAsSnk = new HashSet<Integer>();
+		Set<Integer> pinnedAsPip = new HashSet<Integer>();
+		
+		pinnableAsSrc.addAll(this.exnodes);		
+		for (OPNode srcnode : app.getSources()) {
+			Integer exnodeid = (Integer) GMath.randomElement(this.rnd, pinnableAsSrc);
+			if (srcnode.addPinnable(exnodeid)) {
+				pinnedAsSrc.add(exnodeid);
+				pinnableAsSrc.remove(exnodeid);
+			}							
+		}
+		
+		pinnableAsSnk.addAll(this.exnodes.stream().filter(nodeid -> !pinnedAsSrc.contains(nodeid)).collect(Collectors.toSet()));		
+		for (OPNode snknode : app.getSinks()) {
+			Integer exnodeid = (Integer) GMath.randomElement(this.rnd, pinnableAsSnk);
+			if (snknode.addPinnable(exnodeid)) {
+				pinnedAsSnk.add(exnodeid);
+				pinnableAsSnk.remove(exnodeid);
+			}							
+		}
+		
+		pinnableAsPip.addAll(this.exnodes.stream().filter(nodeid -> !pinnedAsSrc.contains(nodeid) && !pinnedAsSnk.contains(nodeid)).collect(Collectors.toSet()));
+		for (OPNode pipnode : app.getPipes()) {
+			int pinnDegree = GMath.randomNormalInt(this.rnd, pinnableAsPip.size() * this.opnPinn[0], pinnableAsPip.size() * this.opnPinn[1], this.opnPinnVar);
+			List<Object> exnodeids = GMath.randomElements(this.rnd, pinnableAsPip, pinnDegree);
+			for (Object exnodeid : exnodeids) {
+				if (pipnode.addPinnable((Integer)exnodeid))
+					pinnedAsPip.add((Integer)exnodeid);
+			}				
+		}
+		
+			
+	}
 	
 	/********************************************************************************
 	 * Reset		
@@ -337,6 +409,7 @@ public final class ApplicationGenerator {
 		this.pipnodes = OPN_PIP;
 		this.snknodes = OPN_SNK;		
 		this.opnConn  = OPN_CONN;		
+		this.opnPinn  = OPN_PINN;
 		
 		this.srcProd[0] = SRC_PROD[0];
 		this.srcProd[1] = SRC_PROD[1];
@@ -345,18 +418,20 @@ public final class ApplicationGenerator {
 		this.snkCons[0] = SNK_CONS[0];
 		this.snkCons[1] = SNK_CONS[1];	
 		
-		this.opnRes[0]   = OPN_RESOURCES[0];
-		this.opnRes[1]   = OPN_RESOURCES[1];
+		this.opnRes[0]   = OPN_RES[0];
+		this.opnRes[1]   = OPN_RES[1];
 		this.opnSpeed[0] = OPN_SPEED[0];
-		this.opnSpeed[1] = OPN_SPEED[1];
+		this.opnSpeed[1] = OPN_SPEED[1];		
 		
 		this.opnConnVar  = 0.0;
+		this.opnPinnVar	 = 0.0;
 		this.srcProdVar  = 0.0;
 		this.pipConsVar  = 0.0;
 		this.snkConsVar  = 0.0;
 		this.opnResVar   = 0.0;
-		this.opnSpeedVar = 0.0;
+		this.opnSpeedVar = 0.0;		
 		
+		this.exnodes.clear();
 	}
 
 }

@@ -22,27 +22,23 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	private double flowIn;
 	private double flowOut;	
 	private Set<Integer> pinnables;
+	private boolean alwaysPinnable;
 	
 	public OPNode(final int id, final OPRole role, final String name, final Function<Double, Double> transformation, 
-			   	  final int resources, final double speed, final Set<Integer> pinnables) {
+			   	  final int resources, final double speed) {
 		this.setId(id);
 		this.setRole(role);
 		this.setName(name);
 		this.setTransformation(transformation);		
 		this.setResources(resources);
 		this.setSpeed(speed);
+		this.setPinnables(new HashSet<Integer>());
+		this.setAlwaysPinnable(true);
 		
-		/*if (this.isSource())
-			this.setFlowOut(this.getTransformation().apply(new Long(0)));
+		if (this.isSource())
+			this.setFlowOut(this.getTransformation().apply(0.0));
 		else if (this.isSink())
-			this.setFlowOut(0);*/
-		
-		this.setPinnables(pinnables);
-	}
-
-	public OPNode(final int id, final OPRole role, final String name, final Function<Double, Double> transformation, 
-				  final int resources, final double speed) {
-		this(id, role, name, transformation, resources, speed, null);
+			this.setFlowOut(0);
 	}
 	
 	public int getId() {
@@ -114,15 +110,21 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.pinnables;
 	}
 	
-	private void setPinnables(final Set<Integer> pinnables) {
+	public void setPinnables(final Set<Integer> pinnables) {
 		this.pinnables = pinnables;
 	}
 	
+	public boolean addPinnable(final int exnodeid) {
+		this.alwaysPinnable = false;
+		return this.pinnables.add(exnodeid);
+	}
+	
 	public boolean addPinnable(final EXNode exnode) {
-		if (this.pinnables == null) {
-			this.pinnables = new HashSet<Integer>();
-		}
-		return this.pinnables.add(exnode.getId());
+		return this.addPinnable(exnode.getId());
+	}
+	
+	public void setAlwaysPinnable(final boolean alwaysPinnable) {
+		this.alwaysPinnable = alwaysPinnable;
 	}
 	
 	public boolean isSource() {
@@ -137,12 +139,16 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 		return this.getRole().equals(OPRole.PIP);
 	}	
 	
+	public boolean isAlwaysPinnable() {
+		return this.alwaysPinnable;
+	}
+	
 	public void addFlowIn(final double flow) {
 		this.setFlowIn(this.getFlowIn() + flow);
 	}
 	
 	public boolean isPinnableOn(final EXNode exnode) {
-		if (this.pinnables == null)
+		if (this.isAlwaysPinnable())
 			return true;
 		else
 			return this.pinnables.contains(exnode.getId());
@@ -172,7 +178,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 				this.getSpeed(),
 				this.getFlowIn(),
 				this.getFlowOut(),
-				(this.getPinnables()!=null)?(this.getPinnables().isEmpty()?"none":this.getPinnables()):"every");
+				this.isAlwaysPinnable()?"every":this.getPinnables());
 		
 		return str;
 	}
@@ -187,7 +193,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 				this.getSpeed(),
 				this.getFlowIn(),
 				this.getFlowOut(),
-				this.getPinnables());
+				this.isAlwaysPinnable()?"every":this.getPinnables());
 		
 		return str;
 	}

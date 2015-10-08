@@ -10,7 +10,6 @@ import org.junit.rules.TestName;
 import model.application.Application;
 import model.application.opnode.OPNode;
 import model.application.opnode.OPRole;
-import sample.SampleApplication;
 
 public class TestApplicationCreation {
 	
@@ -27,6 +26,8 @@ public class TestApplicationCreation {
 	@Test 
 	public void deterministicAcyclic() {		
 		Application app = SampleApplication.deterministic();
+		
+		if (!Application.isConsistent(app)) fail("Unconsistent application");
 		
 		System.out.println(app.toPrettyString());
 	}
@@ -57,8 +58,7 @@ public class TestApplicationCreation {
 	public void randomUniform() {
 		Application app = SampleApplication.randomUniform();
 		
-		if (!Application.isConsistent(app))
-			fail("Source component disconnected from sink component");		
+		if (!Application.isConsistent(app)) fail("Source component disconnected from sink component");		
 		
 		System.out.println(app.toPrettyString());
 	}
@@ -67,8 +67,7 @@ public class TestApplicationCreation {
 	public void randomNormal() {
 		Application app = SampleApplication.randomNormal();
 		
-		if (!Application.isConsistent(app))
-			fail("Source component disconnected from sink component");		
+		if (!Application.isConsistent(app)) fail("Source component disconnected from sink component");		
 		
 		System.out.println(app.toPrettyString());
 	}

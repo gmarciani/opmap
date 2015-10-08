@@ -10,7 +10,6 @@ import org.junit.rules.TestName;
 import control.exceptions.ModelException;
 import model.application.Application;
 import model.application.opnode.OPPath;
-import sample.SampleApplication;
 
 public class TestApplicationPath {
 	
