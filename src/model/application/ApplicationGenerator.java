@@ -407,9 +407,12 @@ public final class ApplicationGenerator {
 		
 		this.srcnodes = OPN_SRC;
 		this.pipnodes = OPN_PIP;
-		this.snknodes = OPN_SNK;		
-		this.opnConn  = OPN_CONN;		
-		this.opnPinn  = OPN_PINN;
+		this.snknodes = OPN_SNK;
+		
+		this.opnConn[0]  = OPN_CONN[0];	
+		this.opnConn[1]  = OPN_CONN[1];	
+		this.opnPinn[0]  = OPN_PINN[0];
+		this.opnPinn[1]  = OPN_PINN[1];
 		
 		this.srcProd[0] = SRC_PROD[0];
 		this.srcProd[1] = SRC_PROD[1];

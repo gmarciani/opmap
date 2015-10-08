@@ -91,7 +91,7 @@ public final class SampleApplication {
 							.setPIP(3)
 							.setSNK(1)			
 							.setOPNodeConnectivity(0.3, 0.5, 2.0)
-							.setOPNodePinnability(sampleEXNodeId, 0.5, 1.0, 2.0)
+							.setOPNodePinnability(sampleEXNodeId, 0.5, 1.0, 3.0)
 							.setSRCProd(1000.0, 10000.0, 2.0)
 							.setPIPCons(0.3, 0.5, 2.0)
 							.setSNKCons(0.2, 0.4, 2.0)
