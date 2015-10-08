@@ -51,8 +51,9 @@ public final class GMath {
 	}
 	
 	public static List<Object> randomElements(RandomDataGenerator rnd, Collection<?> collection, int k) {
-		List<Object> elements = new ArrayList<Object>(k);
-		Object[] elemArray = rnd.nextSample(collection, k);
+		int sampleSize = Math.min(collection.size(), k);
+		List<Object> elements = new ArrayList<Object>(sampleSize);
+		Object[] elemArray = rnd.nextSample(collection, sampleSize);
 		
 		for (Object obj : elemArray)
 			elements.add(obj);
