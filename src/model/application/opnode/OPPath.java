@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.application.dstream.DStream;
 
@@ -53,55 +54,19 @@ public class OPPath extends ArrayList<DStream> {
 	
 	public String toPrettyString() {
 		String str = "#oppath# ";
-		
-		str += "src:" + this.getSrc().getId() + "|";
-		str += "dst:" + this.getDst().getId() + "|";
-		
-		if (super.isEmpty()) {
-			str += "empty";
-			return str;
-		}
-		
-		str += "nodes:";
-		
-		Iterator<OPNode> nodes = this.getNodes().iterator();
-		while (nodes.hasNext()) {
-			OPNode opnode = nodes.next();
-			str += opnode.getId();
-			if (nodes.hasNext())
-				str += ",";
-			else
-				str += "|";
-		}
-		
-		str += "streams:";
-		
-		Iterator<DStream> iter = super.iterator();		
-		while (iter.hasNext()) {
-			DStream dstream = iter.next();
-			str += "(" + dstream.getSrc().getId() + "," + dstream.getDst().getId() + ")";
-			if (iter.hasNext())
-				str += ",";
-		}
+		str = String.format("#oppath# src:%d|dst%d|opnodes:%s|streams:%s", 
+				this.getSrc().getId(),
+				this.getDst().getId(),
+				this.getNodes().stream().map(opnode -> Integer.valueOf(opnode.getId()).toString()).collect(Collectors.joining(",")),
+				super.stream().map(stream -> "(" + stream.getSrc().getId() + "," + stream.getDst().getId() + ")").collect(Collectors.joining(",")));
 		
 		return str;
 	}
 	
 	@Override
 	public String toString() {
-		String str = "OPPath(" + 
-					 "streams:";
-		
-		Iterator<DStream> iter = super.iterator();
-		
-		while (iter.hasNext()) {
-			DStream dstream = iter.next();
-			str += "(" + dstream.getSrc().getId() + "," + dstream.getDst().getId() + ")";
-			if (iter.hasNext())
-				str += ",";
-			else
-				str += ")";
-		}
+		String str = String.format("OPPath(streams:",
+				super.stream().map(stream -> "(" + stream.getSrc().getId() + "," + stream.getDst().getId() + ")").collect(Collectors.joining(",")));
 		
 		return str;
 	}

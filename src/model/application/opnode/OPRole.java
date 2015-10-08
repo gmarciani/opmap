@@ -1,9 +1,9 @@
 package model.application.opnode;
 
 public enum OPRole {
-	SRC("source"),
-	SNK("sink"),
-	PIP("pipe");
+	SRC("src"),
+	SNK("snk"),
+	PIP("pip");
 	
 	private String name;
 	

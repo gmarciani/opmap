@@ -139,32 +139,26 @@ public class Application extends DirectedAcyclicGraph<OPNode, DStream> {
 	}
 	
 	public String toPrettyString() {
-		String str = "# Application #\n";
-		
-		str += "name: " + this.getName() + "\n";
-		str += "desc: " + this.getDescription() + "\n";
-		str += "nodes:\n";
-		
-		for (OPNode opnode : this.vertexSet().stream().sorted().collect(Collectors.toList()))
-			str += "\t" + opnode.toPrettyString() + "\n";
-		
-		str += "edges:\n";
-		
-		for (DStream dstream : this.edgeSet().stream().sorted().collect(Collectors.toList()))
-			str += "\t" + dstream.toPrettyString() + "\n";			
+		String str = String.format("#application#\nname:%s\ndesc:%s\nopnodes:\n%s\nstreams:\n%s",
+				this.getName(),
+				this.getDescription(),
+				this.vertexSet().stream().sorted().map(opnode -> opnode.toPrettyString()).collect(Collectors.joining("\n")),
+				this.edgeSet().stream().sorted().map(dstream -> dstream.toPrettyString()).collect(Collectors.joining("\n")));
 		
 		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		return "Application(" + 
-			   "name:" + this.getName() + ";" + 
-			   "description:" + this.getDescription() + ";" + 
-			   "sources:" + this.getSources() + ";" + 
-			   "sinks:" + this.getSinks() + ";" +
-			   "pipes:" + this.getPipes() + ";" +
-			   "streams:" + this.edgeSet() + ")";
+		String str = String.format("Application(name:%s|desc:%s|srcs:%s|snks:%s|pips:%s|stream%s)",
+				this.getName(),
+				this.getDescription(),
+				this.getSources(),
+				this.getSinks(),
+				this.getPipes(),
+				this.edgeSet());
+		
+		return str;
 	}
 
 }

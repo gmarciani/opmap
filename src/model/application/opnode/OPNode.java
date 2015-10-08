@@ -164,31 +164,32 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	}	
 	
 	public String toPrettyString() {
-		String str = "#opnode# ";
-		
-		str += "id:" + this.getId() + "|";
-		str += "operator:" + this.getName() + "|";
-		str += "role:" + this.getRole() + "|";
-		str += "resources:" + this.getResources() + "|"; 
-		str += "speed:" + this.getSpeed() + "|"; 
-		str += "flowIn:" + this.getFlowIn() + "|"; 
-		str += "flowOut:" + this.getFlowOut() + "|"; 
-		str += "pinnables:" + ((this.getPinnables()!=null)?(this.getPinnables().isEmpty()?"none":this.getPinnables()):"every");
+		String str = String.format("#opnode# id:%d|opr:%s|role:%s|resources:%d|speed:%f:fIn:%f|fOut:%f|pinnables:%s",
+				this.getId(),
+				this.getName(),
+				this.getRole(),
+				this.getResources(),
+				this.getSpeed(),
+				this.getFlowIn(),
+				this.getFlowOut(),
+				(this.getPinnables()!=null)?(this.getPinnables().isEmpty()?"none":this.getPinnables()):"every");
 		
 		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		return "OPNode(" +
-			   "id:" + this.getId() + ";" + 
-			   "operator:" + this.getName() + ";" +
-			   "role:" + this.getRole() + ";" +
-			   "resources:" + this.getResources() + ";" + 
-			   "speed:" + this.getSpeed() + ";" + 
-			   "flowIn:" + this.getFlowIn() + ";" + 
-			   "flowOut:" + this.getFlowOut() + ";" + 
-			   "pinnables:" + this.getPinnables() + ")";
+		String str = String.format("OPNode(id:%d|opr:%s|role:%s|resources:%d|speed:%f:fIn:%f|fOut:%f|pinnables:%s)",
+				this.getId(),
+				this.getName(),
+				this.getRole(),
+				this.getResources(),
+				this.getSpeed(),
+				this.getFlowIn(),
+				this.getFlowOut(),
+				this.getPinnables());
+		
+		return str;
 	}
 	
 	@Override 
