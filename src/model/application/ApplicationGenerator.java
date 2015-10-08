@@ -358,6 +358,12 @@ public final class ApplicationGenerator {
 	}
 	
 	private void pinnability(Application app) {
+		if (this.exnodes.isEmpty()) {
+			for (OPNode opnode : app.vertexSet())
+				opnode.setAlwaysPinnable(true);
+			return;
+		}
+		
 		Set<Integer> pinnableAsSrc = new HashSet<Integer>();
 		Set<Integer> pinnableAsSnk = new HashSet<Integer>();
 		Set<Integer> pinnableAsPip = new HashSet<Integer>();

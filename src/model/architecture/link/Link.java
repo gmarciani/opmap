@@ -88,20 +88,19 @@ public class Link implements Comparable<Link>, Serializable {
 	}
 	
 	public String toPrettyString() {
-		String str = "#link# ";
-		
-		str += "src:" + this.getSrc().getId() + "|";
-		str += "dst:" + this.getDst().getId() + "|";
-		str += "delay:" + this.getDelay() + "|";
-		str += "bandwidth:" + this.getBandwidth() + "|"; 
-		str += "availability:" + this.getAvailability();
+		String str = String.format("#link# src:%d|dst:%d|delay:%.5f|bandwidth:%.5f|availability:%.5f",
+				this.getSrc().getId(),
+				this.getDst().getId(),
+				this.getDelay(),
+				this.getBandwidth(),
+				this.getAvailability());
 		
 		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		String str = String.format("Link(src:%d|dst:%d|delay:%f|bandwidth:%f|availability:%f",
+		String str = String.format("Link(src:%d|dst:%d|delay:%.5f|bandwidth:%.5f|availability:%.5f)",
 				this.getSrc().getId(),
 				this.getDst().getId(),
 				this.getDelay(),

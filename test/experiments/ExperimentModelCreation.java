@@ -63,7 +63,7 @@ public class ExperimentModelCreation {
 			for (Class<?> optmodel : compareModels) {
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
-					System.out.printf("#compiling %s wrt. EXNodes# opnodes:%d | exnodes:%d/%d | rep:%d/%d\n", modelName, opnodes, exnodes, exmax, rept, repts);
+					System.out.printf("#compiling %s wrt. EXNodes# exnodes:%d/%d | opnodes:%d | rep:%d/%d\n", modelName, exnodes, exmax, opnodes, rept, repts);
 					Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);
 					Instant start = clk.instant();	
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
@@ -75,16 +75,15 @@ public class ExperimentModelCreation {
 			}		
 		}
 			
-		XYSeriesCollection dataset = new XYSeriesCollection();
+		XYSeriesCollection dataset = new XYSeriesCollection();		
+		for (Class<?> optmodel : compareModels)
+			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		for (XYSeries mdlData : data.values())
-			dataset.addSeries(mdlData);	
-		
-		String title = String.format("Model Creation (%d OPNodes)", opnodes);
-		JFreeChart plot = Plotter.create(title, "EXNodes", "Time (ms)", dataset);		
-		
+		String title = String.format("Model Creation");
+		String subtitle = String.format("exnodes:[%d,%d] | opnodes:%d", exmin, exmax, opnodes);
+		JFreeChart plot = Plotter.createLine(title, null, "EXNodes", "Time (ms)", dataset);			
 		try {
-			Plotter.save(plot, Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
@@ -124,45 +123,44 @@ public class ExperimentModelCreation {
 			}		
 		}
 			
-		XYSeriesCollection dataset = new XYSeriesCollection();
+		XYSeriesCollection dataset = new XYSeriesCollection();		
+		for (Class<?> optmodel : compareModels)
+			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		for (XYSeries mdlData : data.values())
-			dataset.addSeries(mdlData);	
-		
-		String title = String.format("Model Creation (%d EXNodes)", exnodes);
-		JFreeChart plot = Plotter.create(title, "OPNodes", "Time (ms)", dataset);		
-		
+		String title = String.format("Model Creation");
+		String subtitle = String.format("exnodes:%d | opnodes:[%d,%d]", exnodes, opmin, opmax);
+		JFreeChart plot = Plotter.createLine(title, null, "OPNodes", "Time (ms)", dataset);
 		try {
-			Plotter.save(plot, Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
 	}
 	
 	@Test
-	public void wrt_PinDegree() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void wrt_PINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelCreation.WRT_PinnDegree.EXNODES;
-		int opnodes = Experiments.ModelCreation.WRT_PinnDegree.OPNODES;
-		double pinmin = Experiments.ModelCreation.WRT_PinnDegree.PINMIN;
-		double pinmax = Experiments.ModelCreation.WRT_PinnDegree.PINMAX;
-		double pinpas = Experiments.ModelCreation.WRT_PinnDegree.PINPAS;	
+		int exnodes = Experiments.ModelCreation.WRT_PINFactor.EXNODES;
+		int opnodes = Experiments.ModelCreation.WRT_PINFactor.OPNODES;
+		double pinmin = Experiments.ModelCreation.WRT_PINFactor.PINMIN;
+		double pinmax = Experiments.ModelCreation.WRT_PINFactor.PINMAX;
+		double pinpas = Experiments.ModelCreation.WRT_PINFactor.PINPAS;	
 		
-		Architecture arc = Experiments.ModelCreation.WRT_PinnDegree.arc();
+		Architecture arc = Experiments.ModelCreation.WRT_PINFactor.arc();
 		
 		double values[] = new double[repts];			
 			
-		for (double pindeg = pinmin; pindeg <= pinmax; pindeg += pinpas) {											
-			Application app = Experiments.ModelCreation.WRT_PinnDegree.app(arc, pindeg);	
+		for (double pinfact = pinmin; pinfact <= pinmax; pinfact += pinpas) {											
+			Application app = Experiments.ModelCreation.WRT_PINFactor.app(arc, pinfact);	
 			for (Class<?> optmodel : compareModels) {
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
-					System.out.printf("#compiling %s wrt. PinDegree# exnodes:%d | opnodes:%d | pindeg:%f/%f | rep:%d/%d\n", modelName, exnodes, opnodes, pindeg, pinmax, rept, repts);
+					System.out.printf("#compiling %s wrt. PINFactor# exnodes:%d | opnodes:%d | pinfact:%f/%f | rep:%d/%d\n", modelName, exnodes, opnodes, pinfact, pinmax, rept, repts);
 					Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);
 					Instant start = clk.instant();	
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
@@ -170,20 +168,19 @@ public class ExperimentModelCreation {
 					mdl.getCPlex().end();
 					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 				}
-				data.get(modelName).add(pindeg, StatUtils.mean(values));
+				data.get(modelName).add(pinfact, StatUtils.mean(values));
 			}		
 		}
 			
-		XYSeriesCollection dataset = new XYSeriesCollection();
+		XYSeriesCollection dataset = new XYSeriesCollection();		
+		for (Class<?> optmodel : compareModels)
+			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		for (XYSeries mdlData : data.values())
-			dataset.addSeries(mdlData);	
-		
-		String title = String.format("Model Creation (%d EXNodes %d OPNodes)", exnodes, opnodes);
-		JFreeChart plot = Plotter.create(title, "PinDeg", "Time (ms)", dataset);		
-		
+		String title = String.format("Model Creation");
+		String subtitle = String.format("exnodes:%d | opnodes:%d | pinfact:[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
+		JFreeChart plot = Plotter.createLine(title, null, "PINFactor", "Time (ms)", dataset);
 		try {
-			Plotter.save(plot, Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}

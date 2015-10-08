@@ -13,6 +13,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUtils;
@@ -32,7 +33,7 @@ public final class Plotter {
 
 	private Plotter() {}
 	
-	public static JFreeChart create(final String title, final String xAxis, final String yAxis, final XYDataset dataset) {
+	public static JFreeChart createLine(final String title, final String subtitle, final String xAxis, final String yAxis, final XYDataset dataset) {
 		JFreeChart plot = ChartFactory.createXYLineChart(
 	            title,
 	            xAxis,
@@ -44,9 +45,18 @@ public final class Plotter {
 	            false
 	        ); 
 		
+		if (subtitle != null) {
+			plot.addSubtitle(new TextTitle(subtitle, FONT_NL));
+			//plot.addSubtitle(0, new TextTitle(subtitle, FONT_NL));
+		}
+			
 		applyTheme(plot);
 		
 		return plot;
+	}
+	
+	public static JFreeChart createLine(final String title, final String xAxis, final String yAxis, final XYDataset dataset) {
+		return createLine(title, null, xAxis, yAxis, dataset);
 	}
 	
 	public static void display(JFreeChart plot) {		
@@ -80,6 +90,10 @@ public final class Plotter {
 		 * Title		
 		 ********************************************************************************/
         plot.getTitle().setFont(FONT_XL);
+        
+        /********************************************************************************
+		 * Subtitle		
+		 ********************************************************************************/
         
         /********************************************************************************
 		 * Legend		

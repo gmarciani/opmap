@@ -76,7 +76,7 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 	}
 	
 	public String toPrettyString() {
-		String str = String.format("#stream# src:%d|dst:%d|flow:%f",
+		String str = String.format("#stream# src:%d|dst:%d|flow:%.5f",
 				this.getSrc().getId(),
 				this.getDst().getId(),
 				this.getFlow());

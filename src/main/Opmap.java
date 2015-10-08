@@ -21,7 +21,7 @@ public class Opmap {
 		
 		OPPSolver solver = new MPSolver();
 		
-		Report report = solver.solve(model);
+		Report report = solver.solveAndReport(model);
 
 		System.out.println(report);
 		

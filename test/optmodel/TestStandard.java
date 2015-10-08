@@ -52,7 +52,7 @@ public class TestStandard {
 		
 		OPPSolver solver = new MPSolver();
 		
-		Report report = solver.solve(model);		
+		Report report = solver.solveAndReport(model);		
 
 		if (report != null)
 			System.out.println(report.toPrettyString());

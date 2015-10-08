@@ -77,7 +77,7 @@ public class EXNode implements Comparable<EXNode>, Serializable {
 	}	
 	
 	public String toPrettyString() {
-		String str = String.format("#exnode# id:%d|name:%s|resources:%d|speedup:%f|availability:%f",
+		String str = String.format("#exnode# id:%d|name:%s|resources:%d|speedup:%.5f|availability:%.5f",
 				this.getId(),
 				this.getName(),
 				this.getResources(),

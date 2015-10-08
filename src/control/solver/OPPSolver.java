@@ -6,6 +6,8 @@ import model.placement.optmodel.OPPModel;
 
 public interface OPPSolver {
 	
-	public Report solve(OPPModel model) throws SolverException;
+	public boolean solve(OPPModel model);
+	
+	public Report solveAndReport(OPPModel model) throws SolverException;
 
 }

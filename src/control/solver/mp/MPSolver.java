@@ -16,7 +16,24 @@ public class MPSolver extends AbstractOPPSolver {
 	}
 	
 	@Override
-	public Report solve(OPPModel model) throws SolverException {
+	public boolean solve(OPPModel model) {		
+		boolean solved = false;
+		
+		if (!super.DBG)
+			model.getCPlex().setOut(null);
+		
+		try {
+			solved = model.getCPlex().solve();			
+		} catch (IloException exc) {
+			System.err.println("EXCEPTION IN SOLVER: " + exc.getMessage());
+			return false;
+		}
+		
+		return solved;
+	}
+	
+	@Override
+	public Report solveAndReport(OPPModel model) throws SolverException {
 		Report report = null;
 		Clock clk = Clock.systemDefaultZone();
 		Instant start, end;
@@ -31,8 +48,7 @@ public class MPSolver extends AbstractOPPSolver {
 				report = new Report(model, start, end);
 			}				
 		} catch (IloException exc) {
-			System.err.println("EXCEPTION IN SOLVER");
-			throw new SolverException("Error while solving model: " + exc.getMessage());
+			System.err.println("EXCEPTION IN SOLVER: " + exc.getMessage());
 		}
 		
 		return report;

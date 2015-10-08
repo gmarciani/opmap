@@ -51,7 +51,7 @@ public final class SampleApplication {
 		return uniform(null);
 	}
 	public static Application uniform(final Set<EXNode> exnodes) {
-		ApplicationGenerator appFactory = new ApplicationGenerator();
+		ApplicationGenerator appGen = new ApplicationGenerator();
 		Set<Integer> sampleEXNodeId = new HashSet<Integer>();
 		if (exnodes == null) {
 			for (int exnode = 0; exnode < 10; exnode++)
@@ -62,7 +62,7 @@ public final class SampleApplication {
 		
 		Application app = null;
 		try {
-			app = appFactory.setName("Sample Application")
+			app = appGen.setName("Sample Application")
 							.setDescription("Created randomly (uniform)")
 							.setSRC(1)
 							.setPIP(3)
@@ -90,7 +90,7 @@ public final class SampleApplication {
 		return gaussian(null);
 	}
 	public static Application gaussian(final Set<EXNode> exnodes) {
-		ApplicationGenerator appFactory = new ApplicationGenerator();
+		ApplicationGenerator appGen = new ApplicationGenerator();
 		Set<Integer> sampleEXNodeId = new HashSet<Integer>();
 		if (exnodes == null) {
 			for (int exnode = 0; exnode < 10; exnode++)
@@ -101,7 +101,7 @@ public final class SampleApplication {
 		
 		Application app = null;
 		try {
-			app = appFactory.setName("Sample Application")
+			app = appGen.setName("Sample Application")
 							.setDescription("Created randomly (gaussian)")
 							.setSRC(1)
 							.setPIP(3)

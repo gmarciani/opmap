@@ -170,7 +170,7 @@ public class OPNode implements Comparable<OPNode>, Serializable {
 	}	
 	
 	public String toPrettyString() {
-		String str = String.format("#opnode# id:%d|opr:%s|role:%s|resources:%d|speed:%f:fIn:%f|fOut:%f|pinnables:%s",
+		String str = String.format("#opnode# id:%d|opr:%s|role:%s|resources:%d|speed:%.5f:fIn:%.5f|fOut:%.5f|pinnables:%s",
 				this.getId(),
 				this.getName(),
 				this.getRole(),

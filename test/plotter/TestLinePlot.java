@@ -29,7 +29,7 @@ public class TestLinePlot {
 
 	@Test 
 	public void display() throws InterruptedException {		
-		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
+		JFreeChart plot = Plotter.createLine("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
 		Plotter.display(plot);
 		
@@ -38,7 +38,7 @@ public class TestLinePlot {
 	
 	@Test 
 	public void save() throws IOException {		
-		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
+		JFreeChart plot = Plotter.createLine("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
 		Plotter.save(plot, "./test/plotter/svg/sample-random.svg");		
 	}

@@ -11,6 +11,10 @@ public final class GMath {
 	
 	public static double randomNormal(RandomDataGenerator rnd, final double min, final double max, final double variance) {
 		double value;
+		
+		if (min == max)
+			return min;
+		
 		if (variance == 0.0) {
 			value = rnd.nextUniform(min, max);
 		} else {
@@ -18,11 +22,16 @@ public final class GMath {
 				value = rnd.nextGaussian((max + min)/2, variance);
 			} while (value < min || value > max);
 		}
+		
 		return value;
 	}
 	
 	public static long randomNormalLong(RandomDataGenerator rnd, final double min, final double max, final double variance) {
 		long value;
+		
+		if (min == max)
+			return FastMath.round(min);
+		
 		if (variance == 0.0) {
 			value = FastMath.round(rnd.nextUniform(min, max));
 		} else {
@@ -31,11 +40,16 @@ public final class GMath {
 			} while (value < min || value > max);
 			
 		}
+		
 		return value;
 	}
 	
 	public static int randomNormalInt(RandomDataGenerator rnd, final double min, final double max, final double variance) {
 		int value;
+		
+		if (min == max)
+			return (int) FastMath.round(min);
+		
 		if (variance == 0.0) {
 			value = (int) FastMath.round(rnd.nextUniform(min, max));
 		} else {
@@ -43,6 +57,7 @@ public final class GMath {
 				value = (int) FastMath.round(rnd.nextGaussian((max + min)/2, variance));
 			} while (value < min || value > max);
 		}
+		
 		return value;
 	}
 	
