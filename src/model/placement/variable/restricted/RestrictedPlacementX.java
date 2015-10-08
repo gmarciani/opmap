@@ -1,5 +1,6 @@
 package model.placement.variable.restricted;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import ilog.concert.IloException;
@@ -16,7 +17,8 @@ public class RestrictedPlacementX extends AbstractPlacementX {
 	public RestrictedPlacementX(Application app, Architecture arc) throws IloException {
 		super(app, arc);
 		for (OPNode opnode : app.vertexSet()) {
-			for (EXNode exnode : arc.vertexSet().stream().filter(exnode -> opnode.isPinnableOn(exnode)).collect(Collectors.toList())) {
+			Set<EXNode> admittables = arc.vertexSet().stream().filter(exnode -> opnode.isPinnableOn(exnode)).collect(Collectors.toSet());
+			for (EXNode exnode : admittables) {
 				int i = opnode.getId();
 				int u = exnode.getId();
 				super.addVariable(i, u);

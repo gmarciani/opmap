@@ -40,7 +40,7 @@ public final class SampleArchitecture {
 	/********************************************************************************
 	 * Random: Uniform distribution of settings
 	 ********************************************************************************/	
-	public static Architecture randomUniform() {
+	public static Architecture uniform() {
 		ArchitectureGenerator arcGen = new ArchitectureGenerator();
 		
 		Architecture arc = null;
@@ -63,9 +63,9 @@ public final class SampleArchitecture {
 	}
 	
 	/********************************************************************************
-	 * Random: Normal distribution of settings (mean, variance)
+	 * Random: Gaussian distribution of settings (mean, variance)
 	 ********************************************************************************/	
-	public static Architecture randomNormal() {
+	public static Architecture gaussian() {
 		ArchitectureGenerator arcGen = new ArchitectureGenerator();
 		
 		Architecture arc = null;

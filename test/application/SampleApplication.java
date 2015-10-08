@@ -2,12 +2,14 @@ package application;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import control.exceptions.GeneratorException;
 import model.application.Application;
 import model.application.ApplicationGenerator;
 import model.application.opnode.OPNode;
 import model.application.opnode.OPRole;
+import model.architecture.exnode.EXNode;
 
 public final class SampleApplication {
 
@@ -45,11 +47,18 @@ public final class SampleApplication {
 	/********************************************************************************
 	 * Random: Uniform distribution of settings
 	 ********************************************************************************/	
-	public static Application randomUniform() {
+	public static Application uniform() {
+		return uniform(null);
+	}
+	public static Application uniform(final Set<EXNode> exnodes) {
 		ApplicationGenerator appFactory = new ApplicationGenerator();
 		Set<Integer> sampleEXNodeId = new HashSet<Integer>();
-		for (int exnode = 0; exnode < 10; exnode++)
-			sampleEXNodeId.add(exnode);
+		if (exnodes == null) {
+			for (int exnode = 0; exnode < 10; exnode++)
+				sampleEXNodeId.add(exnode);
+		} else {
+			sampleEXNodeId.addAll(exnodes.stream().map(node -> node.getId()).collect(Collectors.toSet()));
+		}		
 		
 		Application app = null;
 		try {
@@ -75,13 +84,20 @@ public final class SampleApplication {
 	
 	
 	/********************************************************************************
-	 * Random: Normal distribution of settings (mean, variance)
+	 * Random: Gaussian distribution of settings (mean, variance)
 	 ********************************************************************************/	
-	public static Application randomNormal() {
+	public static Application gaussian() {
+		return gaussian(null);
+	}
+	public static Application gaussian(final Set<EXNode> exnodes) {
 		ApplicationGenerator appFactory = new ApplicationGenerator();
 		Set<Integer> sampleEXNodeId = new HashSet<Integer>();
-		for (int exnode = 0; exnode < 10; exnode++)
-			sampleEXNodeId.add(exnode);
+		if (exnodes == null) {
+			for (int exnode = 0; exnode < 10; exnode++)
+				sampleEXNodeId.add(exnode);
+		} else {
+			sampleEXNodeId.addAll(exnodes.stream().map(node -> node.getId()).collect(Collectors.toSet()));
+		}
 		
 		Application app = null;
 		try {

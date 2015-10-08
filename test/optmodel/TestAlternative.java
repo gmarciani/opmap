@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import application.SampleApplication;
+import architecture.SampleArchitecture;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import control.solver.OPPSolver;
@@ -16,8 +18,6 @@ import model.placement.Report;
 import model.placement.optmodel.OPPModel;
 import model.placement.optmodel.cplex.OPPAlternative;
 import model.placement.optmodel.cplex.OPPStandard;
-import sample.SampleApplication;
-import sample.SampleArchitecture;
 
 public class TestAlternative {
 	
@@ -32,8 +32,8 @@ public class TestAlternative {
 
 	@Test
 	public void create() throws ModelException {
-		Application app = SampleApplication.getRandomSample();
-		Architecture arc = SampleArchitecture.getRandomSample();
+		Architecture arc = SampleArchitecture.uniform();
+		Application app = SampleApplication.uniform(arc.vertexSet());
 		
 		OPPModel model = new OPPStandard(app, arc);
 		
@@ -44,8 +44,8 @@ public class TestAlternative {
 	
 	@Test
 	public void solve() throws ModelException, SolverException, IloException {
-		Application app = SampleApplication.getRandomSample();
-		Architecture arc = SampleArchitecture.getRandomSample();
+		Architecture arc = SampleArchitecture.uniform();
+		Application app = SampleApplication.uniform(arc.vertexSet());
 		
 		System.out.println(app.toPrettyString());		
 		System.out.println(arc.toPrettyString());

@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import application.SampleApplication;
+import architecture.SampleArchitecture;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import control.solver.OPPSolver;
@@ -14,8 +16,6 @@ import model.architecture.Architecture;
 import model.placement.Report;
 import model.placement.optmodel.OPPModel;
 import model.placement.optmodel.cplex.OPPConservative;
-import sample.SampleApplication;
-import sample.SampleArchitecture;
 
 public class TestConservative {
 
@@ -30,8 +30,8 @@ public class TestConservative {
 
 	@Test
 	public void create() throws ModelException {	
-		Application app = SampleApplication.getRandomSample();
-		Architecture arc = SampleArchitecture.getRandomSample();
+		Architecture arc = SampleArchitecture.uniform();
+		Application app = SampleApplication.uniform(arc.vertexSet());
 		
 		OPPModel model = new OPPConservative(app, arc);
 		
@@ -42,8 +42,8 @@ public class TestConservative {
 	
 	@Test
 	public void solve() throws ModelException, SolverException {
-		Application app = SampleApplication.getRandomSample();
-		Architecture arc = SampleArchitecture.getRandomSample();
+		Architecture arc = SampleArchitecture.uniform();
+		Application app = SampleApplication.uniform(arc.vertexSet());
 		
 		System.out.println(app.toPrettyString());		
 		System.out.println(arc.toPrettyString());

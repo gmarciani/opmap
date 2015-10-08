@@ -56,7 +56,7 @@ public class TestApplicationCreation {
 	
 	@Test
 	public void randomUniform() {
-		Application app = SampleApplication.randomUniform();
+		Application app = SampleApplication.uniform();
 		
 		if (!Application.isConsistent(app)) fail("Source component disconnected from sink component");		
 		
@@ -65,7 +65,7 @@ public class TestApplicationCreation {
 	
 	@Test
 	public void randomNormal() {
-		Application app = SampleApplication.randomNormal();
+		Application app = SampleApplication.gaussian();
 		
 		if (!Application.isConsistent(app)) fail("Source component disconnected from sink component");		
 		

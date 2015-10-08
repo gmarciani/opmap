@@ -28,14 +28,14 @@ public class TestArchitectureCreation {
 	
 	@Test
 	public void randomUniform() {
-		Architecture arc = SampleArchitecture.randomUniform();
+		Architecture arc = SampleArchitecture.uniform();
 		
 		System.out.println(arc.toPrettyString());
 	}
 	
 	@Test
 	public void randomNormal() {
-		Architecture arc = SampleArchitecture.randomNormal();
+		Architecture arc = SampleArchitecture.gaussian();
 		
 		System.out.println(arc.toPrettyString());
 	}

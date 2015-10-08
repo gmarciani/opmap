@@ -60,6 +60,8 @@ public class Report {
 		for (int i = 0; i < X.length; i++) {
 			for (int u = 0; u < X[i].length; u++) {
 				IloNumVar var = X[i][u];
+				if (var == null)
+					continue;
 				try {
 					if (this.model.getCPlex().getValue(var) == 1)
 						solution += "opnode " + i + " placed on exnode " + u + "\n";

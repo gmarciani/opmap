@@ -17,7 +17,8 @@ import control.plotter.Plotter;
 
 public class TestLinePlot {
 	
-	@Rule public TestName name = new TestName();
+	@Rule 
+	public TestName name = new TestName();
 	
 	@Before
 	public void testInfo() {
@@ -27,7 +28,7 @@ public class TestLinePlot {
 	}
 
 	@Test 
-	public void randomDisplay() throws InterruptedException {		
+	public void display() throws InterruptedException {		
 		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
 		Plotter.display(plot);
@@ -36,7 +37,7 @@ public class TestLinePlot {
 	}
 	
 	@Test 
-	public void randomSave() throws IOException {		
+	public void save() throws IOException {		
 		JFreeChart plot = Plotter.create("Sample Random Line Plot", "Domain", "Range", sampleDataset());
 		
 		Plotter.save(plot, "./test/plotter/svg/sample-random.svg");		
