@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import model.architecture.Architecture;
-import sample.SampleArchitecture;
 
 public class TestArchitectureCreation {
 	
