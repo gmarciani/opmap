@@ -55,46 +55,45 @@ public class Report {
 	}
 	
 	public String toPrettyString() {
-		String str = "# Report #\n";
-		
-		str += "mod: " + this.getName() + "\n";
-		str += "dat: " + this.getDate() + "\n";
-		str += "tim: " + this.getElapsedSeconds() + "s (" + this.getElapsedMillis() + "ms)\n";
-		str += "sta: " + this.getStatus() + "\n";
-		str += "obj: " + this.getObjectiveValue() + "\n";
-		str += "app: " + this.model.getApplication().getName() + "\n";
-		str += "\topnodes: " + this.model.getApplication().vertexSet().size() + "\n";
-		str += "\tstreams: " + this.model.getApplication().edgeSet().size() + "\n";
-		str += "arc: " + this.model.getArchitecture().getName() + "\n";
-		str += "\texnodes: " + this.model.getArchitecture().vertexSet().size() + "\n";
-		str += "\tlolinks: " + this.model.getArchitecture().edgeSet().size() + "\n";
-		str += "X:" + "\n";
-		
-		IloNumVar X[][] = this.model.getPlacementX().getVector();
-		
+		IloNumVar X[][] = this.model.getPlacementX().getVector();	
+		String solution = "";
 		for (int i = 0; i < X.length; i++) {
 			for (int u = 0; u < X[i].length; u++) {
 				IloNumVar var = X[i][u];
 				try {
 					if (this.model.getCPlex().getValue(var) == 1)
-						str += "\topnode " + i + " placed on exnode " + u + "\n";
+						solution += "opnode " + i + " placed on exnode " + u + "\n";
 				} catch (IloException exc) {
-					str += "\tERROR for opnode " + i + " on exnode " + u + ": " + exc.getMessage() + "\n";
+					solution += "ERROR for opnode " + i + " on exnode " + u + ": " + exc.getMessage() + "\n";
 				}
 			}
 		}
+		
+		String str = String.format("#report#\nmodel:%s\ndate:%s\nelapsed:%f (ms)\nstatus:%s\nobjective:%f\napp:%s (%s)\narc:%s (%s)\nsolution:\n%s",
+				this.getName(),
+				this.getDate(),
+				this.getElapsedMillis(),
+				this.getStatus(),
+				this.getObjectiveValue(),
+				this.model.getApplication().getName(),
+				this.model.getApplication().getDescription(),
+				this.model.getArchitecture().getName(),
+				this.model.getArchitecture().getDescription(),
+				solution);
 		
 		return str;
 	}
 	
 	@Override 
 	public String toString() {
-		return "Report(" +
-			   "mod:" + this.getName() + "|" +
-			   "dat:" + this.getDate() + "|" +
-			   "tim:" + this.getElapsedMillis() + "ms|" +
-			   "sta:" + this.getStatus() + "|" +
-			   "obj:" + this.getObjectiveValue() + ")";
+		String str = String.format("Report(model:%s|date:%s|elapsed:%f (ms)|status:%s|obj:%f)",
+				this.getName(),
+				this.getDate(),
+				this.getElapsedMillis(),
+				this.getStatus(),
+				this.getObjectiveValue());
+		
+		return str;
 	}
 
 }
