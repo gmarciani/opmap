@@ -6,12 +6,12 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestExperimentModelCreation.class,
+	ExperimentModelCreation.class,
 	TestExperimentStandard.class,
 	TestExperimentRestricted.class,
 	TestExperimentConservative.class,
 	TestExperimentAlternative.class
 })
-public class AllTestsExperiment {
+public class AllExperiments {
 
 }

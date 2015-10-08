@@ -12,6 +12,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+
+import application.SampleApplication;
+import architecture.SampleArchitecture;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import control.plotter.Plotter;
@@ -22,9 +25,6 @@ import model.architecture.Architecture;
 import model.placement.Report;
 import model.placement.optmodel.OPPModel;
 import model.placement.optmodel.cplex.OPPAlternative;
-import sample.Default;
-import sample.SampleApplication;
-import sample.SampleArchitecture;
 
 public class TestExperimentAlternative {
 
@@ -41,11 +41,11 @@ public class TestExperimentAlternative {
 	public void compareOPNodes() throws ModelException, SolverException {	
 		XYSeriesCollection dataset = new XYSeriesCollection();	
 		
-		int compareOpnodes[] = Default.Experiments.ModelResolution.CMP_OPNODES;		
-		int exmin = Default.Experiments.ModelResolution.EXMIN;
-		int exmax = Default.Experiments.ModelResolution.EXMAX;
-		int expas = Default.Experiments.ModelResolution.EXPAS;		
-		int repts = Default.Experiments.ModelResolution.REPETITIONS;
+		int compareOpnodes[] = Experiments.Experiments.ModelResolution.CMP_OPNODES;		
+		int exmin = Experiments.Experiments.ModelResolution.EXMIN;
+		int exmax = Experiments.Experiments.ModelResolution.EXMAX;
+		int expas = Experiments.Experiments.ModelResolution.EXPAS;		
+		int repts = Experiments.Experiments.ModelResolution.REPETITIONS;
 		
 		double values[] = new double[repts];
 		
@@ -54,7 +54,7 @@ public class TestExperimentAlternative {
 			Application app = SampleApplication.getRandomSample(opnodes);	
 			
 			for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {											
-				Architecture arc = SampleArchitecture.getRandomSample(exnodes);
+				Architecture arc = SampleArchitecture.randomUniform(exnodes);
 				
 				boolean solvable = true;
 				
@@ -92,7 +92,7 @@ public class TestExperimentAlternative {
 		JFreeChart plot = Plotter.create("Alternative Model (Comparing OPNodes)", "EXNodes", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, Default.Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, Experiments.Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
@@ -102,18 +102,18 @@ public class TestExperimentAlternative {
 	public void compareEXNodes() throws ModelException, SolverException {		
 		XYSeriesCollection dataset = new XYSeriesCollection();		
 				
-		int compareExnodes[] = Default.Experiments.ModelResolution.CMP_EXNODES;		
-		int opmin = Default.Experiments.ModelResolution.OPMIN;
-		int opmax = Default.Experiments.ModelResolution.OPMAX;
-		int oppas = Default.Experiments.ModelResolution.OPPAS;
+		int compareExnodes[] = Experiments.Experiments.ModelResolution.CMP_EXNODES;		
+		int opmin = Experiments.Experiments.ModelResolution.OPMIN;
+		int opmax = Experiments.Experiments.ModelResolution.OPMAX;
+		int oppas = Experiments.Experiments.ModelResolution.OPPAS;
 		
-		int repts = Default.Experiments.ModelResolution.REPETITIONS;
+		int repts = Experiments.Experiments.ModelResolution.REPETITIONS;
 		
 		double[] values = new double[repts];
 		
 		for (int exnodes : compareExnodes) {
 			XYSeries series = new XYSeries(exnodes + " EXNodes");			
-			Architecture arc = SampleArchitecture.getRandomSample(exnodes);
+			Architecture arc = SampleArchitecture.randomUniform(exnodes);
 			
 			for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {								
 				Application app = SampleApplication.getRandomSample(opnodes);
@@ -154,7 +154,7 @@ public class TestExperimentAlternative {
 		JFreeChart plot = Plotter.create("Alternative Model (Comparing EXNodes)", "OPNodes", "Time (s)", dataset);		
 		
 		try {
-			Plotter.save(plot, Default.Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
+			Plotter.save(plot, Experiments.Experiments.RESULTS_DIR + plot.getTitle().getText() + ".svg");
 		} catch (IOException exc) {
 			fail("Plot SVG export failure: " + exc.getMessage());
 		}
