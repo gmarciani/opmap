@@ -69,7 +69,7 @@ public class Report {
 			}
 		}
 		
-		String str = String.format("#report#\nmodel:%s\ndate:%s\nelapsed:%f (ms)\nstatus:%s\nobjective:%f\napp:%s (%s)\narc:%s (%s)\nsolution:\n%s",
+		String str = String.format("#report#\nmodel:%s\ndate:%s\nelapsed:%d (ms)\nstatus:%s\nobjective:%f\napp:%s (%s)\narc:%s (%s)\nsolution:\n%s",
 				this.getName(),
 				this.getDate(),
 				this.getElapsedMillis(),
