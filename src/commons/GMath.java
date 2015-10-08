@@ -1,5 +1,9 @@
 package commons;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -40,6 +44,20 @@ public final class GMath {
 			} while (value < min || value > max);
 		}
 		return value;
+	}
+	
+	public static Object randomElement(RandomDataGenerator rnd, Collection<?> collection) {
+		return rnd.nextSample(collection, 1)[0];
+	}
+	
+	public static List<Object> randomElements(RandomDataGenerator rnd, Collection<?> collection, int k) {
+		List<Object> elements = new ArrayList<Object>(k);
+		Object[] elemArray = rnd.nextSample(collection, k);
+		
+		for (Object obj : elemArray)
+			elements.add(obj);
+		
+		return elements;
 	}
 
 }
