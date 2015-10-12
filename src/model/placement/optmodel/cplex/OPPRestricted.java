@@ -61,9 +61,7 @@ public class OPPRestricted extends AbstractOPPStandard {
 				IloLinearNumExpr Rptx = modeler.linearNumExpr();
 				
 				for (OPNode opnode : path.getNodes()) {
-					for (EXNode exnode : this.getArchitecture().vertexSet()) {
-						if (!opnode.isPinnableOn(exnode))
-							continue;
+					for (EXNode exnode : arc.getPinnableNodes(opnode)) {
 						int i = opnode.getId();
 						int u = exnode.getId();
 						Rpex.addTerm(opnode.getSpeed() / exnode.getSpeedup(), this.X.get(i, u));
@@ -71,9 +69,7 @@ public class OPPRestricted extends AbstractOPPStandard {
 				}							
 				
 				for (DStream dstream : path) {
-					for (Link link : arc.edgeSet()) {
-						if (!dstream.isPinnableOn(link))
-							continue;
+					for (Link link : arc.getPinnablesLinks(dstream)) {
 						int i = dstream.getSrc().getId();
 						int j = dstream.getDst().getId();
 						int u = link.getSrc().getId();
@@ -100,20 +96,16 @@ public class OPPRestricted extends AbstractOPPStandard {
 			Aex = modeler.linearNumExpr();
 			Atx = modeler.linearNumExpr();
 			
-			for (OPNode opnode : this.getApplication().vertexSet()) {
-				for (EXNode exnode : this.getArchitecture().vertexSet()) {
-					if (!opnode.isPinnableOn(exnode))
-						continue;
+			for (OPNode opnode : app.vertexSet()) {
+				for (EXNode exnode : arc.getPinnableNodes(opnode)) {
 					int i = opnode.getId();
 					int u = exnode.getId();
 					Aex.addTerm(Math.log(exnode.getAvailability()), this.X.get(i, u));
 				}					
 			}				
 			
-			for (DStream dstream : this.getApplication().edgeSet()) {
-				for (Link link : this.getArchitecture().edgeSet()) {
-					if (!dstream.isPinnableOn(link))
-						continue;
+			for (DStream dstream : app.edgeSet()) {
+				for (Link link : arc.getPinnablesLinks(dstream)) {
 					int i = dstream.getSrc().getId();
 					int j = dstream.getDst().getId();
 					int u = link.getSrc().getId();
@@ -169,9 +161,7 @@ public class OPPRestricted extends AbstractOPPStandard {
 		try {
 			for (OPNode opnode : app.vertexSet()) {
 				IloLinearNumExpr exprUniqueness = modeler.linearNumExpr();
-				for (EXNode exnode : arc.vertexSet()) {
-					if (!opnode.isPinnableOn(exnode))
-						continue;
+				for (EXNode exnode : arc.getPinnableNodes(opnode)) {
 					int i = opnode.getId();
 					int u = exnode.getId();
 					exprUniqueness.addTerm(1.0, this.X.get(i, u));
@@ -189,9 +179,7 @@ public class OPPRestricted extends AbstractOPPStandard {
 		 ********************************************************************************/
 		try {
 			for (DStream dstream : app.edgeSet()) {
-				for (Link link : arc.edgeSet()) {
-					if (!dstream.isPinnableOn(link))
-						continue;
+				for (Link link : arc.getPinnablesLinks(dstream)) {
 					IloLinearNumExpr exprConn1 = modeler.linearNumExpr();
 					IloLinearNumExpr exprConn2 = modeler.linearNumExpr();
 					int i = dstream.getSrc().getId();

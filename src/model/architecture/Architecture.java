@@ -1,6 +1,7 @@
 package model.architecture;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -10,6 +11,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import model.application.dstream.DStream;
+import model.application.opnode.OPNode;
 import model.architecture.exnode.EXNode;
 import model.architecture.link.Link;
 
@@ -48,6 +51,14 @@ public class Architecture extends DefaultDirectedGraph<EXNode, Link> {
 	
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+	
+	public Set<EXNode> getPinnableNodes(OPNode opnode) {
+		return this.vertexSet().stream().filter(node -> opnode.isPinnableOn(node)).collect(Collectors.toSet());
+	}
+	
+	public Set<Link> getPinnablesLinks(DStream dstream) {
+		return this.edgeSet().stream().filter(link -> dstream.isPinnableOn(link)).collect(Collectors.toSet());
 	}
 	
 	public static Architecture readJSON(final String json) throws JsonParseException, JsonMappingException, IOException {

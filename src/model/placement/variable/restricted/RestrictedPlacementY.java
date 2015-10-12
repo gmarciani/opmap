@@ -1,8 +1,5 @@
 package model.placement.variable.restricted;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ilog.concert.IloException;
 import model.application.Application;
 import model.application.dstream.DStream;
@@ -17,8 +14,7 @@ public class RestrictedPlacementY extends AbstractPlacementY {
 	public RestrictedPlacementY(Application app, Architecture arc) throws IloException {
 		super(app, arc);
 		for (DStream dstream : app.edgeSet()) {
-			Set<Link> admittables = arc.edgeSet().stream().filter(link -> dstream.isPinnableOn(link)).collect(Collectors.toSet());
-			for (Link link : admittables) {
+			for (Link link : arc.getPinnablesLinks(dstream)) {
 				int i = dstream.getSrc().getId();
 				int j = dstream.getDst().getId();
 				int u = link.getSrc().getId();

@@ -27,7 +27,7 @@ public final class Plotter {
 	private static final int HEIGHT = 300;
 	
 	private static final Font FONT_XL = new Font("Latin Modern Roman", Font.BOLD, 12);
-	private static final Font FONT_NLB = new Font("Latin Modern Roman", Font.BOLD, 11);
+	//private static final Font FONT_NLB = new Font("Latin Modern Roman", Font.BOLD, 11);
 	private static final Font FONT_NL = new Font("Latin Modern Roman", Font.PLAIN, 11);
 	private static final Font FONT_SL = new Font("Latin Modern Roman", Font.PLAIN, 8);
 
@@ -35,7 +35,7 @@ public final class Plotter {
 	
 	public static JFreeChart createLine(final String title, final String subtitle, final String xAxis, final String yAxis, final XYDataset dataset) {
 		JFreeChart plot = ChartFactory.createXYLineChart(
-	            title,
+	            (title != null)?title:"",
 	            xAxis,
 	            yAxis,
 	            dataset,
@@ -99,13 +99,13 @@ public final class Plotter {
 		 * Legend		
 		 ********************************************************************************/
         plot.getLegend().setItemFont(FONT_NL); 
-        plot.getLegend().setPosition(RectangleEdge.RIGHT);
+        plot.getLegend().setPosition(RectangleEdge.BOTTOM);
         plot.getLegend().setFrame(BlockBorder.NONE);
         
         /********************************************************************************
 		 * Domain Axis		
 		 ********************************************************************************/       
-        plot.getXYPlot().getDomainAxis().setLabelFont(FONT_NLB);
+        plot.getXYPlot().getDomainAxis().setLabelFont(FONT_NL);
         plot.getXYPlot().getDomainAxis().setTickLabelFont(FONT_SL);
         plot.getXYPlot().setDomainGridlinesVisible(false);
         plot.getXYPlot().setDomainGridlinePaint(Color.LIGHT_GRAY);
@@ -113,16 +113,24 @@ public final class Plotter {
         /********************************************************************************
 		 * Range Axis		
 		 ********************************************************************************/
-        plot.getXYPlot().getRangeAxis().setLabelFont(FONT_NLB);
+        plot.getXYPlot().getRangeAxis().setLabelFont(FONT_NL);
         plot.getXYPlot().getRangeAxis().setTickLabelFont(FONT_SL);
         plot.getXYPlot().setRangeGridlinesVisible(false);
         plot.getXYPlot().setRangeGridlinePaint(Color.LIGHT_GRAY);
+        
+        /********************************************************************************
+		 * Border		
+		 ********************************************************************************/
+        plot.setBorderVisible(false);
+        plot.getXYPlot().setOutlineVisible(true);
+        plot.getXYPlot().setOutlinePaint(Color.BLACK);
         
         /********************************************************************************
 		 * Background		
 		 ********************************************************************************/
         plot.setBackgroundPaint(Color.WHITE);
         plot.getXYPlot().setBackgroundPaint(Color.WHITE); 
+        
 	}
 
 }

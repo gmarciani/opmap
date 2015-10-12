@@ -21,6 +21,7 @@ import org.junit.rules.TestName;
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
 import control.plotter.Plotter;
+import experiments.Experiments.UNIT;
 import model.application.Application;
 import model.architecture.Architecture;
 import model.placement.optmodel.OPPModel;
@@ -37,29 +38,31 @@ public class ExperimentModelCreation {
 		System.out.println(" ********************************************************************************/\n");
 	}
 	
-	final Class<?> compareModels[] = Experiments.ModelCreation.CMP_MODELS;
-	final int repts = Experiments.ModelCreation.REPETITIONS;
+	final Class<?> compareModels[] = Experiments.Creation.CMP_MODELS;
+	final int repts = Experiments.Creation.REPETITIONS;
 	final Clock clk = Clock.systemDefaultZone();
 	
 	@Test
-	public void wrt_EXNodes() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expCEXNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int opnodes = Experiments.ModelCreation.WRT_EXNodes.OPNODES;
-		int exmin 	= Experiments.ModelCreation.WRT_EXNodes.EXMIN;
-		int exmax 	= Experiments.ModelCreation.WRT_EXNodes.EXMAX;
-		int expas 	= Experiments.ModelCreation.WRT_EXNodes.EXPAS;				
+		int opnodes = Experiments.Creation.WRT_EXNodes.OPNODES;
+		int exmin 	= Experiments.Creation.WRT_EXNodes.EXMIN;
+		int exmax 	= Experiments.Creation.WRT_EXNodes.EXMAX;
+		int expas 	= Experiments.Creation.WRT_EXNodes.EXPAS;	
 		
-		Application app = Experiments.ModelCreation.WRT_EXNodes.app();
+		UNIT unit 	= Experiments.Creation.WRT_EXNodes.MEASURE;
+		
+		Application app = Experiments.Creation.WRT_EXNodes.app();
 		
 		double values[] = new double[repts];			
 			
 		for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {											
-			Architecture arc = Experiments.ModelCreation.WRT_EXNodes.arc(exnodes);	
+			Architecture arc = Experiments.Creation.WRT_EXNodes.arc(exnodes);	
 			for (Class<?> optmodel : compareModels) {
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -69,9 +72,12 @@ public class ExperimentModelCreation {
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
 					Instant end = clk.instant();
 					mdl.getCPlex().end();
-					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					if (unit == UNIT.MILLIS)
+						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					else if (unit == UNIT.SECOND)
+						values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
-				data.get(modelName).add(exnodes, StatUtils.mean(values));
+				data.get(modelName).add(exnodes, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -79,9 +85,9 @@ public class ExperimentModelCreation {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Creation");
-		String subtitle = String.format("exnodes:[%d,%d] | opnodes:%d", exmin, exmax, opnodes);
-		JFreeChart plot = Plotter.createLine(title, null, "EXNodes", "Time (ms)", dataset);			
+		String title = String.format("C-EXNode");
+		String subtitle = String.format("exnodes[%d,%d], opnodes:%d", exmin, exmax, opnodes);
+		JFreeChart plot = Plotter.createLine(null, null, "EXNodes", String.format("Time (%s)", unit.toString()), dataset);			
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
@@ -90,24 +96,26 @@ public class ExperimentModelCreation {
 	}
 	
 	@Test
-	public void wrt_OPNodes() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expCOPNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelCreation.WRT_OPNodes.EXNODES;
-		int opmin 	= Experiments.ModelCreation.WRT_OPNodes.OPMIN;
-		int opmax 	= Experiments.ModelCreation.WRT_OPNodes.OPMAX;
-		int oppas 	= Experiments.ModelCreation.WRT_OPNodes.OPPAS;				
+		int exnodes = Experiments.Creation.WRT_OPNodes.EXNODES;
+		int opmin 	= Experiments.Creation.WRT_OPNodes.OPMIN;
+		int opmax 	= Experiments.Creation.WRT_OPNodes.OPMAX;
+		int oppas 	= Experiments.Creation.WRT_OPNodes.OPPAS;		
 		
-		Architecture arc = Experiments.ModelCreation.WRT_OPNodes.arc();
+		UNIT unit 	= Experiments.Creation.WRT_OPNodes.MEASURE;
+		
+		Architecture arc = Experiments.Creation.WRT_OPNodes.arc();
 		
 		double values[] = new double[repts];			
 			
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {											
-			Application app = Experiments.ModelCreation.WRT_OPNodes.app(opnodes);	
+			Application app = Experiments.Creation.WRT_OPNodes.app(opnodes);	
 			for (Class<?> optmodel : compareModels) {
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -117,9 +125,12 @@ public class ExperimentModelCreation {
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
 					Instant end = clk.instant();
 					mdl.getCPlex().end();
-					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					if (unit == UNIT.MILLIS)
+						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					else if (unit == UNIT.SECOND)
+						values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
-				data.get(modelName).add(opnodes, StatUtils.mean(values));
+				data.get(modelName).add(opnodes, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -127,9 +138,9 @@ public class ExperimentModelCreation {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Creation");
-		String subtitle = String.format("exnodes:%d | opnodes:[%d,%d]", exnodes, opmin, opmax);
-		JFreeChart plot = Plotter.createLine(title, null, "OPNodes", "Time (ms)", dataset);
+		String title = String.format("C-OPNode");
+		String subtitle = String.format("exnodes:%d, opnodes[%d,%d]", exnodes, opmin, opmax);
+		JFreeChart plot = Plotter.createLine(null, null, "OPNodes", String.format("Time (%s)", unit.toString()), dataset);
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
@@ -138,37 +149,42 @@ public class ExperimentModelCreation {
 	}
 	
 	@Test
-	public void wrt_PINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expCPINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelCreation.WRT_PINFactor.EXNODES;
-		int opnodes = Experiments.ModelCreation.WRT_PINFactor.OPNODES;
-		double pinmin = Experiments.ModelCreation.WRT_PINFactor.PINMIN;
-		double pinmax = Experiments.ModelCreation.WRT_PINFactor.PINMAX;
-		double pinpas = Experiments.ModelCreation.WRT_PINFactor.PINPAS;	
+		int exnodes = Experiments.Creation.WRT_PINFactor.EXNODES;
+		int opnodes = Experiments.Creation.WRT_PINFactor.OPNODES;
+		double pinmin = Experiments.Creation.WRT_PINFactor.PINMIN;
+		double pinmax = Experiments.Creation.WRT_PINFactor.PINMAX;
+		double pinpas = Experiments.Creation.WRT_PINFactor.PINPAS;	
 		
-		Architecture arc = Experiments.ModelCreation.WRT_PINFactor.arc();
+		UNIT unit 	= Experiments.Creation.WRT_PINFactor.MEASURE;
+		
+		Architecture arc = Experiments.Creation.WRT_PINFactor.arc();
 		
 		double values[] = new double[repts];			
 			
 		for (double pinfact = pinmin; pinfact <= pinmax; pinfact += pinpas) {											
-			Application app = Experiments.ModelCreation.WRT_PINFactor.app(arc, pinfact);	
+			Application app = Experiments.Creation.WRT_PINFactor.app(arc, pinfact);	
 			for (Class<?> optmodel : compareModels) {
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
-					System.out.printf("#compiling %s wrt. PINFactor# exnodes:%d | opnodes:%d | pinfact:%f/%f | rep:%d/%d\n", modelName, exnodes, opnodes, pinfact, pinmax, rept, repts);
+					System.out.printf("#compiling %s wrt. PINFactor# exnodes:%d | opnodes:%d | pinfact:%.2f/%.2f | rep:%d/%d\n", modelName, exnodes, opnodes, pinfact, pinmax, rept, repts);
 					Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);
 					Instant start = clk.instant();	
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
 					Instant end = clk.instant();
 					mdl.getCPlex().end();
-					values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					if (unit == UNIT.MILLIS)
+						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+					else if (unit == UNIT.SECOND)
+						values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
-				data.get(modelName).add(pinfact, StatUtils.mean(values));
+				data.get(modelName).add(pinfact, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -176,9 +192,9 @@ public class ExperimentModelCreation {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Creation");
-		String subtitle = String.format("exnodes:%d | opnodes:%d | pinfact:[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
-		JFreeChart plot = Plotter.createLine(title, null, "PINFactor", "Time (ms)", dataset);
+		String title = String.format("C-PINFactor");
+		String subtitle = String.format("exnodes:%d, opnodes:%d, pinfact[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
+		JFreeChart plot = Plotter.createLine(null, null, "PINFactor", String.format("Time (%s)", unit.toString()), dataset);
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {

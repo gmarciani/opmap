@@ -24,6 +24,7 @@ import control.exceptions.SolverException;
 import control.plotter.Plotter;
 import control.solver.OPPSolver;
 import control.solver.mp.MPSolver;
+import experiments.Experiments.UNIT;
 import model.application.Application;
 import model.architecture.Architecture;
 import model.placement.optmodel.OPPModel;
@@ -40,8 +41,8 @@ public class ExperimentModelResolution {
 		System.out.println(" ********************************************************************************/\n");
 	}
 	
-	final Class<?> compareModels[] = Experiments.ModelResolution.CMP_MODELS;
-	final int repts = Experiments.ModelResolution.REPETITIONS;
+	final Class<?> compareModels[] = Experiments.Resolution.CMP_MODELS;
+	final int repts = Experiments.Resolution.REPETITIONS;
 	final Clock clk = Clock.systemDefaultZone();
 
 	
@@ -49,24 +50,26 @@ public class ExperimentModelResolution {
 	 * Model resolution with respect to the number of exnodes		
 	 ********************************************************************************/
 	@Test
-	public void wrt_EXNodes() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expREXNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int opnodes = Experiments.ModelResolution.WRT_EXNodes.OPNODES;
-		int exmin 	= Experiments.ModelResolution.WRT_EXNodes.EXMIN;
-		int exmax 	= Experiments.ModelResolution.WRT_EXNodes.EXMAX;
-		int expas 	= Experiments.ModelResolution.WRT_EXNodes.EXPAS;				
+		int opnodes = Experiments.Resolution.WRT_EXNodes.OPNODES;
+		int exmin 	= Experiments.Resolution.WRT_EXNodes.EXMIN;
+		int exmax 	= Experiments.Resolution.WRT_EXNodes.EXMAX;
+		int expas 	= Experiments.Resolution.WRT_EXNodes.EXPAS;			
 		
-		Application app = Experiments.ModelResolution.WRT_EXNodes.app();
+		UNIT unit 	= Experiments.Resolution.WRT_EXNodes.MEASURE;
+		
+		Application app = Experiments.Resolution.WRT_EXNodes.app();
 		
 		double values[] = new double[repts];			
 			
 		for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {											
-			Architecture arc = Experiments.ModelResolution.WRT_EXNodes.arc(exnodes);	
+			Architecture arc = Experiments.Resolution.WRT_EXNodes.arc(exnodes);	
 			for (Class<?> optmodel : compareModels) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
@@ -80,13 +83,16 @@ public class ExperimentModelResolution {
 					mdl.getCPlex().end();
 					if (!solved) {
 						System.out.println("Unsolvable");
-						arc = Experiments.ModelResolution.WRT_EXNodes.arc(exnodes);	
+						arc = Experiments.Resolution.WRT_EXNodes.arc(exnodes);	
 						rept -= 1;
 					} else {
-						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						if (unit == UNIT.MILLIS)
+							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						else if (unit == UNIT.SECOND)
+							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(exnodes, StatUtils.mean(values));
+				data.get(modelName).add(exnodes, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -94,9 +100,9 @@ public class ExperimentModelResolution {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Resolution");
-		String subtitle = String.format("exnodes:[%d,%d] | opnodes:%d", exmin, exmax, opnodes);
-		JFreeChart plot = Plotter.createLine(title, null, "EXNodes", "Time (ms)", dataset);			
+		String title = String.format("R-EXNode");
+		String subtitle = String.format("exnodes[%d,%d], opnodes%d", exmin, exmax, opnodes);
+		JFreeChart plot = Plotter.createLine(title, null, "EXNodes", String.format("Time (%s)", unit.toString()), dataset);			
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
@@ -109,24 +115,26 @@ public class ExperimentModelResolution {
 	 * Model resolution with respect to the number of opnodes	 		
 	 ********************************************************************************/
 	@Test
-	public void wrt_OPNodes() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expROPNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelResolution.WRT_OPNodes.EXNODES;
-		int opmin 	= Experiments.ModelResolution.WRT_OPNodes.OPMIN;
-		int opmax 	= Experiments.ModelResolution.WRT_OPNodes.OPMAX;
-		int oppas 	= Experiments.ModelResolution.WRT_OPNodes.OPPAS;				
+		int exnodes = Experiments.Resolution.WRT_OPNodes.EXNODES;
+		int opmin 	= Experiments.Resolution.WRT_OPNodes.OPMIN;
+		int opmax 	= Experiments.Resolution.WRT_OPNodes.OPMAX;
+		int oppas 	= Experiments.Resolution.WRT_OPNodes.OPPAS;		
 		
-		Architecture arc = Experiments.ModelResolution.WRT_OPNodes.arc();
+		UNIT unit 	= Experiments.Resolution.WRT_OPNodes.MEASURE;
+		
+		Architecture arc = Experiments.Resolution.WRT_OPNodes.arc();
 		
 		double values[] = new double[repts];			
 			
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {											
-			Application app = Experiments.ModelResolution.WRT_OPNodes.app(opnodes);	
+			Application app = Experiments.Resolution.WRT_OPNodes.app(opnodes);	
 			for (Class<?> optmodel : compareModels) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
@@ -140,13 +148,16 @@ public class ExperimentModelResolution {
 					mdl.getCPlex().end();
 					if (!solved) {
 						System.out.println("Unsolvable");
-						app = Experiments.ModelResolution.WRT_OPNodes.app(opnodes);	
+						app = Experiments.Resolution.WRT_OPNodes.app(opnodes);	
 						rept -= 1;
 					} else {
-						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						if (unit == UNIT.MILLIS)
+							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						else if (unit == UNIT.SECOND)
+							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(opnodes, StatUtils.mean(values));
+				data.get(modelName).add(opnodes, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -154,9 +165,9 @@ public class ExperimentModelResolution {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Resolution");
-		String subtitle = String.format("exnodes:%d | opnodes:[%d,%d]", exnodes, opmin, opmax);
-		JFreeChart plot = Plotter.createLine(title, null, "OPNodes", "Time (ms)", dataset);			
+		String title = String.format("R-OPNode");
+		String subtitle = String.format("exnodes%d, opnodes[%d,%d]", exnodes, opmin, opmax);
+		JFreeChart plot = Plotter.createLine(title, null, "OPNodes", String.format("Time (%s)", unit.toString()), dataset);			
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
@@ -169,25 +180,27 @@ public class ExperimentModelResolution {
 	 * Model resolution with respect to the opnodes pinnability factor 		
 	 ********************************************************************************/
 	@Test
-	public void wrt_PINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expRPINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelResolution.WRT_PINFactor.EXNODES;
-		int opnodes = Experiments.ModelResolution.WRT_PINFactor.OPNODES;
-		double pinmin = Experiments.ModelResolution.WRT_PINFactor.PINMIN;
-		double pinmax = Experiments.ModelResolution.WRT_PINFactor.PINMAX;
-		double pinpas = Experiments.ModelResolution.WRT_PINFactor.PINPAS;			
+		int exnodes = Experiments.Resolution.WRT_PINFactor.EXNODES;
+		int opnodes = Experiments.Resolution.WRT_PINFactor.OPNODES;
+		double pinmin = Experiments.Resolution.WRT_PINFactor.PINMIN;
+		double pinmax = Experiments.Resolution.WRT_PINFactor.PINMAX;
+		double pinpas = Experiments.Resolution.WRT_PINFactor.PINPAS;		
 		
-		Architecture arc = Experiments.ModelResolution.WRT_PINFactor.arc();
+		UNIT unit 	= Experiments.Resolution.WRT_PINFactor.MEASURE;
+		
+		Architecture arc = Experiments.Resolution.WRT_PINFactor.arc();
 		
 		double values[] = new double[repts];			
 			
 		for (double pinfact = pinmin; pinfact <= pinmax; pinfact += pinpas) {											
-			Application app = Experiments.ModelResolution.WRT_PINFactor.app(arc, pinfact);
+			Application app = Experiments.Resolution.WRT_PINFactor.app(arc, pinfact);
 			for (Class<?> optmodel : compareModels) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
@@ -201,13 +214,16 @@ public class ExperimentModelResolution {
 					mdl.getCPlex().end();
 					if (!solved) {
 						System.out.println("Unsolvable");
-						app = Experiments.ModelResolution.WRT_PINFactor.app(arc, pinfact);
+						app = Experiments.Resolution.WRT_PINFactor.app(arc, pinfact);
 						rept -= 1;
 					} else {
-						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						if (unit == UNIT.MILLIS)
+							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						else if (unit == UNIT.SECOND)
+							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(pinfact, StatUtils.mean(values));
+				data.get(modelName).add(pinfact, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -215,9 +231,9 @@ public class ExperimentModelResolution {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Resolution");
-		String subtitle = String.format("exnodes:%d | opnodes:%d | pinfact:[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
-		JFreeChart plot = Plotter.createLine(title, null, "PINFactor", "Time (ms)", dataset);			
+		String title = String.format("R-PINFactor");
+		String subtitle = String.format("exnodes%d, opnodes%d, pinfact[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
+		JFreeChart plot = Plotter.createLine(title, null, "PINFactor", String.format("Time (%s)", unit.toString()), dataset);			
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {
@@ -230,25 +246,27 @@ public class ExperimentModelResolution {
 	 * Model resolution with respect to the opnodes diversity factor 		
 	 ********************************************************************************/
 	@Test
-	public void wrt_DIVFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
+	public void expRDIVFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
 		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
 		for (Class<?> optmodel : compareModels) {
 			String modelName = optmodel.getSimpleName();
 			data.put(modelName, new XYSeries(modelName));
 		}				
 		
-		int exnodes = Experiments.ModelResolution.WRT_DIVFactor.EXNODES;
-		int opnodes = Experiments.ModelResolution.WRT_DIVFactor.OPNODES;
-		double divmin = Experiments.ModelResolution.WRT_DIVFactor.DIVMIN;
-		double divmax = Experiments.ModelResolution.WRT_DIVFactor.DIVMAX;
-		double divpas = Experiments.ModelResolution.WRT_DIVFactor.DIVPAS;			
+		int exnodes = Experiments.Resolution.WRT_DIVFactor.EXNODES;
+		int opnodes = Experiments.Resolution.WRT_DIVFactor.OPNODES;
+		double divmin = Experiments.Resolution.WRT_DIVFactor.DIVMIN;
+		double divmax = Experiments.Resolution.WRT_DIVFactor.DIVMAX;
+		double divpas = Experiments.Resolution.WRT_DIVFactor.DIVPAS;	
 		
-		Application app = Experiments.ModelResolution.WRT_DIVFactor.app();
+		UNIT unit 	= Experiments.Resolution.WRT_DIVFactor.MEASURE;
+		
+		Application app = Experiments.Resolution.WRT_DIVFactor.app();
 		
 		double values[] = new double[repts];			
 			
 		for (double divfact = divmin; divfact <= divmax; divfact += divpas) {											
-			Architecture arc = Experiments.ModelResolution.WRT_DIVFactor.arc(divfact);
+			Architecture arc = Experiments.Resolution.WRT_DIVFactor.arc(divfact);
 			for (Class<?> optmodel : compareModels) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
@@ -262,13 +280,16 @@ public class ExperimentModelResolution {
 					mdl.getCPlex().end();
 					if (!solved) {
 						System.out.println("Unsolvable");
-						arc = Experiments.ModelResolution.WRT_DIVFactor.arc(divfact);
+						arc = Experiments.Resolution.WRT_DIVFactor.arc(divfact);
 						rept -= 1;
 					} else {
-						values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						if (unit == UNIT.MILLIS)
+							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						else if (unit == UNIT.SECOND)
+							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(divfact, StatUtils.mean(values));
+				data.get(modelName).add(divfact, StatUtils.percentile(values, 50));
 			}		
 		}
 			
@@ -276,9 +297,9 @@ public class ExperimentModelResolution {
 		for (Class<?> optmodel : compareModels)
 			dataset.addSeries(data.get(optmodel.getSimpleName()));
 		
-		String title = String.format("Model Resolution");
-		String subtitle = String.format("exnodes:%d | opnodes:%d | divfact:[%.2f,%.2f]", exnodes, opnodes, divmin, divmax);
-		JFreeChart plot = Plotter.createLine(title, null, "DIVFactor", "Time (ms)", dataset);			
+		String title = String.format("R-DIVFactor");
+		String subtitle = String.format("exnodes%d, opnodes%d, divfact[%.2f,%.2f]", exnodes, opnodes, divmin, divmax);
+		JFreeChart plot = Plotter.createLine(title, null, "DIVFactor", String.format("Time (%s)", unit.toString()), dataset);			
 		try {
 			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
 		} catch (IOException exc) {

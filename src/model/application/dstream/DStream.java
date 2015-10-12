@@ -56,7 +56,7 @@ public class DStream extends DefaultWeightedEdge implements Comparable<DStream> 
 	}
 	
 	public double getWeight() {
-		return -this.getFlow();
+		return -(this.getFlow() + (this.getDst().getResources() / this.getSrc().getResources()));
 	}
 	
 	@Override
