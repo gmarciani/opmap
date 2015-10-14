@@ -6,9 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	ExperimentRandom.class,
-	ExperimentModelCreation.class,
-	ExperimentModelResolution.class
+	ExperimentCompilation.class,
+	ExperimentResolution.class
 })
 public class AllExperiments {
 
