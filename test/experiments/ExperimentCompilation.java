@@ -41,6 +41,9 @@ public class ExperimentCompilation {
 	final int repts = Experiments.Compilation.REPETITIONS;
 	final Clock clk = Clock.systemDefaultZone();
 	
+	/********************************************************************************
+	 * Model compilation with respect to the number of exnodes		
+	 ********************************************************************************/	
 	@Test
 	public void expCEXNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 		
@@ -59,7 +62,7 @@ public class ExperimentCompilation {
 		Application app = Experiments.Compilation.C_EXNode.app();
 		
 		double iterValues [] = new double[repts];
-		double values[]	= new double[models.size()];
+		double medians[]	= new double[models.size()];
 			
 		for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {											
 			Architecture arc = Experiments.Compilation.C_EXNode.arc(exnodes);
@@ -78,13 +81,16 @@ public class ExperimentCompilation {
 						iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
 				double median = StatUtils.percentile(iterValues, 50);
-				values[models.indexOf(optmodel)] = median;
+				medians[models.indexOf(optmodel)] = median;
 			}
-			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(values, '\t')));
+			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(medians, '\t')));
 		}		
 		writer.close();
 	}
 	
+	/********************************************************************************
+	 * Model compilation with respect to the number of opnodes		
+	 ********************************************************************************/
 	@Test
 	public void expCOPNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 	
@@ -102,8 +108,8 @@ public class ExperimentCompilation {
 		
 		Architecture arc = Experiments.Compilation.C_OPNode.arc();
 		
-		double iterValues[] = new double[repts];
-		double values[]	= new double[models.size()];
+		double observe[] = new double[repts];
+		double medians[] = new double[models.size()];
 			
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {											
 			Application app = Experiments.Compilation.C_OPNode.app(opnodes);	
@@ -117,18 +123,21 @@ public class ExperimentCompilation {
 					Instant end = clk.instant();
 					mdl.getCPlex().end();
 					if (unit == UNIT.MILLIS)
-						iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						observe[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 					else if (unit == UNIT.SECOND)
-						iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+						observe[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
-				double median = StatUtils.percentile(iterValues, 50);
-				values[models.indexOf(optmodel)] = median;
+				double median = StatUtils.percentile(observe, 50);
+				medians[models.indexOf(optmodel)] = median;
 			}
-			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(values, '\t')));
+			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(medians, '\t')));
 		}		
 		writer.close();
 	}
 	
+	/********************************************************************************
+	 * Model compilation with respect to the pin factor		
+	 ********************************************************************************/
 	@Test
 	public void expCPINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 		
@@ -147,8 +156,8 @@ public class ExperimentCompilation {
 		
 		Architecture arc = Experiments.Compilation.C_PINFactor.arc();
 		
-		double iterValues[] = new double[repts];			
-		double values[]	= new double[models.size()];
+		double observe[] = new double[repts];			
+		double medians[] = new double[models.size()];
 			
 		for (double pinfact = pinmin; pinfact <= pinmax; pinfact += pinpas) {											
 			Application app = Experiments.Compilation.C_PINFactor.app(arc, pinfact);	
@@ -162,14 +171,14 @@ public class ExperimentCompilation {
 					Instant end = clk.instant();
 					mdl.getCPlex().end();
 					if (unit == UNIT.MILLIS)
-						iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+						observe[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 					else if (unit == UNIT.SECOND)
-						iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+						observe[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 				}
-				double median = StatUtils.percentile(iterValues, 50);
-				values[models.indexOf(optmodel)] = median;
+				double median = StatUtils.percentile(observe, 50);
+				medians[models.indexOf(optmodel)] = median;
 			}	
-			writer.append(String.format("%.2f\t%s\n", pinfact, StringUtils.join(values, '\t')));
+			writer.append(String.format("%.2f\t%s\n", pinfact, StringUtils.join(medians, '\t')));
 		}
 		writer.close();
 	}

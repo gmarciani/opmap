@@ -1,19 +1,19 @@
 package experiments;
 
-import static org.junit.Assert.*;
-
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.StatUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +21,6 @@ import org.junit.rules.TestName;
 
 import control.exceptions.ModelException;
 import control.exceptions.SolverException;
-import control.plotter.Plotter;
 import control.solver.OPPSolver;
 import control.solver.mp.MPSolver;
 import experiments.Experiments.UNIT;
@@ -41,7 +40,7 @@ public class ExperimentResolution {
 		System.out.println(" ********************************************************************************/\n");
 	}
 	
-	final Class<?> compareModels[] = Experiments.Resolution.CMP_MODELS;
+	final List<Class<?>> models = Experiments.Compilation.MODELS;
 	final int repts = Experiments.Resolution.REPETITIONS;
 	final Clock clk = Clock.systemDefaultZone();
 
@@ -50,27 +49,28 @@ public class ExperimentResolution {
 	 * Model resolution with respect to the number of exnodes		
 	 ********************************************************************************/
 	@Test
-	public void expREXNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
-		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
-		for (Class<?> optmodel : compareModels) {
-			String modelName = optmodel.getSimpleName();
-			data.put(modelName, new XYSeries(modelName));
-		}				
+	public void expREXNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {			
 		
 		int opnodes = Experiments.Resolution.R_EXNode.OPNODES;
 		int exmin 	= Experiments.Resolution.R_EXNode.EXMIN;
 		int exmax 	= Experiments.Resolution.R_EXNode.EXMAX;
-		int expas 	= Experiments.Resolution.R_EXNode.EXPAS;			
-		
+		int expas 	= Experiments.Resolution.R_EXNode.EXPAS;		
 		UNIT unit 	= Experiments.Resolution.R_EXNode.MEASURE;
+		
+		String title = String.format("R-EXNode - exnodes[%d,%d], opnodes:%d", exmin, exmax, opnodes);
+		Path path = Paths.get(String.format("%s/%s.txt", Experiments.RESULTS_DIR, title));
+		BufferedWriter writer = Files.newBufferedWriter(path);
+		String header = String.format("EXNodes\t%s\n", models.stream().map(model -> model.getSimpleName()).collect(Collectors.joining("\t")));
+		writer.write(header);
 		
 		Application app = Experiments.Resolution.R_EXNode.app();
 		
-		double values[] = new double[repts];			
+		double iterValues[] = new double[repts];	
+		double medians[]	= new double[models.size()];
 			
 		for (int exnodes = exmin; exnodes <= exmax; exnodes += expas) {											
 			Architecture arc = Experiments.Resolution.R_EXNode.arc(exnodes);	
-			for (Class<?> optmodel : compareModels) {				
+			for (Class<?> optmodel : models) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -87,55 +87,46 @@ public class ExperimentResolution {
 						rept -= 1;
 					} else {
 						if (unit == UNIT.MILLIS)
-							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+							iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 						else if (unit == UNIT.SECOND)
-							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
-					}					
+							iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+					}	
 				}
-				data.get(modelName).add(exnodes, StatUtils.percentile(values, 50));
-			}		
+				double median = StatUtils.percentile(iterValues, 50);
+				medians[models.indexOf(optmodel)] = median;
+			}
+			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(medians, '\t')));
 		}
-			
-		XYSeriesCollection dataset = new XYSeriesCollection();		
-		for (Class<?> optmodel : compareModels)
-			dataset.addSeries(data.get(optmodel.getSimpleName()));
-		
-		String title = String.format("R-EXNode");
-		String subtitle = String.format("exnodes[%d,%d], opnodes%d", exmin, exmax, opnodes);
-		JFreeChart plot = Plotter.createLine(null, null, "Nodi computazionali", String.format("Tempo (%s)", unit.toString()), dataset);			
-		try {
-			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
-		} catch (IOException exc) {
-			fail("Plot SVG export failure: " + exc.getMessage());
-		}
+		writer.close();
 	}
 	
 	
 	/********************************************************************************
-	 * Model resolution with respect to the number of opnodes	 		
+	 * Model resolution with respect to the number of opnodes	 	
 	 ********************************************************************************/
 	@Test
-	public void expROPNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
-		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
-		for (Class<?> optmodel : compareModels) {
-			String modelName = optmodel.getSimpleName();
-			data.put(modelName, new XYSeries(modelName));
-		}				
+	public void expROPNode() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 		
 		int exnodes = Experiments.Resolution.R_OPNode.EXNODES;
 		int opmin 	= Experiments.Resolution.R_OPNode.OPMIN;
 		int opmax 	= Experiments.Resolution.R_OPNode.OPMAX;
-		int oppas 	= Experiments.Resolution.R_OPNode.OPPAS;		
-		
+		int oppas 	= Experiments.Resolution.R_OPNode.OPPAS;			
 		UNIT unit 	= Experiments.Resolution.R_OPNode.MEASURE;
+		
+		String title = String.format("R-OPNode - exnodes:%d, opnodes[%d,%d]", exnodes, opmin, opmax);
+		Path path = Paths.get(String.format("%s/%s.txt", Experiments.RESULTS_DIR, title));
+		BufferedWriter writer = Files.newBufferedWriter(path);
+		String header = String.format("OPNodes\t%s\n", models.stream().map(model -> model.getSimpleName()).collect(Collectors.joining("\t")));
+		writer.write(header);
 		
 		Architecture arc = Experiments.Resolution.R_OPNode.arc();
 		
-		double values[] = new double[repts];			
+		double iterValues[] = new double[repts];		
+		double medians[]	= new double[models.size()];
 			
 		for (int opnodes = opmin; opnodes <= opmax; opnodes += oppas) {											
 			Application app = Experiments.Resolution.R_OPNode.app(opnodes);	
-			for (Class<?> optmodel : compareModels) {				
+			for (Class<?> optmodel : models) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -152,27 +143,17 @@ public class ExperimentResolution {
 						rept -= 1;
 					} else {
 						if (unit == UNIT.MILLIS)
-							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+							iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 						else if (unit == UNIT.SECOND)
-							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+							iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(opnodes, StatUtils.percentile(values, 50));
-			}		
+				double median = StatUtils.percentile(iterValues, 50);
+				medians[models.indexOf(optmodel)] = median;
+			}
+			writer.append(String.format("%d\t%s\n", opnodes, StringUtils.join(medians, '\t')));
 		}
-			
-		XYSeriesCollection dataset = new XYSeriesCollection();		
-		for (Class<?> optmodel : compareModels)
-			dataset.addSeries(data.get(optmodel.getSimpleName()));
-		
-		String title = String.format("R-OPNode");
-		String subtitle = String.format("exnodes%d, opnodes[%d,%d]", exnodes, opmin, opmax);
-		JFreeChart plot = Plotter.createLine(null, null, "Nodi operazionali", String.format("Tempo (%s)", unit.toString()), dataset);			
-		try {
-			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
-		} catch (IOException exc) {
-			fail("Plot SVG export failure: " + exc.getMessage());
-		}
+		writer.close();
 	}
 
 	
@@ -180,28 +161,29 @@ public class ExperimentResolution {
 	 * Model resolution with respect to the opnodes pinnability factor 		
 	 ********************************************************************************/
 	@Test
-	public void expRPINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
-		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
-		for (Class<?> optmodel : compareModels) {
-			String modelName = optmodel.getSimpleName();
-			data.put(modelName, new XYSeries(modelName));
-		}				
+	public void expRPINFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 		
 		int exnodes = Experiments.Resolution.R_PINFactor.EXNODES;
 		int opnodes = Experiments.Resolution.R_PINFactor.OPNODES;
 		double pinmin = Experiments.Resolution.R_PINFactor.PINMIN;
 		double pinmax = Experiments.Resolution.R_PINFactor.PINMAX;
-		double pinpas = Experiments.Resolution.R_PINFactor.PINPAS;		
-		
+		double pinpas = Experiments.Resolution.R_PINFactor.PINPAS;			
 		UNIT unit 	= Experiments.Resolution.R_PINFactor.MEASURE;
+		
+		String title = String.format("R-PINFactor - exnodes:%d, opnodes:%d, pinfact[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
+		Path path = Paths.get(String.format("%s/%s.txt", Experiments.RESULTS_DIR, title));
+		BufferedWriter writer = Files.newBufferedWriter(path);
+		String header = String.format("PINFactor\t%s\n", models.stream().map(model -> model.getSimpleName()).collect(Collectors.joining("\t")));
+		writer.write(header);
 		
 		Architecture arc = Experiments.Resolution.R_PINFactor.arc();
 		
-		double values[] = new double[repts];			
+		double iterValues[] = new double[repts];	
+		double medians[]	= new double[models.size()];
 			
 		for (double pinfact = pinmin; pinfact <= pinmax; pinfact += pinpas) {											
 			Application app = Experiments.Resolution.R_PINFactor.app(arc, pinfact);
-			for (Class<?> optmodel : compareModels) {				
+			for (Class<?> optmodel : models) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -218,57 +200,46 @@ public class ExperimentResolution {
 						rept -= 1;
 					} else {
 						if (unit == UNIT.MILLIS)
-							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+							iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 						else if (unit == UNIT.SECOND)
-							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+							iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(pinfact, StatUtils.percentile(values, 50));
-			}		
+				double median = StatUtils.percentile(iterValues, 50);
+				medians[models.indexOf(optmodel)] = median;
+			}
+			writer.append(String.format("%.2f\t%s\n", pinfact, StringUtils.join(medians, '\t')));
 		}
-			
-		XYSeriesCollection dataset = new XYSeriesCollection();		
-		for (Class<?> optmodel : compareModels)
-			dataset.addSeries(data.get(optmodel.getSimpleName()));
-		
-		String title = String.format("R-PINFactor");
-		String subtitle = String.format("exnodes%d, opnodes%d, pinfact[%.2f,%.2f]", exnodes, opnodes, pinmin, pinmax);
-		JFreeChart plot = Plotter.createLine(null, null, "Fattore di pin", String.format("Tempo (%s)", unit.toString()), dataset);			
-		try {
-			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
-		} catch (IOException exc) {
-			fail("Plot SVG export failure: " + exc.getMessage());
-		}
+		writer.close();
 	}
 
 	
 	/********************************************************************************
-	 * Model resolution with respect to the opnodes diversity factor 		
+	 * Model resolution with respect to the opnodes diversity factor 	
 	 ********************************************************************************/
 	@Test
-	public void expRDIVFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {	
-		Map<String, XYSeries> data = new HashMap<String, XYSeries>();
-		for (Class<?> optmodel : compareModels) {
-			String modelName = optmodel.getSimpleName();
-			data.put(modelName, new XYSeries(modelName));
-		}				
+	public void expRDIVFactor() throws ModelException, SolverException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {	
 		
 		int exnodes = Experiments.Resolution.R_DIVFactor.EXNODES;
 		int opnodes = Experiments.Resolution.R_DIVFactor.OPNODES;
 		double divmin = Experiments.Resolution.R_DIVFactor.DIVMIN;
 		double divmax = Experiments.Resolution.R_DIVFactor.DIVMAX;
-		double divpas = Experiments.Resolution.R_DIVFactor.DIVPAS;	
-		
+		double divpas = Experiments.Resolution.R_DIVFactor.DIVPAS;			
 		UNIT unit 	= Experiments.Resolution.R_DIVFactor.MEASURE;
 		
+		String title = String.format("R-DIVFactor - exnodes:%d, opnodes:%d, divfact[%.2f,%.2f]", exnodes, opnodes, divmin, divmax);
+		Path path = Paths.get(String.format("%s/%s.txt", Experiments.RESULTS_DIR, title));
+		BufferedWriter writer = Files.newBufferedWriter(path);
+		String header = String.format("DIVFactor\t%s\n", models.stream().map(model -> model.getSimpleName()).collect(Collectors.joining("\t")));
+		writer.write(header);
 		
-		
-		double values[] = new double[repts];			
+		double iterValues[] = new double[repts];
+		double values[]	= new double[models.size()];
 			
 		for (double divfact = divmin; divfact <= divmax; divfact += divpas) {											
 			Architecture arc = Experiments.Resolution.R_DIVFactor.arc(divfact);
 			Application app = Experiments.Resolution.R_DIVFactor.app(divfact);
-			for (Class<?> optmodel : compareModels) {				
+			for (Class<?> optmodel : models) {				
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
@@ -285,27 +256,17 @@ public class ExperimentResolution {
 						rept -= 1;
 					} else {
 						if (unit == UNIT.MILLIS)
-							values[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
+							iterValues[rept - 1] = end.toEpochMilli() - start.toEpochMilli();
 						else if (unit == UNIT.SECOND)
-							values[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
+							iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}					
 				}
-				data.get(modelName).add(divfact, StatUtils.percentile(values, 50));
-			}		
+				double median = StatUtils.percentile(iterValues, 50);
+				values[models.indexOf(optmodel)] = median;
+			}
+			writer.append(String.format("%.2f\t%s\n", divfact, StringUtils.join(values, '\t')));
 		}
-			
-		XYSeriesCollection dataset = new XYSeriesCollection();		
-		for (Class<?> optmodel : compareModels)
-			dataset.addSeries(data.get(optmodel.getSimpleName()));
-		
-		String title = String.format("R-DIVFactor");
-		String subtitle = String.format("exnodes%d, opnodes%d, divfact[%.2f,%.2f]", exnodes, opnodes, divmin, divmax);
-		JFreeChart plot = Plotter.createLine(null, null, "Fattore di diversità", String.format("Tempo (%s)", unit.toString()), dataset);			
-		try {
-			Plotter.save(plot, String.format("%s/%s - %s.svg", Experiments.RESULTS_DIR, title, subtitle));
-		} catch (IOException exc) {
-			fail("Plot SVG export failure: " + exc.getMessage());
-		}
+		writer.close();
 	}
 
 }
