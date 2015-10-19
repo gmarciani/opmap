@@ -114,7 +114,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.exnRes[0] = min;
 		this.exnRes[1] = max;
-		this.exnResVar = var;
+		this.exnResVar = var * (max - min) / 2.0;;
 		return this;
 	}	
 	
@@ -132,7 +132,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.exnSpeed[0] = min;
 		this.exnSpeed[1] = max;
-		this.exnSpeedVar = var;
+		this.exnSpeedVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -150,7 +150,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.exnAvail[0] = min;
 		this.exnAvail[1] = max;
-		this.exnAvailVar = var;
+		this.exnAvailVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -172,7 +172,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.lnkDelay[0] = min;
 		this.lnkDelay[1] = max;
-		this.lnkDelayVar = var;
+		this.lnkDelayVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -190,7 +190,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.lnkBandw[0] = min;
 		this.lnkBandw[1] = max;
-		this.lnkBandwVar = var;
+		this.lnkBandwVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -208,7 +208,7 @@ public class ArchitectureGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.lnkAvail[0] = min;
 		this.lnkAvail[1] = max;
-		this.lnkAvailVar = var;
+		this.lnkAvailVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	

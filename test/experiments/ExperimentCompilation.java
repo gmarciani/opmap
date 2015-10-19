@@ -130,7 +130,7 @@ public class ExperimentCompilation {
 				double median = StatUtils.percentile(observe, 50);
 				medians[models.indexOf(optmodel)] = median;
 			}
-			writer.append(String.format("%d\t%s\n", exnodes, StringUtils.join(medians, '\t')));
+			writer.append(String.format("%d\t%s\n", opnodes, StringUtils.join(medians, '\t')));
 		}		
 		writer.close();
 	}

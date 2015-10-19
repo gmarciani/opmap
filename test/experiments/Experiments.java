@@ -52,9 +52,9 @@ public final class Experiments {
 		 ********************************************************************************/
 		public static final class C_EXNode {			
 			public static final int OPNODES = 20;			
-			public static final int EXMIN = 5;
+			public static final int EXMIN = 10;
 			public static final int EXMAX = 100;
-			public static final int EXPAS = 5;			
+			public static final int EXPAS = 10;			
 			
 			public static final UNIT MEASURE = UNIT.MILLIS;
 			
@@ -108,9 +108,9 @@ public final class Experiments {
 		 ********************************************************************************/
 		public static final class C_OPNode {
 			public static final int EXNODES = 20;
-			public static final int OPMIN = 5;
+			public static final int OPMIN = 10;
 			public static final int OPMAX = 100;
-			public static final int OPPAS = 5;
+			public static final int OPPAS = 10;
 			
 			public static final UNIT MEASURE = UNIT.MILLIS;
 			
@@ -164,11 +164,11 @@ public final class Experiments {
 		 ********************************************************************************/
 		public static final class C_PINFactor {
 			public static final int EXNODES = 100;
-			public static final int OPNODES = 20;
+			public static final int OPNODES = 10;
 			
-			public static final double PINMIN = 0.05;
+			public static final double PINMIN = 0.1;
 			public static final double PINMAX = 1.001;
-			public static final double PINPAS = 0.05;
+			public static final double PINPAS = 0.1;
 			
 			public static final UNIT MEASURE = UNIT.MILLIS;
 			
@@ -226,18 +226,18 @@ public final class Experiments {
 	public static final class Resolution {		
 		
 		public static final List<Class<?>> MODELS = Arrays.asList(new Class<?>[] {OPPStandard.class, OPPRestricted.class, OPPConservative.class});
-		public static final int REPETITIONS = 3;		
+		public static final int REPETITIONS = 20;		
 		
 		/********************************************************************************
 		 * Model resolution with respect to the number of exnodes		
 		 ********************************************************************************/
 		public static final class R_EXNode {
-			public static final int OPNODES = 5;			
+			public static final int OPNODES = 10;			
 			public static final int EXMIN = 5;
-			public static final int EXMAX = 15;
+			public static final int EXMAX = 50;
 			public static final int EXPAS = 5;
 			
-			public static final UNIT MEASURE = UNIT.SECOND;
+			public static final UNIT MEASURE = UNIT.MILLIS;
 			
 			public static final Application app() {
 				ApplicationGenerator appGen = new ApplicationGenerator();
@@ -289,11 +289,11 @@ public final class Experiments {
 		 ********************************************************************************/
 		public static final class R_OPNode {
 			public static final int EXNODES = 10;
-			public static final int OPMIN = 3;
-			public static final int OPMAX = 9;
-			public static final int OPPAS = 3;
+			public static final int OPMIN = 5;
+			public static final int OPMAX = 50;
+			public static final int OPPAS = 5;
 			
-			public static final UNIT MEASURE = UNIT.SECOND;
+			public static final UNIT MEASURE = UNIT.MILLIS;
 			
 			public static final Architecture arc() {
 				ArchitectureGenerator arcGen = new ArchitectureGenerator();				
@@ -302,7 +302,7 @@ public final class Experiments {
 					arc = arcGen.setName("Random Architecture")
 								.setDescription("Created randomly for experiment R-OPNode")
 				 				.setEXNodes(EXNODES)
-				 				.setEXNodeResources(4, 8)
+				 				.setEXNodeResources(8, 16)
 				 				.setEXNodeSpeedup(2.0, 4.0)
 				 				.setEXNodeAvailability(0.85, 1.0)
 				 				.setLinkDelay(30.0, 300.0)
@@ -344,14 +344,14 @@ public final class Experiments {
 		 * Model resolution with respect to the opnodes pin factor 		
 		 ********************************************************************************/
 		public static final class R_PINFactor {
-			public static final int EXNODES = 10;
-			public static final int OPNODES = 5;
+			public static final int EXNODES = 50;
+			public static final int OPNODES = 10;
 			
 			public static final double PINMIN = 0.1;
-			public static final double PINMAX = 1.01;
+			public static final double PINMAX = 1.001;
 			public static final double PINPAS = 0.1;
 			
-			public static final UNIT MEASURE = UNIT.SECOND;
+			public static final UNIT MEASURE = UNIT.MILLIS;
 			
 			public static final Architecture arc() {
 				ArchitectureGenerator arcGen = new ArchitectureGenerator();				
@@ -403,14 +403,14 @@ public final class Experiments {
 		 * Model resolution with respect to the exnodes diversity factor 		
 		 ********************************************************************************/
 		public static final class R_DIVFactor {
-			public static final int EXNODES = 5;
-			public static final int OPNODES = 5;
+			public static final int EXNODES = 50;
+			public static final int OPNODES = 10;
 			
-			public static final double DIVMIN = 0.0;
-			public static final double DIVMAX = 5.0;
-			public static final double DIVPAS = 5.0;
+			public static final double DIVMIN = 0.1;
+			public static final double DIVMAX = 1.001;
+			public static final double DIVPAS = 0.1;
 			
-			public static final UNIT MEASURE = UNIT.SECOND;
+			public static final UNIT MEASURE = UNIT.MILLIS;
 			
 			public static final Architecture arc(final double divfact) {
 				ArchitectureGenerator arcGen = new ArchitectureGenerator();				
@@ -421,9 +421,9 @@ public final class Experiments {
 				 				.setEXNodes(EXNODES)
 				 				.setEXNodeResources(2, 12, divfact)
 				 				.setEXNodeSpeedup(2.0, 8.0, divfact)
-				 				.setEXNodeAvailability(0.85, 1.0, divfact)
+				 				.setEXNodeAvailability(0.85, 1.0, divfact )
 				 				.setLinkDelay(30.0, 300.0, divfact)
-				 				.setLinkBandwidth(1000000.0, 1000000000.0, divfact)
+				 				.setLinkBandwidth(1000000.0, 10000000.0, divfact)
 				 				.setLinkAvailability(0.85, 1.0, divfact)
 				 				.create();
 				} catch (GeneratorException exc) {

@@ -135,7 +135,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.opnConn[0] = min;
 		this.opnConn[1] = max;
-		this.opnConnVar = var;
+		this.opnConnVar = var * (max - min) / 2.0;
 		return this;
 	}
 	
@@ -155,7 +155,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.opnPinn[0] = min;
 		this.opnPinn[1] = max;
-		this.opnPinnVar = var;
+		this.opnPinnVar = var * (max - min) / 2.0;;
 		this.exnodes.clear();
 		this.exnodes.addAll(exnodes);
 		return this;
@@ -179,7 +179,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.srcProd[0] = min;
 		this.srcProd[1] = max;
-		this.srcProdVar = var;
+		this.srcProdVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -197,7 +197,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.pipCons[0] = min;
 		this.pipCons[1] = max;
-		this.pipConsVar = var;
+		this.pipConsVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -215,7 +215,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.snkCons[0] = min;
 		this.snkCons[1] = max;
-		this.snkConsVar = var;
+		this.snkConsVar = var * (max - min) / 2.0;;
 		return this;
 	}
 
@@ -233,7 +233,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.opnRes[0] = min;
 		this.opnRes[1] = max;
-		this.opnResVar = var;
+		this.opnResVar = var * (max - min) / 2.0;;
 		return this;
 	}
 	
@@ -251,7 +251,7 @@ public final class ApplicationGenerator {
 			throw new GeneratorException("Invalid arguments");
 		this.opnSpeed[0] = min;
 		this.opnSpeed[1] = max;
-		this.opnSpeedVar = var;
+		this.opnSpeedVar = var * (max - min) / 2.0;;
 		return this;
 	}
 		

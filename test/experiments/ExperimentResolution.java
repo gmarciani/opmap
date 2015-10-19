@@ -74,12 +74,12 @@ public class ExperimentResolution {
 				Constructor<?> modelConstructor = optmodel.getConstructor(Application.class, Architecture.class);				
 				String modelName = optmodel.getSimpleName();
 				for (int rept = 1; rept <= repts; rept++) {
-					System.out.printf("#R-EXNode: resolving %s# exnodes:%d/%d | opnodes:%d | rep:%d/%d\n", modelName, exnodes, exmax, opnodes, rept, repts);
+					System.out.printf("#R-EXNode: resolving %s# exnodes:%d/%d | opnodes:%d | rep:%d/%d\n", modelName, exnodes, exmax, opnodes, rept, repts);		
 					OPPModel mdl = (OPPModel) modelConstructor.newInstance(app, arc);
 					OPPSolver solver = new MPSolver();
 					Instant start = clk.instant();
 					boolean solved = solver.solve(mdl);
-					Instant end = clk.instant();
+					Instant end = clk.instant();	
 					mdl.getCPlex().end();
 					if (!solved) {
 						System.out.println("Unsolvable");
@@ -92,6 +92,7 @@ public class ExperimentResolution {
 							iterValues[rept - 1] = (end.toEpochMilli() - start.toEpochMilli()) / 1000.0;
 					}	
 				}
+				
 				double median = StatUtils.percentile(iterValues, 50);
 				medians[models.indexOf(optmodel)] = median;
 			}
