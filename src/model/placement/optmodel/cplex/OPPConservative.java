@@ -134,7 +134,7 @@ public class OPPConservative extends AbstractOPPStandard {
 		IloNumExpr objRExpr, objAExpr, objExpr;
 		try {			
 			objRExpr = modeler.prod(modeler.sum(this.getRmax(), modeler.negative(R)), this.getRw() / (this.getRmax() - this.getRmin()));
-			objAExpr = modeler.prod(modeler.sum(modeler.negative(Alg), Math.log(this.getAmin())), this.getAw() / (Math.log(this.getAmax()) - Math.log(this.getAmin())));
+			objAExpr = modeler.prod(modeler.sum(Alg, -Math.log(this.getAmin())), this.getAw() / (Math.log(this.getAmax()) - Math.log(this.getAmin())));
 			objExpr  = modeler.sum(objRExpr, objAExpr);
 			obj 	 = modeler.maximize(objExpr);
 			super.getCPlex().addObjective(obj.getSense(), obj.getExpr(), "StandardObj");
