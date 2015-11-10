@@ -1,5 +1,4 @@
 
-
                                         
    _ \   __ \   __ `__ \    _` |  __ \  
   (   |  |   |  |   |   |  (   |  |   | 
@@ -22,17 +21,13 @@ Author's email: giacomo.marciani@gmail.com
  
 
 # UPDATES
-SSP updates available at https://github.com/gmarciani/ssp
+SSP updates available at https://github.com/gmarciani/opmap
 
 
 # TEST
 The tests were run on a 2 GHz Intel i5 with 2GB of RAM, running Linux Ubuntu 14.04 
 and Java 1.8.
-
-Every JUnit-based test suite is available in package ssp.test.
-
-Tests output related to faireness session, both on Max-Min, Kalai-Smorodinski and 
-Proportional are available in folder /test.
+Every JUnit-based test suite is available in package opmap.test.
 
 
 # LICENSE
