@@ -1,0 +1,25 @@
+/*********************************************
+ * OPL 12.6.2.0 Model
+ * 
+ * Project: Opmap
+ * Version: 1.0
+ * Author: Giacomo Marciani
+ *********************************************/
+ 
+CPlex project implementing the Operator Placement Problem (OPP).
+The project structure provides the following directories:
+
+
+- OFFICIAL: Contains the standard and alternative formulation both for Mathematical Programming (MP)
+			and Constraint Programming (CP). The formulation follows the one stated in "Optimal DSP
+			Deployment" by prof. Francesco Lo Presti. 
+
+- CUSTOM:   Contains the standard and alternative formulation both for Mathematical Programming (MP)
+			and Constraint Programming (CP). The formulation follows the one stated in "Posizionamento
+			degli Operatori" by stud. Giacomo Marciani. 
+			
+- RUN CONF: COntains the run configurations for official/custom standard/alternative MP/CP formulation.
+
+
+RESULTS
+For now, the best formulation seems to be the Official MP Alternative.
